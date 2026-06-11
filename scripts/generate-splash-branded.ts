@@ -2,7 +2,6 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import sharp from 'sharp';
 
 import {
   BRANDED_LOGO_HEIGHT,
@@ -132,7 +131,20 @@ ${sloganTextsXml}
 </svg>`;
 }
 
+async function loadSharp() {
+  try {
+    const mod = await import('sharp');
+    return mod.default;
+  } catch {
+    console.error(
+      'sharp is required for generate:splash. Install locally: npm install -D sharp',
+    );
+    process.exit(1);
+  }
+}
+
 async function renderPng(svg: string, outPath: string): Promise<void> {
+  const sharp = await loadSharp();
   await sharp(Buffer.from(svg))
     .flatten({ background: '#000000' })
     .png()
