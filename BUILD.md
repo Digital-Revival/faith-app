@@ -19,9 +19,9 @@ The app version lives in **app.json** (`expo.version`). It is synced to `package
 |--------|--------------|
 | `npm run version:sync` | Sync app.json → package.json, VERSION.md |
 | `npm run version:sync-to-app` | Sync package.json → app.json, VERSION.md |
-| `npm run version:bump:patch` | Bump patch (0.5.0 → 0.5.1) |
-| `npm run version:bump:minor` | Bump minor (0.5.0 → 0.6.0) |
-| `npm run version:bump:major` | Bump major (0.5.0 → 1.0.0) |
+| `npm run version:bump:patch` | Bump patch (2.0.0 → 2.0.1) |
+| `npm run version:bump:minor` | Bump minor (2.0.0 → 2.1.0) |
+| `npm run version:bump:major` | Bump major (2.0.0 → 3.0.0) |
 
 Before each EAS build, `version:sync` runs automatically via `eas-build-pre-install`.
 

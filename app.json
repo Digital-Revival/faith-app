@@ -2,7 +2,7 @@
   "expo": {
     "name": "Faith Generation",
     "slug": "faith-generation",
-    "version": "0.6.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo_icon.png",
     "scheme": "faithapp",
@@ -35,6 +35,7 @@
       "bundler": "metro"
     },
     "plugins": [
+      "./plugins/withJdk17Gradle.js",
       "expo-router",
       [
         "expo-splash-screen",

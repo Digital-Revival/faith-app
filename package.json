@@ -1,11 +1,11 @@
 {
   "name": "faith-app",
   "main": "index.js",
-  "version": "0.6.0",
+  "version": "2.0.0",
   "scripts": {
     "eas-build-pre-install": "npm run version:sync",
     "start": "expo start",
-    "android": "expo run:android",
+    "android": "node scripts/with-jdk17.js expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
@@ -18,7 +18,8 @@
     "version:bump:patch": "npm version patch --no-git-tag-version && npm run version:sync-to-app",
     "version:bump:minor": "npm version minor --no-git-tag-version && npm run version:sync-to-app",
     "version:bump:major": "npm version major --no-git-tag-version && npm run version:sync-to-app",
-    "generate:splash": "tsx scripts/generate-splash-branded.ts"
+    "generate:splash": "tsx scripts/generate-splash-branded.ts",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@expo-google-fonts/poppins": "^0.4.1",
@@ -84,6 +85,7 @@
     "babel-plugin-module-resolver": "^5.0.2",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~55.0.0",
+    "patch-package": "^8.0.1",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "sharp": "^0.34.5",
