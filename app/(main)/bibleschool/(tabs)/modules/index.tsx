@@ -6,7 +6,7 @@ import {
   useIntroductionVimeoId,
   useModules,
 } from "@/hooks/useBibleschoolContent";
-import { useLastWatchedLesson } from "@/hooks/useLastWatchedLesson";
+import { useLessonUnlocks } from "@/hooks/useLessonUnlocks";
 import { prefetchLessonThumbnailsForModule } from "@/hooks/usePrefetchLessonThumbnails";
 import { useTheme } from "@/hooks/useTheme";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -33,7 +33,7 @@ export default function BibleSchoolModulesScreen() {
   const { data: introductionVimeoId } = useIntroductionVimeoId(locale);
   const { progressMap, attemptCountMap } = useModuleProgress();
   const { data: modules } = useModules(locale);
-  const { module: currentModule } = useLastWatchedLesson();
+  const { nextUnlockedTarget } = useLessonUnlocks();
   const [searchQuery, setSearchQuery] = useState("");
 
   const firstModuleId = useMemo(() => getFirstModuleId(modules ?? []), [modules]);
@@ -45,8 +45,9 @@ export default function BibleSchoolModulesScreen() {
 
   const moduleToPrefetch = useMemo(() => {
     if (!modules?.length) return undefined;
-    const cmd = currentModule
-      ? modules.find((m) => m.id === currentModule.id)
+    const resumeModuleId = nextUnlockedTarget?.module.id;
+    const cmd = resumeModuleId
+      ? modules.find((m) => m.id === resumeModuleId)
       : undefined;
     const pool = cmd
       ? modules.filter((m) => m.id !== cmd.id)
@@ -55,7 +56,7 @@ export default function BibleSchoolModulesScreen() {
       (m) => progressMap[m.id]?.status !== "completed",
     );
     return cmd ?? remaining[0];
-  }, [modules, currentModule?.id, progressMap]);
+  }, [modules, nextUnlockedTarget?.module.id, progressMap]);
 
   const handleModulePress = useCallback(
     (module: BibleschoolModule) => {
@@ -74,10 +75,26 @@ export default function BibleSchoolModulesScreen() {
     [queryClient, introductionVimeoId, firstModuleId, modules],
   );
 
+  const allModulesCompleted = useMemo(() => {
+    if (!modules?.length) return false;
+    return modules.every((m) => progressMap[m.id]?.status === "completed");
+  }, [modules, progressMap]);
+
   const currentModuleData = useMemo(() => {
-    if (!filteredModules?.length || !currentModule) return undefined;
-    return filteredModules.find((m) => m.id === currentModule.id);
-  }, [filteredModules, currentModule?.id]);
+    if (allModulesCompleted || !filteredModules?.length) return undefined;
+
+    const resumeModuleId = nextUnlockedTarget?.module.id;
+    if (resumeModuleId) {
+      const resumeModule = filteredModules.find((m) => m.id === resumeModuleId);
+      if (resumeModule && progressMap[resumeModule.id]?.status !== "completed") {
+        return resumeModule;
+      }
+    }
+
+    return filteredModules.find(
+      (m) => progressMap[m.id]?.status !== "completed",
+    );
+  }, [filteredModules, nextUnlockedTarget?.module.id, progressMap, allModulesCompleted]);
 
   const completedModules = useMemo(() => {
     if (!filteredModules?.length) return [];
@@ -88,15 +105,16 @@ export default function BibleSchoolModulesScreen() {
 
   const allModulesExcludingCurrent = useMemo(() => {
     if (!filteredModules?.length) return [];
-    if (!currentModuleData) return filteredModules;
+    if (allModulesCompleted || !currentModuleData) return filteredModules;
     return filteredModules.filter((m) => m.id !== currentModuleData.id);
-  }, [filteredModules, currentModuleData?.id]);
+  }, [filteredModules, currentModuleData?.id, allModulesCompleted]);
 
   const remainingModules = useMemo(() => {
+    if (allModulesCompleted) return allModulesExcludingCurrent;
     return allModulesExcludingCurrent.filter(
       (m) => progressMap[m.id]?.status !== "completed",
     );
-  }, [allModulesExcludingCurrent, progressMap]);
+  }, [allModulesExcludingCurrent, progressMap, allModulesCompleted]);
 
   useEffect(() => {
     if (!moduleToPrefetch || !modules?.length) return;
@@ -197,8 +215,13 @@ export default function BibleSchoolModulesScreen() {
         ) : (
           <ModulesCatalogSections
             theme={theme}
+            allModulesCompleted={allModulesCompleted}
+            moduleCount={modules.length}
             currentModuleLabel={t("modules.currentModule")}
             allModulesLabel={t("modules.allModules")}
+            year1AllModulesLabel={t("modules.year1AllModules", {
+              year: t("modules.year1Label"),
+            })}
             completedModulesLabel={t("modules.completedModules")}
             currentModuleData={currentModuleData}
             remainingModules={remainingModules}

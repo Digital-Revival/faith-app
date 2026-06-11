@@ -416,6 +416,14 @@
     "currentModule": "Huidige module",
     "completedModules": "Afgeronde modules",
     "allModules": "Alle modules",
+    "year1Label": "Leerjaar 1",
+    "year2Label": "Leerjaar 2",
+    "year1AllModules": "{{year}} — alle modules",
+    "allModulesCompletedTitle": "Gefeliciteerd! Je hebt {{year}} afgerond",
+    "allModulesCompletedSubtitle": "Je hebt alle {{count}} modules en examens voltooid. Blader hieronder door je modules om een les te herhalen.",
+    "year2ComingSoonLabel": "Binnenkort",
+    "year2ComingSoonTitle": "{{year}} komt eraan",
+    "year2ComingSoonBody": "We werken aan nieuwe modules voor {{year}}. Je ontvangt een melding zodra ze beschikbaar zijn.",
     "searchPlaceholder": "Zoek modules en lessen…",
     "searchNoResults": "Geen modules of lessen gevonden voor deze zoekopdracht.",
     "searchClear": "Zoekveld wissen",
@@ -451,5 +459,5 @@
     "loadError": "De nieuwste inhoud kon niet worden geladen. Er wordt opgeslagen of offline materiaal getoond.",
     "retry": "Opnieuw proberen"
   },
-  "exam": {"takeExam": "Examen maken","unlockHint": "Voltooi alle lessen om te ontgrendelen","readyHint": "Alle lessen voltooid","passed": "Examen behaald","passedHint": "Je hebt het examen van deze module afgerond","failedScore": "{{score}}% - {{correct}}/{{total}} goed","retryHint": "Tik om opnieuw te proberen","retryHintWithAttempt": "Poging {{count}} - Tik om opnieuw te proberen","alreadyPassed": "Je hebt dit examen al behaald"}
+  "exam": {"takeExam": "Examen maken","unlockHint": "Voltooi alle lessen om te ontgrendelen","readyHint": "Alle lessen voltooid","passed": "Examen behaald","passedHint": "Je hebt het examen van deze module afgerond","failedScore": "{{score}}% - {{correct}}/{{total}} goed","failedScorePercent": "{{score}}%","retryHint": "Tik om opnieuw te proberen","retryHintWithAttempt": "Poging {{count}} - Tik om opnieuw te proberen","alreadyPassed": "Je hebt dit examen al behaald"}
 }

@@ -486,6 +486,14 @@
     "currentModule": "Текущ модул",
     "completedModules": "Завършени модули",
     "allModules": "Всички модули",
+    "year1Label": "Година 1",
+    "year2Label": "Година 2",
+    "year1AllModules": "{{year}} — всички модули",
+    "allModulesCompletedTitle": "Поздравления! Завършихте {{year}}",
+    "allModulesCompletedSubtitle": "Завършихте всички {{count}} модула и изпити. Прегледайте модулите по-долу, за да повторите урок.",
+    "year2ComingSoonLabel": "Скоро",
+    "year2ComingSoonTitle": "{{year}} предстои",
+    "year2ComingSoonBody": "Подготвяме нови модули за {{year}}. Ще получите известие, когато станат достъпни.",
     "searchPlaceholder": "Търси модули и уроци…",
     "searchNoResults": "Няма модули или уроци, които да отговарят на търсенето.",
     "searchClear": "Изчисти търсенето"
@@ -734,6 +742,7 @@
     "passed": "Изпитът е успешен",
     "passedHint": "Завършихте изпита по този модул",
     "failedScore": "{{score}}% - {{correct}}/{{total}} верни",
+    "failedScorePercent": "{{score}}%",
     "retryHint": "Докоснете за повторен опит",
     "retryHintWithAttempt": "Опит {{count}} - Докоснете за повторен опит",
     "alreadyPassed": "Вече сте преминали този изпит"

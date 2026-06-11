@@ -77,7 +77,7 @@ export const authService = {
         () =>
           reject(
             new Error(
-              'Verbinding timed out. Controleer of je apparaat op hetzelfde netwerk zit als je computer en dat Supabase draait (supabase start).',
+              'Verbinding timed out. Controleer je internet en of EXPO_PUBLIC_SUPABASE_URL in .env naar de remote Supabase wijst (niet localhost).',
             ),
           ),
         LOGIN_TIMEOUT_MS,
@@ -107,7 +107,7 @@ export const authService = {
         msg.includes('enotfound')
       ) {
         throw new Error(
-          'Geen verbinding met de server. Controleer je internet en of je apparaat op hetzelfde netwerk zit als je computer.',
+          'Geen verbinding met de server. Controleer je internet en EXPO_PUBLIC_SUPABASE_URL in .env.',
         );
       }
       throw err;
@@ -147,7 +147,7 @@ export const authService = {
         msg.includes('enotfound')
       ) {
         throw new Error(
-          'Geen verbinding met de server. Controleer je internet en of je apparaat op hetzelfde netwerk zit als je computer.',
+          'Geen verbinding met de server. Controleer je internet en EXPO_PUBLIC_SUPABASE_URL in .env.',
         );
       }
       throw err;

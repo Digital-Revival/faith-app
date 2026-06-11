@@ -47,11 +47,16 @@ export function ModuleExamInteractiveRow({
         <Box className="flex-1">
           <Text className="text-base font-semibold" style={{ color: theme.textPrimary }}>
             {examStatus.latestFailedAttempt
-              ? t('exam.failedScore', {
-                  score: examStatus.latestFailedAttempt.score,
-                  correct: examStatus.latestFailedAttempt.correct,
-                  total: examStatus.latestFailedAttempt.total,
-                })
+              ? examStatus.latestFailedAttempt.correct != null &&
+                examStatus.latestFailedAttempt.total != null
+                ? t('exam.failedScore', {
+                    score: examStatus.latestFailedAttempt.score,
+                    correct: examStatus.latestFailedAttempt.correct,
+                    total: examStatus.latestFailedAttempt.total,
+                  })
+                : t('exam.failedScorePercent', {
+                    score: examStatus.latestFailedAttempt.score,
+                  })
               : t('exam.takeExam')}
           </Text>
           <Text className="text-xs mt-0.5" style={{ color: theme.textSecondary }}>

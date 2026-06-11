@@ -5,7 +5,11 @@ import { Platform } from 'react-native';
 import { getSupabaseUrl } from '@/utils/getSupabaseUrl';
 
 const supabaseUrl = getSupabaseUrl();
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseAnonKey =
+  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ||
+  process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 if (!supabaseAnonKey) {
   throw new Error(

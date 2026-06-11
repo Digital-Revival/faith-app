@@ -416,6 +416,14 @@
     "currentModule": "वर्तमान मॉड्यूल",
     "completedModules": "पूर्ण मॉड्यूल",
     "allModules": "सभी मॉड्यूल",
+    "year1Label": "वर्ष 1",
+    "year2Label": "वर्ष 2",
+    "year1AllModules": "{{year}} — सभी मॉड्यूल",
+    "allModulesCompletedTitle": "बधाई हो! आपने {{year}} पूरा कर लिया",
+    "allModulesCompletedSubtitle": "आपने सभी {{count}} मॉड्यूल और परीक्षाएँ पूरी कर ली हैं। नीचे अपने मॉड्यूल देखें या कोई पाठ दोहराएँ।",
+    "year2ComingSoonLabel": "जल्द आ रहा है",
+    "year2ComingSoonTitle": "{{year}} जल्द आ रहा है",
+    "year2ComingSoonBody": "हम {{year}} के लिए नए मॉड्यूल तैयार कर रहे हैं। उपलब्ध होते ही आपको सूचना मिलेगी।",
     "searchPlaceholder": "मॉड्यूल और पाठ खोजें…",
     "searchNoResults": "आपकी खोज से कोई मॉड्यूल या पाठ मेल नहीं खाता।",
     "searchClear": "खोज साफ़ करें",
@@ -451,5 +459,5 @@
     "loadError": "नवीनतम सामग्री लोड नहीं हो सकी। सहेजा या ऑफ़लाइन डेटा दिखाया जा रहा है।",
     "retry": "फिर से कोशिश करें"
   },
-  "exam": {"takeExam": "परीक्षा दें","unlockHint": "अनलॉक करने के लिए सभी पाठ पूर्ण करें","readyHint": "सभी पाठ पूर्ण","passed": "परीक्षा उत्तीर्ण","passedHint": "आपने इस मॉड्यूल की परीक्षा पूरी कर ली","failedScore": "{{score}}% - {{correct}}/{{total}} सही","retryHint": "पुनः प्रयास करने के लिए टैप करें","retryHintWithAttempt": "प्रयास {{count}} - पुनः प्रयास करने के लिए टैप करें","alreadyPassed": "आप इस परीक्षा को पहले ही उत्तीर्ण कर चुके हैं"}
+  "exam": {"takeExam": "परीक्षा दें","unlockHint": "अनलॉक करने के लिए सभी पाठ पूर्ण करें","readyHint": "सभी पाठ पूर्ण","passed": "परीक्षा उत्तीर्ण","passedHint": "आपने इस मॉड्यूल की परीक्षा पूरी कर ली","failedScore": "{{score}}% - {{correct}}/{{total}} सही","failedScorePercent": "{{score}}%","retryHint": "पुनः प्रयास करने के लिए टैप करें","retryHintWithAttempt": "प्रयास {{count}} - पुनः प्रयास करने के लिए टैप करें","alreadyPassed": "आप इस परीक्षा को पहले ही उत्तीर्ण कर चुके हैं"}
 }

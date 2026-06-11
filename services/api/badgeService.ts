@@ -1,4 +1,5 @@
 import type { Badge, UserBadge } from '@/types/badge';
+import { getEligibleBadgeIds } from '@/utils/badgeEligibility';
 
 import { lessonProgressService } from './lessonProgressService';
 import { moduleProgressService } from './moduleProgressService';
@@ -58,7 +59,9 @@ export async function getUserBadges(userId: string): Promise<UserBadge[]> {
 
 export async function checkAndAwardBadges(
   userId: string,
+  options?: { notify?: boolean },
 ): Promise<{ badge: Badge }[]> {
+  const notify = options?.notify !== false;
   const [badges, earnedBadgeIds, completedLessons, moduleProgress, dbStreak] =
     await Promise.all([
       getBadges(),
@@ -90,46 +93,21 @@ export async function checkAndAwardBadges(
   const streak = dbStreak?.days ?? 0;
 
   const completedModuleIds = new Set(completedModules.map((m) => m.module_id));
+  const earnedBadgeIdSet = new Set(earnedBadgeIds);
 
-  const newlyEarned: { badge: Badge }[] = [];
-  const badgeIdsToAward: string[] = [];
+  const badgeIdsToAward = getEligibleBadgeIds(badges, earnedBadgeIdSet, {
+    lessonCount,
+    completedModuleIds,
+    moduleCount,
+    streakDays: streak,
+    hasPassedQuiz,
+    introWatched,
+  });
 
-  for (const badge of badges) {
-    if (earnedBadgeIds.includes(badge.id)) continue;
-
-    let qualifies = false;
-    if (badge.id === 'first_lesson') {
-      qualifies = lessonCount >= 1;
-    } else if (badge.id.startsWith('lesson_milestone_')) {
-      const target = badge.target_value;
-      qualifies = lessonCount >= target;
-    } else if (badge.id === 'student_van_het_woord') {
-      qualifies = lessonCount >= 10;
-    } else if (badge.id.startsWith('streak_')) {
-      qualifies = streak >= badge.target_value;
-    } else if (badge.id === 'volharder') {
-      qualifies = streak >= 7;
-    } else if (badge.id === 'strijder') {
-      qualifies = hasPassedQuiz;
-    } else if (badge.id === 'bijbelleraar') {
-      qualifies = moduleCount >= 5;
-    } else if (badge.id === 'faith_finisher') {
-      qualifies = moduleCount >= 20;
-    } else if (badge.id === 'schriftgeleerde') {
-      qualifies = lessonCount >= 100;
-    } else if (badge.id.startsWith('module_')) {
-      const moduleNum = parseInt(badge.id.replace('module_', ''), 10);
-      const moduleId = `module-${moduleNum}`;
-      qualifies = completedModuleIds.has(moduleId);
-    } else if (badge.id === 'intro_watched') {
-      qualifies = introWatched;
-    }
-
-    if (qualifies) {
-      newlyEarned.push({ badge });
-      badgeIdsToAward.push(badge.id);
-    }
-  }
+  const newlyEarned = badgeIdsToAward.flatMap((id) => {
+    const badge = badges.find((b) => b.id === id);
+    return badge ? [{ badge }] : [];
+  });
 
   if (badgeIdsToAward.length > 0) {
     try {
@@ -137,9 +115,11 @@ export async function checkAndAwardBadges(
     } catch {
       return [];
     }
-    await notificationService
-      .createForBadges(userId, newlyEarned)
-      .catch(() => {});
+    if (notify) {
+      await notificationService
+        .createForBadges(userId, newlyEarned)
+        .catch(() => {});
+    }
   }
 
   return newlyEarned;

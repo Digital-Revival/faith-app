@@ -15,6 +15,7 @@ import {
   isExamUnlocked,
   isLessonUnlocked,
 } from '@/utils/unlockLogic';
+import { resolveQuizAttemptCounts } from '@/utils/quizAttemptScore';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
@@ -23,7 +24,11 @@ const QUIZ_ATTEMPTS_STALE_MS = 5 * 60 * 1000;
 export interface ExamStatusForModule {
   passed: boolean;
   attemptCount?: number;
-  latestFailedAttempt?: { score: number; correct: number; total: number };
+  latestFailedAttempt?: {
+    score: number;
+    correct?: number;
+    total?: number;
+  };
 }
 
 export function useLessonUnlocks() {
@@ -122,19 +127,14 @@ export function useLessonUnlocks() {
       if (!latestAttempt) {
         return { passed: false };
       }
-      const total =
-        latestAttempt.total_count ??
-        (Object.keys(latestAttempt.answers ?? {}).length || 1);
-      const correct =
-        latestAttempt.correct_count ??
-        Math.round((latestAttempt.score_percentage / 100) * total);
+      const counts = resolveQuizAttemptCounts(latestAttempt);
       return {
         passed: false,
         attemptCount: attempts.length,
         latestFailedAttempt: {
           score: latestAttempt.score_percentage,
-          correct,
-          total,
+          correct: counts?.correct,
+          total: counts?.total,
         },
       };
     },

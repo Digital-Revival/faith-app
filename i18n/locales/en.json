@@ -416,6 +416,14 @@
     "currentModule": "Current module",
     "completedModules": "Completed modules",
     "allModules": "All modules",
+    "year1Label": "Year 1",
+    "year2Label": "Year 2",
+    "year1AllModules": "{{year}} — all modules",
+    "allModulesCompletedTitle": "Congratulations! You've completed {{year}}",
+    "allModulesCompletedSubtitle": "You've finished all {{count}} modules and exams. Browse your modules below to review or repeat a lesson.",
+    "year2ComingSoonLabel": "Coming soon",
+    "year2ComingSoonTitle": "{{year}} is coming soon",
+    "year2ComingSoonBody": "We're preparing new modules for {{year}}. You'll receive a notification when they're available.",
     "searchPlaceholder": "Search modules and lessons…",
     "searchNoResults": "No modules or lessons match your search.",
     "searchClear": "Clear search",
@@ -451,5 +459,5 @@
     "loadError": "Could not load the latest content. Showing saved or offline data.",
     "retry": "Try again"
   },
-  "exam": {"takeExam": "Take exam","unlockHint": "Complete all lessons to unlock","readyHint": "All lessons completed","passed": "Exam passed","passedHint": "You've completed this module's exam","failedScore": "{{score}}% - {{correct}}/{{total}} correct","retryHint": "Tap to try again","retryHintWithAttempt": "Attempt {{count}} - Tap to try again","alreadyPassed": "You have already passed this exam"}
+  "exam": {"takeExam": "Take exam","unlockHint": "Complete all lessons to unlock","readyHint": "All lessons completed","passed": "Exam passed","passedHint": "You've completed this module's exam","failedScore": "{{score}}% - {{correct}}/{{total}} correct","failedScorePercent": "{{score}}%","retryHint": "Tap to try again","retryHintWithAttempt": "Attempt {{count}} - Tap to try again","alreadyPassed": "You have already passed this exam"}
 }

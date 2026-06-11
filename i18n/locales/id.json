@@ -416,6 +416,14 @@
     "currentModule": "Modul saat ini",
     "completedModules": "Modul selesai",
     "allModules": "Semua modul",
+    "year1Label": "Tahun 1",
+    "year2Label": "Tahun 2",
+    "year1AllModules": "{{year}} — semua modul",
+    "allModulesCompletedTitle": "Selamat! Anda telah menyelesaikan {{year}}",
+    "allModulesCompletedSubtitle": "Anda telah menyelesaikan semua {{count}} modul dan ujian. Telusuri modul di bawah untuk meninjau atau mengulang pelajaran.",
+    "year2ComingSoonLabel": "Segera hadir",
+    "year2ComingSoonTitle": "{{year}} segera hadir",
+    "year2ComingSoonBody": "Kami sedang menyiapkan modul baru untuk {{year}}. Anda akan mendapat notifikasi saat tersedia.",
     "searchPlaceholder": "Cari modul dan pelajaran…",
     "searchNoResults": "Tidak ada modul atau pelajaran yang cocok dengan pencarian Anda.",
     "searchClear": "Hapus pencarian",
@@ -451,5 +459,5 @@
     "loadError": "Konten terbaru tidak dapat dimuat. Menampilkan data tersimpan atau offline.",
     "retry": "Coba lagi"
   },
-  "exam": {"takeExam": "Kerjakan ujian","unlockHint": "Selesaikan semua pelajaran untuk membuka","readyHint": "Semua pelajaran selesai","passed": "Ujian lulus","passedHint": "Anda telah menyelesaikan ujian modul ini","failedScore": "{{score}}% - {{correct}}/{{total}} benar","retryHint": "Ketuk untuk mencoba lagi","retryHintWithAttempt": "Percobaan {{count}} - Ketuk untuk mencoba lagi","alreadyPassed": "Anda sudah lulus ujian ini"}
+  "exam": {"takeExam": "Kerjakan ujian","unlockHint": "Selesaikan semua pelajaran untuk membuka","readyHint": "Semua pelajaran selesai","passed": "Ujian lulus","passedHint": "Anda telah menyelesaikan ujian modul ini","failedScore": "{{score}}% - {{correct}}/{{total}} benar","failedScorePercent": "{{score}}%","retryHint": "Ketuk untuk mencoba lagi","retryHintWithAttempt": "Percobaan {{count}} - Ketuk untuk mencoba lagi","alreadyPassed": "Anda sudah lulus ujian ini"}
 }

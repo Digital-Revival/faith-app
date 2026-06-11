@@ -218,7 +218,6 @@ Use this file to instantly locate any file or pattern without guessing paths.
 | `supabase/config.toml` | Local Supabase config (`project_id = "faith-app"`) |
 | `supabase/migrations/` | SQL migration files (order by filename YYYYMMDDHHMMSS) |
 | `supabase/seed.sql` | Dev seed data |
-| `supabase/scripts/` | Helper scripts |
 
 Current migrations (in order):
 1. `20260218120000_initial_schema.sql` — profiles, progress, quiz, user_settings, RPCs, RLS

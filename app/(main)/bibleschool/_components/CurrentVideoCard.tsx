@@ -2,9 +2,9 @@ import { Box } from '@/components/ui/box';
 import { HStack } from '@/components/ui/hstack';
 import { Text } from '@/components/ui/text';
 import { useBibleschoolTab } from '@/contexts/BibleschoolTabContext';
-import { useLastWatchedLesson } from '@/hooks/useLastWatchedLesson';
 import { useIntroductionVimeoId, useModules } from '@/hooks/useBibleschoolContent';
 import { useIntroVideoWatched } from '@/hooks/useIntroVideoWatched';
+import { useLessonUnlocks } from '@/hooks/useLessonUnlocks';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useVimeoThumbnail } from '@/hooks/useVimeoThumbnail';
@@ -22,19 +22,29 @@ export function CurrentVideoCard() {
   const theme = useTheme();
   const { t, locale } = useTranslation();
   const { setActiveTab } = useBibleschoolTab();
-  const { lesson, module, isLoading } = useLastWatchedLesson();
+  const { nextUnlockedTarget, isLoading: unlocksLoading } = useLessonUnlocks();
   const { hasWatched: introWatched, isLoading: introLoading } =
     useIntroVideoWatched();
   const { data: introductionVimeoId } = useIntroductionVimeoId(locale);
   const { data: modules = [] } = useModules(locale);
   const curriculum = useMemo(() => sortModulesByOrder(modules), [modules]);
   const firstModule = curriculum[0];
+  const resumeLesson =
+    nextUnlockedTarget?.type === 'lesson' ? nextUnlockedTarget.lesson : undefined;
+  const resumeModule = nextUnlockedTarget
+    ? nextUnlockedTarget.type === 'lesson'
+      ? nextUnlockedTarget.module
+      : nextUnlockedTarget.module
+    : undefined;
+  const resumeExam = nextUnlockedTarget?.type === 'exam';
+
   const fallbackLesson = firstModule ? sortLessonsByOrder(firstModule)[0] : undefined;
   const fallbackModule = firstModule;
-  const targetLesson = lesson ?? fallbackLesson;
-  const targetModule = module ?? fallbackModule;
+  const targetLesson = resumeExam ? undefined : resumeLesson ?? fallbackLesson;
+  const targetModule = resumeModule ?? fallbackModule;
 
-  const showIntro = !lesson && !introWatched;
+  const showIntro = !resumeLesson && !resumeExam && !introWatched;
+  const isLoading = unlocksLoading || introLoading;
 
   const introThumbnailId = showIntro ? introductionVimeoId : undefined;
   const lessonThumbId =
@@ -54,21 +64,30 @@ export function CurrentVideoCard() {
   const moduleName = targetModule?.title ?? '';
   const lessonName = showIntro
     ? t('overview.introVideoTitle')
-    : targetLesson?.title ?? '';
+    : resumeExam
+      ? t('exam.takeExam')
+      : targetLesson?.title ?? '';
 
-  const subtitle = isLoading || introLoading
+  const subtitle = isLoading
     ? t('overview.currentVideoPlaceholder')
     : showIntro
       ? t('overview.introVideoSubtitle')
-      : lesson && module
-        ? t('overview.currentVideoContext', { moduleName })
-        : t('overview.startFirstLesson');
+      : resumeExam && targetModule
+        ? t('overview.continueLearningExamNext', {
+            moduleLabel: targetModule.title,
+          })
+        : targetLesson && targetModule
+          ? t('overview.currentVideoContext', { moduleName })
+          : t('overview.startFirstLesson');
 
   const handlePress = () => {
     bzzt();
     if (showIntro) {
       setActiveTab('modules');
       router.push(routes.bibleschoolIntro());
+    } else if (resumeExam && targetModule) {
+      setActiveTab('modules');
+      router.push(routes.bibleschoolModuleExam(targetModule.id));
     } else if (targetModule && targetLesson) {
       setActiveTab('modules');
       router.push(routes.bibleschoolModuleLesson(targetModule.id, targetLesson.id));
@@ -80,7 +99,10 @@ export function CurrentVideoCard() {
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={handlePress}
-        disabled={!showIntro && (isLoading || !targetLesson || !targetModule)}
+        disabled={
+          !showIntro &&
+          (isLoading || !targetModule || (!targetLesson && !resumeExam))
+        }
         className="cursor-pointer"
         style={{ opacity: !showIntro && isLoading ? 0.7 : 1 }}
       >

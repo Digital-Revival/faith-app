@@ -5,11 +5,15 @@ import type { ThemeColors } from '@/hooks/useTheme';
 import type { ModuleProgress } from '@/types/progress';
 import type { BibleschoolModule } from '@/types/bibleschool';
 import { ModuleCard } from './ModuleCard';
+import { ModulesYearCompleteCard } from './ModulesYearCompleteCard';
 
 interface ModulesCatalogSectionsProps {
   theme: ThemeColors;
+  allModulesCompleted: boolean;
+  moduleCount: number;
   currentModuleLabel: string;
   allModulesLabel: string;
+  year1AllModulesLabel: string;
   completedModulesLabel: string;
   currentModuleData: BibleschoolModule | undefined;
   remainingModules: BibleschoolModule[];
@@ -25,8 +29,11 @@ interface ModulesCatalogSectionsProps {
 
 export function ModulesCatalogSections({
   theme,
+  allModulesCompleted,
+  moduleCount,
   currentModuleLabel,
   allModulesLabel,
+  year1AllModulesLabel,
   completedModulesLabel,
   currentModuleData,
   remainingModules,
@@ -39,8 +46,15 @@ export function ModulesCatalogSections({
   onToggleCompletedModules,
   onModulePress,
 }: ModulesCatalogSectionsProps) {
+  const catalogTitle = allModulesCompleted
+    ? year1AllModulesLabel
+    : allModulesLabel;
+
   return (
     <VStack className="gap-6">
+      {allModulesCompleted ? (
+        <ModulesYearCompleteCard theme={theme} moduleCount={moduleCount} />
+      ) : null}
       {currentModuleData ? (
         <VStack className="gap-2">
           <Text
@@ -64,7 +78,7 @@ export function ModulesCatalogSections({
       ) : null}
       <VStack className="gap-2">
         <CollapsibleSection
-          title={allModulesLabel}
+          title={catalogTitle}
           collapsed={!allModulesExpanded}
           onToggle={onToggleAllModules}
           headerBg={theme.tabInactiveBg}
@@ -83,7 +97,7 @@ export function ModulesCatalogSections({
             />
           ))}
         </CollapsibleSection>
-        {completedModules.length > 0 ? (
+        {!allModulesCompleted && completedModules.length > 0 ? (
           <CollapsibleSection
             title={completedModulesLabel}
             collapsed={!completedModulesExpanded}
