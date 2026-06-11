@@ -1,6 +1,6 @@
 {
   "cli": {
-    "appVersionSource": "remote"
+    "appVersionSource": "local"
   },
   "build": {
     "development": {
@@ -8,16 +8,20 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
     },
     "production": {
+      "node": "22.13.0",
       "autoIncrement": true,
       "ios": {
         "resourceClass": "m-medium",
         "image": "sdk-56"
       },
       "android": {
-        "buildType": "apk",
+        "buildType": "app-bundle",
         "image": "sdk-56"
       }
     },
