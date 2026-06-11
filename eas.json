@@ -12,12 +12,13 @@
     },
     "production": {
       "autoIncrement": true,
-      "image": "sdk-56",
       "ios": {
-        "resourceClass": "m-medium"
+        "resourceClass": "m-medium",
+        "image": "sdk-56"
       },
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "image": "sdk-56"
       }
     },
     "testflight": {
