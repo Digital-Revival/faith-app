@@ -13,7 +13,7 @@ import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import { ThemeSwitcher } from './_components/ThemeSwitcher';
 import { LANGUAGES_FOR_UI } from '@/i18n';
 import { THEME_OPTIONS } from './_components/ThemeSwitcher';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "expo-router/react-navigation";
 import { SETTINGS_SECTIONS } from './_config/settingsSections';
 
 export default function PreferencesSettingsScreen() {

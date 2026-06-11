@@ -1,7 +1,7 @@
 import { useBibleschoolTab } from '@/contexts/BibleschoolTabContext';
 import { stackScreenOptions } from '@/constants/screenAnimationOptions';
 import { useTheme } from '@/hooks/useTheme';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "expo-router/react-navigation";
 import { Stack } from 'expo-router';
 import { useCallback } from 'react';
 

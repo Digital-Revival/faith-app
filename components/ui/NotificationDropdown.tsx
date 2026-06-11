@@ -6,10 +6,9 @@ import { useNotifications } from '@/hooks/useNotifications';
 import { useTranslation } from '@/hooks/useTranslation';
 import { formatRelativeDate } from '@/utils/formatters';
 import { bzzt } from '@/utils/haptics';
-import { DrawerActions, useNavigation } from '@react-navigation/native';
+import { DrawerActions, useNavigation } from "expo-router/react-navigation";
 import { Ionicons } from '@expo/vector-icons';
-import type { Href } from 'expo-router';
-import { router } from 'expo-router';
+import { type Href, router } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,

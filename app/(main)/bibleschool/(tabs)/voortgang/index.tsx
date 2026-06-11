@@ -7,7 +7,7 @@ import { routes } from '@/constants/routes';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { bzzt } from '@/utils/haptics';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "expo-router/react-navigation";
 import { router } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { FlatList, RefreshControl, TouchableOpacity, View } from 'react-native';

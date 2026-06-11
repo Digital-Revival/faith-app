@@ -35,7 +35,7 @@
       "bundler": "metro"
     },
     "plugins": [
-      "./plugins/withJdk17Gradle.js",
+      "./plugins/withAndroidBuildFix.js",
       "expo-router",
       [
         "expo-splash-screen",
@@ -82,7 +82,8 @@
       "expo-image",
       "expo-localization",
       "expo-sharing",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-status-bar"
     ],
     "experiments": {
       "typedRoutes": true,

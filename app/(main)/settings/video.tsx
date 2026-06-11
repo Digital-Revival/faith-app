@@ -11,7 +11,7 @@ import { ScrollView } from 'react-native';
 import { createElement } from 'react';
 import { VideoQualitySelector } from './_components/VideoQualitySelector';
 import { VIDEO_QUALITY_OPTIONS } from './_components/VideoQualitySelector';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "expo-router/react-navigation";
 import { SETTINGS_SECTIONS } from './_config/settingsSections';
 
 export default function VideoSettingsScreen() {

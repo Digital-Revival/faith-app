@@ -17,7 +17,7 @@ import { getErrorMessage } from "@/utils/errors";
 import { validateBirthdate, validateName, validatePhone } from "@/utils/validators";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation } from "expo-router/react-navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FormScrollView } from "@/components/ui/FormScrollView";

@@ -17,7 +17,7 @@ import { bzzt } from '@/utils/haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { usePathname, router } from 'expo-router';
-import { DrawerContentComponentProps } from '@react-navigation/drawer';
+import type { DrawerContentComponentProps } from 'expo-router/drawer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScrollView, TouchableOpacity } from 'react-native';
 import { useEffect } from 'react';

@@ -5,7 +5,7 @@ import type { ThemeColors } from '@/hooks/useTheme';
 import type { ModuleProgress } from '@/types/progress';
 import type { BibleschoolModule } from '@/types/bibleschool';
 import { ModuleCard } from './ModuleCard';
-import { ModulesYearCompleteCard } from './ModulesYearCompleteCard';
+import { ModulesYearCompleteCard } from '@/components/bibleschool/ModulesYearCompleteCard';
 
 interface ModulesCatalogSectionsProps {
   theme: ThemeColors;

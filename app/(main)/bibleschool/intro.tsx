@@ -16,7 +16,7 @@ import { useNavigation, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "expo-router/react-navigation";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   ActivityIndicator,
@@ -170,7 +170,7 @@ function IntroVideoPlayer({
           entering={FadeIn.duration(150)}
           exiting={FadeOut.duration(200)}
           style={[
-            StyleSheet.absoluteFillObject,
+            StyleSheet.absoluteFill,
             {
               backgroundColor: '#000000',
               alignItems: 'center',

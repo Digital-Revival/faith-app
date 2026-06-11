@@ -12,8 +12,9 @@
     },
     "production": {
       "autoIncrement": true,
+      "image": "sdk-56",
       "ios": {
-        "resourceClass": "m1-medium"
+        "resourceClass": "m-medium"
       },
       "android": {
         "buildType": "apk"

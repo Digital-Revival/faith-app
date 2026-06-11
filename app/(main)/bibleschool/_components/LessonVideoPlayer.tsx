@@ -1,6 +1,6 @@
 import { useEvent, useEventListener } from 'expo';
 import { useVideoPlayer, VideoView } from 'expo-video';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "expo-router/react-navigation";
 import {
   useCallback,
   useEffect,
@@ -225,7 +225,7 @@ export function LessonVideoPlayer({
           entering={FadeIn.duration(150)}
           exiting={FadeOut.duration(200)}
           style={[
-            StyleSheet.absoluteFillObject,
+            StyleSheet.absoluteFill,
             {
               backgroundColor: '#000000',
               alignItems: 'center',

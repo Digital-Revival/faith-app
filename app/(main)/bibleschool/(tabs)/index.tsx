@@ -10,7 +10,7 @@ import { ContinueLearningCard } from '../_components/ContinueLearningCard';
 import { CurrentVideoCard } from '../_components/CurrentVideoCard';
 import { ProgressCard } from '../_components/ProgressCard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "expo-router/react-navigation";
 import { router } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { RefreshControl, ScrollView } from 'react-native';

@@ -2,7 +2,7 @@ import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider as NavThemeProvider,
-} from '@react-navigation/native';
+} from "expo-router/react-navigation";
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 

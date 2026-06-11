@@ -8,7 +8,7 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { Appearance } from 'react-native';
+import { Appearance, type ColorSchemeName } from 'react-native';
 
 import { useAuth } from './AuthContext';
 
@@ -24,17 +24,23 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+function normalizeColorScheme(
+  scheme: ColorSchemeName | null | undefined,
+): 'light' | 'dark' | null {
+  return scheme === 'light' || scheme === 'dark' ? scheme : null;
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [systemScheme, setSystemScheme] = useState<'light' | 'dark' | null>(
-    () => Appearance.getColorScheme(),
+    () => normalizeColorScheme(Appearance.getColorScheme()),
   );
   const { user } = useAuth();
 
   useEffect(() => {
     const subscription = Appearance.addChangeListener(({ colorScheme }) => {
-      setSystemScheme(colorScheme);
+      setSystemScheme(normalizeColorScheme(colorScheme));
     });
-    setSystemScheme(Appearance.getColorScheme());
+    setSystemScheme(normalizeColorScheme(Appearance.getColorScheme()));
     return () => subscription.remove();
   }, []);
   const [preference, setPreferenceState] = useState<ThemePreference>('system');

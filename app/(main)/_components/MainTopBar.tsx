@@ -6,7 +6,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { bzzt } from '@/utils/haptics';
 import { Ionicons } from '@expo/vector-icons';
-import { DrawerActions, useNavigation } from '@react-navigation/native';
+import { DrawerActions, useNavigation } from "expo-router/react-navigation";
 import { router } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
 

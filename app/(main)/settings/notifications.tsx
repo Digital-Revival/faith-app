@@ -8,7 +8,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScrollView } from 'react-native';
 import { createElement } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "expo-router/react-navigation";
 import { SETTINGS_SECTIONS } from './_config/settingsSections';
 
 export default function NotificationsSettingsScreen() {

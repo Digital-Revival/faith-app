@@ -144,7 +144,7 @@ export function ProfileFieldsForm({
                 </InputIcon>
               </InputSlot>
               <InputField
-                ref={phoneRef}
+                ref={phoneRef as React.Ref<React.ComponentRef<typeof InputField>>}
                 placeholder={t('auth.phonePlaceholder')}
                 value={phone}
                 onChangeText={onPhoneChange}
@@ -471,7 +471,7 @@ export function ProfileFieldsForm({
               </InputIcon>
             </InputSlot>
             <InputField
-              ref={cityRef}
+              ref={cityRef as React.Ref<React.ComponentRef<typeof InputField>>}
               placeholder={t('auth.cityPlaceholder')}
               value={city}
               onChangeText={onCityChange}
