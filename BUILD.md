@@ -29,12 +29,25 @@ Before each EAS build, `version:sync` runs automatically via `eas-build-pre-inst
 
 Build numbers (iOS `CFBundleVersion`, Android `versionCode`) are managed **remotely on EAS** (`appVersionSource: remote` in eas.json). They are **not** in `app.json` — EAS auto-increments on each production/testflight build without changing your repo.
 
-**One-time setup** (sync remote counter with the stores after switching to remote):
+**iOS** — sync remote counter with App Store Connect (once after switching to remote):
 
 ```bash
-eas build:version:sync -p ios -e testflight
-eas build:version:sync -p android -e production
+npm run version:set:ios
+# or: eas build:version:sync -p ios -e testflight
 ```
+
+**Android** — seed remote counter to match Google Play (required after Expo account / project migration):
+
+EAS keeps a separate remote counter per project. If Play Store already has `versionCode` 31 but EAS shows `4 → 5`, you must set it manually:
+
+```bash
+npm run version:set:android
+```
+
+When prompted for **versionCode**, enter the **last value already published in Play Console** (e.g. `31`).  
+The **next** production build will auto-increment to `32` and use that in the AAB.
+
+> Do not enter the *next* number — `autoIncrement` adds 1 at build time.
 
 Only commit when you bump the **app version** (`expo.version`, e.g. 2.0.1 → 2.0.2). Never commit after a build just for build numbers.
 
@@ -111,5 +124,6 @@ Choose the `testflight` profile and let EAS manage credentials, or use your own.
 ## Troubleshooting
 
 - **Bundle identifier mismatch** – Ensure `app.json` has `ios.bundleIdentifier: "com.tt.faithGeneration"` (must match App Store Connect)
-- **Build number already used** – EAS remote versioning should auto-increment; if not, run `eas build:version:set` to sync
+- **Android versionCode too low (4→5 while Play has 31)** – Remote counter is from an old Expo project. Run `npm run version:set:android`, enter `31` (last published). Next build uses `32`.
+- **Build number already used** – Run `npm run version:set:android` or `npm run version:set:ios` to realign the remote counter with the store.
 - **Invalid provisioning profile** – Run `eas credentials --platform ios` and regenerate

@@ -20,6 +20,8 @@
     "version:bump:patch": "npm version patch --no-git-tag-version && npm run version:sync-to-app",
     "version:bump:minor": "npm version minor --no-git-tag-version && npm run version:sync-to-app",
     "version:bump:major": "npm version major --no-git-tag-version && npm run version:sync-to-app",
+    "version:set:android": "eas build:version:set -p android -e production",
+    "version:set:ios": "eas build:version:set -p ios -e testflight",
     "generate:splash": "tsx scripts/generate-splash-branded.ts",
     "supabase:restart": "supabase stop && supabase start"
   },
