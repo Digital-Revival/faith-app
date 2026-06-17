@@ -6,3 +6,4 @@ export const VStack = forwardRef<View, ViewProps>((props, ref) => {
   const combinedClassName = `flex-col ${className}`.trim();
   return <View ref={ref} className={combinedClassName} style={style} {...rest} />;
 });
+VStack.displayName = 'VStack';

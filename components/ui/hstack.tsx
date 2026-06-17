@@ -6,3 +6,4 @@ export const HStack = forwardRef<View, ViewProps>((props, ref) => {
   const combinedClassName = `flex-row ${className}`.trim();
   return <View ref={ref} className={combinedClassName} style={style} {...rest} />;
 });
+HStack.displayName = 'HStack';
