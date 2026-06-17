@@ -1,6 +1,7 @@
 {
   "app": {
-    "versionLabel": "App version {{version}}"
+    "versionLabel": "App version {{version}}",
+    "versionWhatsNewButton": "v{{version}} · What's new"
   },
   "splash": {
     "logoFaith": "Faith",
@@ -271,6 +272,39 @@
     "messageTooShort": "Message must be at least 10 characters",
     "messageTooLong": "Message must be at most 2000 characters"
   },
+  "whatsNew": {
+    "title": "What's New",
+    "subtitle": "See what's new in this update",
+    "gotIt": "Got it",
+    "viewAll": "View all",
+    "badgeNew": "New",
+    "currentVersion": "Current version",
+    "olderVersions": "Older versions",
+    "dateFormat": "{{date}}",
+    "empty": "No release notes yet.",
+    "markSeenError": "Couldn't mark this update as seen. Please try again.",
+    "category": {
+      "added": "Added",
+      "improved": "Improved",
+      "fixed": "Fixed"
+    },
+    "releases": {
+      "v2_0_0": {
+        "passwordReset": {
+          "title": "Reset your password",
+          "description": "Forgot your password? Tap 'Forgot password' on the login screen and we'll email you a reset link."
+        },
+        "changePassword": {
+          "title": "Change your password",
+          "description": "Update your login password anytime from your profile."
+        },
+        "feedback": {
+          "title": "Send feedback",
+          "description": "Share feedback via the drawer menu or the feedback button on home and Bible school."
+        }
+      }
+    }
+  },
   "admin": {
     "overview": "Admin Overview",
     "welcome": "Admin Dashboard",
@@ -429,7 +463,9 @@
     "videoQualityMedium": "640p",
     "videoQualityLow": "480p",
     "videoQualityDataSaver": "Data saver",
-    "videoQualityDescription": "Affects loading speed and data usage"
+    "videoQualityDescription": "Affects loading speed and data usage",
+    "whatsNew": "What's New",
+    "whatsNewSubtitle": "Release notes and updates"
   },
   "loading": {
     "video": "Loading video...",

@@ -1,6 +1,7 @@
 {
   "app": {
-    "versionLabel": "ऐप संस्करण {{version}}"
+    "versionLabel": "ऐप संस्करण {{version}}",
+    "versionWhatsNewButton": "v{{version}} · नया क्या है"
   },
   "splash": {
     "logoFaith": "Faith",
@@ -271,6 +272,39 @@
     "messageTooShort": "संदेश कम से कम 10 अक्षरों का होना चाहिए",
     "messageTooLong": "संदेश अधिकतम 2000 अक्षरों का हो सकता है"
   },
+  "whatsNew": {
+    "title": "नया क्या है",
+    "subtitle": "इस अपडेट में नया क्या है, देखें",
+    "gotIt": "समझ गया",
+    "viewAll": "सभी देखें",
+    "badgeNew": "नया",
+    "currentVersion": "वर्तमान संस्करण",
+    "olderVersions": "पुराने संस्करण",
+    "dateFormat": "{{date}}",
+    "empty": "अभी तक कोई रिलीज़ नोट उपलब्ध नहीं है।",
+    "markSeenError": "इस अपडेट को देखा हुआ चिह्नित नहीं कर सके। कृपया पुनः प्रयास करें।",
+    "category": {
+      "added": "जोड़ा गया",
+      "improved": "सुधार",
+      "fixed": "ठीक किया गया"
+    },
+    "releases": {
+      "v2_0_0": {
+        "passwordReset": {
+          "title": "पासवर्ड रीसेट करें",
+          "description": "पासवर्ड भूल गए? लॉगिन स्क्रीन पर 'पासवर्ड भूल गए?' पर टैप करें और हम आपको ईमेल से रीसेट लिंक भेजेंगे।"
+        },
+        "changePassword": {
+          "title": "पासवर्ड बदलें",
+          "description": "अपने प्रोफ़ाइल से कभी भी अपना लॉगिन पासवर्ड अपडेट करें।"
+        },
+        "feedback": {
+          "title": "प्रतिक्रिया भेजें",
+          "description": "होम और बाइबल स्कूल पर फीडबैक बटन या ड्रॉअर मेनू से प्रतिक्रिया साझा करें।"
+        }
+      }
+    }
+  },
   "admin": {
     "overview": "व्यवस्थापक अवलोकन",
     "welcome": "व्यवस्थापक डैशबोर्ड",
@@ -429,7 +463,9 @@
     "videoQualityMedium": "640p",
     "videoQualityLow": "480p",
     "videoQualityDataSaver": "डेटा सेवर",
-    "videoQualityDescription": "लोडिंग गति और डेटा उपयोग को प्रभावित करता है"
+    "videoQualityDescription": "लोडिंग गति और डेटा उपयोग को प्रभावित करता है",
+    "whatsNew": "नया क्या है",
+    "whatsNewSubtitle": "रिलीज़ नोट और अपडेट"
   },
   "loading": {
     "video": "वीडियो लोड हो रहा है...",

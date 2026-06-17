@@ -1,6 +1,7 @@
 {
   "app": {
-    "versionLabel": "Versi aplikasi {{version}}"
+    "versionLabel": "Versi aplikasi {{version}}",
+    "versionWhatsNewButton": "v{{version}} · Apa yang baru"
   },
   "splash": {
     "logoFaith": "Faith",
@@ -271,6 +272,39 @@
     "messageTooShort": "Pesan harus minimal 10 karakter",
     "messageTooLong": "Pesan maksimal 2000 karakter"
   },
+  "whatsNew": {
+    "title": "Apa yang Baru",
+    "subtitle": "Lihat yang baru dalam pembaruan ini",
+    "gotIt": "Mengerti",
+    "viewAll": "Lihat semua",
+    "badgeNew": "Baru",
+    "currentVersion": "Versi saat ini",
+    "olderVersions": "Versi lama",
+    "dateFormat": "{{date}}",
+    "empty": "Belum ada catatan rilis.",
+    "markSeenError": "Tidak dapat menandai pembaruan ini sebagai sudah dibaca. Silakan coba lagi.",
+    "category": {
+      "added": "Ditambahkan",
+      "improved": "Ditingkatkan",
+      "fixed": "Diperbaiki"
+    },
+    "releases": {
+      "v2_0_0": {
+        "passwordReset": {
+          "title": "Atur ulang kata sandi",
+          "description": "Lupa kata sandi? Ketuk 'Lupa kata sandi?' di layar masuk dan kami akan mengirim tautan reset melalui email."
+        },
+        "changePassword": {
+          "title": "Ubah kata sandi",
+          "description": "Perbarui kata sandi login Anda kapan saja dari profil."
+        },
+        "feedback": {
+          "title": "Kirim masukan",
+          "description": "Bagikan masukan melalui menu drawer atau tombol masukan di beranda dan Sekolah Alkitab."
+        }
+      }
+    }
+  },
   "admin": {
     "overview": "Ringkasan Admin",
     "welcome": "Dasbor Admin",
@@ -429,7 +463,9 @@
     "videoQualityMedium": "640p",
     "videoQualityLow": "480p",
     "videoQualityDataSaver": "Hemat data",
-    "videoQualityDescription": "Mempengaruhi kecepatan pemuatan dan penggunaan data"
+    "videoQualityDescription": "Mempengaruhi kecepatan pemuatan dan penggunaan data",
+    "whatsNew": "Apa yang Baru",
+    "whatsNewSubtitle": "Catatan rilis dan pembaruan"
   },
   "loading": {
     "video": "Memuat video...",

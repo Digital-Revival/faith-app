@@ -16,6 +16,7 @@ export default function SettingsLayout() {
       <Stack.Screen name="preferences" />
       <Stack.Screen name="video" />
       <Stack.Screen name="notifications" />
+      <Stack.Screen name="whats-new" />
     </Stack>
   );
 }

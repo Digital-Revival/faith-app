@@ -8,13 +8,13 @@ import { useUserProfile } from '@/hooks/useUserProfile';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { routes } from '@/constants/routes';
-import { APP_VERSION } from '@/constants/version';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { FeedbackFab } from '@/app/(main)/_components/FeedbackFab';
+import { VersionWhatsNewBadge } from '@/app/(main)/_components/VersionWhatsNewBadge';
 import { MainTopBar } from '@/app/(main)/_components/MainTopBar';
 import { FaithHeroBanner } from './_components/FaithHeroBanner';
 import { SectionCard } from './_components/SectionCard';
@@ -152,21 +152,9 @@ export default function HubScreen() {
           backgroundColor: theme.pageBg,
         }}
       >
-        <Box
-          className="px-3 py-1.5"
-          style={{
-            backgroundColor: theme.tabInactiveBg,
-            borderRadius: 6,
-            alignSelf: 'center',
-          }}
-        >
-          <Text
-            className="text-xs font-medium"
-            style={{ color: theme.textTertiary }}
-          >
-            {t('app.versionLabel', { version: APP_VERSION })}
-          </Text>
-        </Box>
+        <VersionWhatsNewBadge
+          onPress={() => router.push(routes.settings('whats-new'))}
+        />
       </Box>
 
       <FeedbackFab variant="aboveFooter" />

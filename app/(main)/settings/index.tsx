@@ -9,11 +9,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScrollView } from 'react-native';
 import { VStack } from '@/components/ui/vstack';
 import { getProfileReturnHref } from '@/hooks/useLastSectionRestore';
+import { useWhatsNew } from '@/hooks/useWhatsNew';
 
 export default function SettingsScreen() {
   const theme = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  const { hasUnreadWhatsNew } = useWhatsNew();
 
   const handleBack = () => {
     getProfileReturnHref().then((href) => {
@@ -68,6 +70,14 @@ export default function SettingsScreen() {
             title={t('settings.notifications')}
             subtitle={t('settings.notificationsSubtitle')}
             onPress={() => router.push(routes.settings('notifications'))}
+            compact
+          />
+          <SectionCard
+            icon="sparkles-outline"
+            title={t('settings.whatsNew')}
+            subtitle={t('settings.whatsNewSubtitle')}
+            onPress={() => router.push(routes.settings('whats-new'))}
+            badge={hasUnreadWhatsNew ? t('whatsNew.badgeNew') : undefined}
             compact
           />
         </VStack>

@@ -9,12 +9,15 @@ import {
 import { useLastSectionRestore } from "@/hooks/useLastSectionRestore";
 import { useStreak } from "@/hooks/useStreak";
 import { useTheme } from "@/hooks/useTheme";
+import { useToast } from "@/hooks/useToast";
 import { useTranslation } from "@/hooks/useTranslation";
-import { Redirect } from "expo-router";
+import { useWhatsNew } from "@/hooks/useWhatsNew";
+import { Redirect, router } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { DrawerContent } from "./_components/DrawerContent";
+import { WhatsNewModal } from "./settings/_components/WhatsNewModal";
 
 const LOADING_DELAY_MS = 300;
 
@@ -22,10 +25,42 @@ function MainLayoutContent() {
   const { session } = useAuth();
   const { isNavigating, targetSection } = useSectionNavigation();
   const [showLoadingOverlay, setShowLoadingOverlay] = useState(false);
+  const [dismissedUnreadKey, setDismissedUnreadKey] = useState<string | null>(
+    null,
+  );
   useLastSectionRestore();
   useStreak();
   const { t } = useTranslation();
   const theme = useTheme();
+  const toast = useToast();
+  const {
+    hasUnreadWhatsNew,
+    unreadReleases,
+    isLoading: isWhatsNewLoading,
+    markSeen,
+  } = useWhatsNew();
+
+  const unreadReleaseKey = unreadReleases.map((release) => release.version).join(",");
+
+  const handleWhatsNewDismiss = async () => {
+    setDismissedUnreadKey(unreadReleaseKey);
+    try {
+      await markSeen();
+    } catch {
+      toast.error(t("whatsNew.markSeenError"));
+    }
+  };
+
+  const handleWhatsNewViewAll = () => {
+    setDismissedUnreadKey(unreadReleaseKey);
+    router.push(routes.settings("whats-new"));
+  };
+
+  const showWhatsNewModal =
+    !isWhatsNewLoading &&
+    hasUnreadWhatsNew &&
+    unreadReleases.length > 0 &&
+    dismissedUnreadKey !== unreadReleaseKey;
 
   useEffect(() => {
     if (!isNavigating) {
@@ -86,6 +121,12 @@ function MainLayoutContent() {
           <LoadingScreen message={loadingMessage} />
         </View>
       )}
+      <WhatsNewModal
+        visible={showWhatsNewModal}
+        unreadReleases={unreadReleases}
+        onDismiss={() => void handleWhatsNewDismiss()}
+        onViewAll={handleWhatsNewViewAll}
+      />
     </View>
   );
 }

@@ -1,6 +1,7 @@
 {
   "app": {
-    "versionLabel": "Appversie {{version}}"
+    "versionLabel": "Appversie {{version}}",
+    "versionWhatsNewButton": "v{{version}} · Nieuw in de app"
   },
   "splash": {
     "logoFaith": "Faith",
@@ -271,6 +272,39 @@
     "messageTooShort": "Bericht moet minimaal 10 tekens bevatten",
     "messageTooLong": "Bericht mag maximaal 2000 tekens bevatten"
   },
+  "whatsNew": {
+    "title": "Nieuw in de app",
+    "subtitle": "Ontdek wat er nieuw is in deze update",
+    "gotIt": "Begrepen",
+    "viewAll": "Bekijk alles",
+    "badgeNew": "Nieuw",
+    "currentVersion": "Huidige versie",
+    "olderVersions": "Eerdere versies",
+    "dateFormat": "{{date}}",
+    "empty": "Nog geen release notes beschikbaar.",
+    "markSeenError": "Kon deze update niet als gelezen markeren. Probeer het opnieuw.",
+    "category": {
+      "added": "Nieuw",
+      "improved": "Verbeterd",
+      "fixed": "Opgelost"
+    },
+    "releases": {
+      "v2_0_0": {
+        "passwordReset": {
+          "title": "Wachtwoord resetten",
+          "description": "Wachtwoord vergeten? Tik op 'Wachtwoord vergeten?' op het inlogscherm en we sturen je een resetlink per e-mail."
+        },
+        "changePassword": {
+          "title": "Wachtwoord wijzigen",
+          "description": "Wijzig je inlogwachtwoord wanneer je wilt via je profiel."
+        },
+        "feedback": {
+          "title": "Feedback sturen",
+          "description": "Deel je feedback via het menu of de feedbackknop op je overzicht en bij de Bijbelschool."
+        }
+      }
+    }
+  },
   "admin": {
     "overview": "Admin overzicht",
     "welcome": "Admin dashboard",
@@ -429,7 +463,9 @@
     "videoQualityMedium": "640p",
     "videoQualityLow": "480p",
     "videoQualityDataSaver": "Data besparen",
-    "videoQualityDescription": "Beïnvloedt laadsnelheid en dataverbruik"
+    "videoQualityDescription": "Beïnvloedt laadsnelheid en dataverbruik",
+    "whatsNew": "Nieuw in de app",
+    "whatsNewSubtitle": "Release notes en updates"
   },
   "loading": {
     "video": "Video laden...",

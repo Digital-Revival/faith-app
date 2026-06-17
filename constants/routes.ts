@@ -27,8 +27,9 @@ export const routes = {
     (badgeId
       ? `/(main)/badges?badgeId=${encodeURIComponent(badgeId)}`
       : "/(main)/badges") as Href,
-  settings: (sub?: "preferences" | "video" | "notifications"): Href =>
-    (sub ? `/(main)/settings/${sub}` : "/(main)/settings") as Href,
+  settings: (
+    sub?: "preferences" | "video" | "notifications" | "whats-new",
+  ): Href => (sub ? `/(main)/settings/${sub}` : "/(main)/settings") as Href,
   podcasts: () => "/(main)/podcasts" as Href,
   sermons: () => "/(main)/sermons" as Href,
   faithBusinessSchool: () => "/(main)/faith-business-school" as Href,

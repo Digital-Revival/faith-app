@@ -10,9 +10,7 @@ import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useUserProfile } from '@/hooks/useUserProfile';
-import { routes } from '@/constants/routes';
-import { saveProfileReturnHref } from '@/hooks/useLastSectionRestore';
-import { APP_VERSION } from '@/constants/version';
+import { VersionWhatsNewBadge } from '@/app/(main)/_components/VersionWhatsNewBadge';
 import { bzzt } from '@/utils/haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
@@ -383,21 +381,12 @@ export function DrawerContent(props: DrawerContentComponentProps) {
             </Text>
           </HStack>
         </TouchableOpacity>
-        <Box
-          className="px-4 py-2 items-center"
-          style={{
-            backgroundColor: theme.tabInactiveBg,
-            borderRadius: 8,
-            alignSelf: 'center',
+        <VersionWhatsNewBadge
+          onPress={() => {
+            navigation.closeDrawer();
+            router.push(routes.settings('whats-new'));
           }}
-        >
-          <Text
-            className="text-xs font-medium"
-            style={{ color: theme.textTertiary }}
-          >
-            {t('app.versionLabel', { version: APP_VERSION })}
-          </Text>
-        </Box>
+        />
       </VStack>
     </Box>
   );
