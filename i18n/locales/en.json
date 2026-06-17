@@ -289,7 +289,11 @@
       "fixed": "Fixed"
     },
     "releases": {
-      "v2_0_0": {
+      "v2_0_1": {
+        "whatsNew": {
+          "title": "What's New",
+          "description": "See what's new in each update via Settings or the version badge in the menu."
+        },
         "passwordReset": {
           "title": "Reset your password",
           "description": "Forgot your password? Tap 'Forgot password' on the login screen and we'll email you a reset link."

@@ -289,7 +289,11 @@
       "fixed": "Diperbaiki"
     },
     "releases": {
-      "v2_0_0": {
+      "v2_0_1": {
+        "whatsNew": {
+          "title": "Apa yang baru",
+          "description": "Lihat apa yang baru di setiap pembaruan melalui Pengaturan atau lencana versi di menu."
+        },
         "passwordReset": {
           "title": "Atur ulang kata sandi",
           "description": "Lupa kata sandi? Ketuk 'Lupa kata sandi?' di layar masuk dan kami akan mengirim tautan reset melalui email."

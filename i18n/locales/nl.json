@@ -289,7 +289,11 @@
       "fixed": "Opgelost"
     },
     "releases": {
-      "v2_0_0": {
+      "v2_0_1": {
+        "whatsNew": {
+          "title": "Nieuw in de app",
+          "description": "Bekijk per update wat er nieuw is via Instellingen of de versie-badge in het menu."
+        },
         "passwordReset": {
           "title": "Wachtwoord resetten",
           "description": "Wachtwoord vergeten? Tik op 'Wachtwoord vergeten?' op het inlogscherm en we sturen je een resetlink per e-mail."

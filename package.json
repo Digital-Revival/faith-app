@@ -1,7 +1,7 @@
 {
   "name": "faith-app",
   "main": "index.js",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "scripts": {
     "eas-build-pre-install": "npm run version:sync",
     "start": "expo start",

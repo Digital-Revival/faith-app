@@ -20,28 +20,35 @@ export const WHATS_NEW_MAX_RELEASES = 10;
 
 export const WHATS_NEW_RELEASES: WhatsNewRelease[] = [
   {
-    version: '2.0.0',
-    date: '2026-06-17',
+    version: '2.0.1',
+    date: '2026-06-18',
     items: [
+      {
+        id: 'whatsNew',
+        icon: 'sparkles-outline',
+        titleKey: 'whatsNew.releases.v2_0_1.whatsNew.title',
+        descriptionKey: 'whatsNew.releases.v2_0_1.whatsNew.description',
+        category: 'added',
+      },
       {
         id: 'passwordReset',
         icon: 'key-outline',
-        titleKey: 'whatsNew.releases.v2_0_0.passwordReset.title',
-        descriptionKey: 'whatsNew.releases.v2_0_0.passwordReset.description',
+        titleKey: 'whatsNew.releases.v2_0_1.passwordReset.title',
+        descriptionKey: 'whatsNew.releases.v2_0_1.passwordReset.description',
         category: 'added',
       },
       {
         id: 'changePassword',
         icon: 'lock-closed-outline',
-        titleKey: 'whatsNew.releases.v2_0_0.changePassword.title',
-        descriptionKey: 'whatsNew.releases.v2_0_0.changePassword.description',
+        titleKey: 'whatsNew.releases.v2_0_1.changePassword.title',
+        descriptionKey: 'whatsNew.releases.v2_0_1.changePassword.description',
         category: 'added',
       },
       {
         id: 'feedback',
         icon: 'chatbubble-ellipses-outline',
-        titleKey: 'whatsNew.releases.v2_0_0.feedback.title',
-        descriptionKey: 'whatsNew.releases.v2_0_0.feedback.description',
+        titleKey: 'whatsNew.releases.v2_0_1.feedback.title',
+        descriptionKey: 'whatsNew.releases.v2_0_1.feedback.description',
         category: 'added',
       },
     ],
