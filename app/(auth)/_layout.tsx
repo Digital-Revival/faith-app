@@ -30,6 +30,10 @@ export default function AuthLayout() {
         name="verify-email/index"
         options={{ title: "E-mail bevestigen" }}
       />
+      <Stack.Screen
+        name="forgot-password/index"
+        options={{ title: "Wachtwoord vergeten" }}
+      />
     </Stack>
   );
 }

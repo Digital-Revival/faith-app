@@ -3,10 +3,14 @@ import { VStack } from '@/components/ui/vstack';
 import { useAuthCardShadow } from '@/hooks/useShadows';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
+import { routes } from '@/constants/routes';
 import { bzzt } from '@/utils/haptics';
 import { validateEmail, validatePasswordForLogin } from '@/utils/validators';
+import { router } from 'expo-router';
 import { useRef, useState } from 'react';
 import type { TextInput } from 'react-native';
+import { TouchableOpacity } from 'react-native';
+import { Text } from '@/components/ui/text';
 import { AuthErrorBox } from '../../_components/AuthErrorBox';
 import { AuthInputField } from '../../_components/AuthInputField';
 import { AuthSubmitButton } from '../../_components/AuthSubmitButton';
@@ -107,6 +111,24 @@ export function LoginForm({ onSubmit, isLoading, error }: LoginFormProps) {
             blurOnSubmit
             editable={!isLoading}
           />
+
+          <TouchableOpacity
+            onPress={() => {
+              bzzt();
+              router.push(routes.authForgotPassword());
+            }}
+            activeOpacity={0.7}
+            className="self-end"
+            accessibilityRole="link"
+            accessibilityLabel={t('auth.forgotPassword')}
+          >
+            <Text
+              className="text-sm font-medium"
+              style={{ color: theme.buttonPrimary }}
+            >
+              {t('auth.forgotPassword')}
+            </Text>
+          </TouchableOpacity>
         </VStack>
 
         {error && <AuthErrorBox message={error} />}

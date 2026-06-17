@@ -256,6 +256,13 @@ export default function ProfileScreen() {
               compact
             />
             <SectionCard
+              icon="lock-closed-outline"
+              title={t('profile.changePassword')}
+              subtitle={t('profile.changePasswordSubtitle')}
+              onPress={() => router.push(routes.profile('password'))}
+              compact
+            />
+            <SectionCard
               icon="ribbon-outline"
               title={t('badges.title')}
               subtitle={t('badges.subtitle', { count: userBadges.length })}

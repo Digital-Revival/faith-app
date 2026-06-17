@@ -1,4 +1,5 @@
 import { BrandedSplashScreen } from '@/components/ui/BrandedSplashScreen';
+import { routes } from '@/constants/routes';
 import { useAuth } from '@/contexts/AuthContext';
 import { getLastSectionHref } from '@/hooks/useLastSectionRestore';
 import { useOnboardingSection } from '@/hooks/useOnboardingSection';
@@ -9,7 +10,13 @@ import { Redirect, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 
 export default function Index() {
-  const { session, isLoading: authLoading, user, signOut } = useAuth();
+  const {
+    session,
+    isLoading: authLoading,
+    user,
+    signOut,
+    pendingPasswordRecovery,
+  } = useAuth();
   const router = useRouter();
   const [mainHref, setMainHref] = useState<Href | null>(null);
   const userId = user?.id ?? session?.user?.id;
@@ -53,6 +60,10 @@ export default function Index() {
 
   if (authLoading) {
     return <BrandedSplashScreen />;
+  }
+
+  if (pendingPasswordRecovery) {
+    return <Redirect href={routes.authResetPassword()} />;
   }
 
   if (!session) {

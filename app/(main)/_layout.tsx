@@ -1,5 +1,6 @@
 import { BrandedSplashScreen } from "@/components/ui/BrandedSplashScreen";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { routes } from "@/constants/routes";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   SectionNavigationProvider,
@@ -89,12 +90,15 @@ function MainLayoutContent() {
 }
 
 export default function MainLayout() {
-  const { session, isLoading } = useAuth();
+  const { session, isLoading, pendingPasswordRecovery } = useAuth();
 
   if (isLoading) {
     return <BrandedSplashScreen />;
   }
   if (!session) return <Redirect href="/(auth)/login" />;
+  if (pendingPasswordRecovery) {
+    return <Redirect href={routes.authResetPassword()} />;
+  }
 
   return (
     <SectionNavigationProvider>

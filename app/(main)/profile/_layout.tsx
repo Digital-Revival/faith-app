@@ -14,6 +14,7 @@ export default function ProfileLayout() {
     >
       <Stack.Screen name="index" />
       <Stack.Screen name="information" />
+      <Stack.Screen name="password" />
     </Stack>
   );
 }
