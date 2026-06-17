@@ -15,20 +15,25 @@ export const routes = {
     `/(main)/bibleschool/modules/${moduleId}/exam` as Href,
   admin: (path?: string): Href =>
     (path ? `/(main)/admin/${path}` : "/(main)/admin") as Href,
-  auth: (screen: "login" | "register") => `/(auth)/${screen}` as Href,
+  auth: (screen: "login" | "register" | "forgot-password") =>
+    `/(auth)/${screen}` as Href,
+  authForgotPassword: () => "/(auth)/forgot-password" as Href,
+  authResetPassword: () => "/reset-password" as Href,
   authVerifyEmail: (email: string) =>
     `/(auth)/verify-email?email=${encodeURIComponent(email)}` as Href,
-  profile: (sub?: "information" | "settings"): Href =>
+  profile: (sub?: "information" | "password"): Href =>
     (sub ? `/(main)/profile/${sub}` : "/(main)/profile") as Href,
   badges: (badgeId?: string): Href =>
     (badgeId
       ? `/(main)/badges?badgeId=${encodeURIComponent(badgeId)}`
       : "/(main)/badges") as Href,
-  settings: (sub?: "preferences" | "video" | "notifications"): Href =>
-    (sub ? `/(main)/settings/${sub}` : "/(main)/settings") as Href,
+  settings: (
+    sub?: "preferences" | "video" | "notifications" | "whats-new",
+  ): Href => (sub ? `/(main)/settings/${sub}` : "/(main)/settings") as Href,
   podcasts: () => "/(main)/podcasts" as Href,
   sermons: () => "/(main)/sermons" as Href,
   faithBusinessSchool: () => "/(main)/faith-business-school" as Href,
+  feedback: () => "/(main)/feedback" as Href,
   hubTeaser: (section: string) =>
     `/(main)/hub-teaser?section=${encodeURIComponent(section)}` as Href,
 };

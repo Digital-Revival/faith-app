@@ -1,6 +1,7 @@
 {
   "app": {
-    "versionLabel": "Версия на приложението {{version}}"
+    "versionLabel": "Версия на приложението {{version}}",
+    "versionWhatsNewButton": "v{{version}} · Какво е ново"
   },
   "splash": {
     "logoFaith": "Faith",
@@ -71,6 +72,21 @@
     "resendConfirmationFailed": "Неуспешно повторно изпращане. Опитайте по-късно.",
     "invalidCredentials": "Невалиден имейл или парола. Проверете данните си или създайте акаунт.",
     "loginFailed": "Входът не беше успешен. Опитайте отново.",
+    "forgotPassword": "Забравена парола?",
+    "forgotPasswordTitle": "Нулиране на парола",
+    "forgotPasswordBody": "Въведете имейл адреса си и ще ви изпратим връзка за нулиране на паролата.",
+    "forgotPasswordSent": "Ако съществува акаунт с този имейл, изпратихме инструкции за нулиране.",
+    "forgotPasswordLinkValidity": "Връзката е валидна 24 часа и може да се използва само веднъж.",
+    "resetPasswordTitle": "Задайте нова парола",
+    "resetPasswordSubtitle": "Изберете нова парола за вашия акаунт.",
+    "newPassword": "Нова парола",
+    "newPasswordPlaceholder": "Въведете новата си парола",
+    "resetPasswordSuccess": "Паролата ви е актуализирана. Моля, влезте отново.",
+    "resetPasswordFailed": "Неуспешно нулиране на паролата. Моля, опитайте отново.",
+    "passwordResetLinkExpired": "Тази връзка за нулиране е изтекла.",
+    "passwordResetLinkUsed": "Тази връзка за нулиране вече е използвана.",
+    "requestNewResetLink": "Заявете нова връзка",
+    "resetPasswordRateLimited": "Твърде много опити. Моля, опитайте по-късно.",
     "next": "Напред",
     "stepOf": "Стъпка {{current}} от {{total}}",
     "step1Title": "Акаунт",
@@ -241,6 +257,58 @@
     "bibleReadingScheduleSubtitle": "Ежедневни планове за четене",
     "comingSoon": "Скоро"
   },
+  "feedback": {
+    "title": "Обратна връзка",
+    "subtitle": "Споделете мислите си, докладвайте грешки или предложете идеи",
+    "message": "Съобщение",
+    "messagePlaceholder": "Кажете ни какво мислите...",
+    "categoryBug": "Грешка",
+    "categoryIdea": "Идея",
+    "categoryOther": "Друго",
+    "submit": "Изпрати обратна връзка",
+    "submitting": "Изпращане...",
+    "success": "Благодарим! Вашата обратна връзка е изпратена.",
+    "error": "Неуспешно изпращане. Моля, опитайте отново.",
+    "messageTooShort": "Съобщението трябва да съдържа поне 10 знака",
+    "messageTooLong": "Съобщението може да съдържа най-много 2000 знака"
+  },
+  "whatsNew": {
+    "title": "Какво е новото",
+    "subtitle": "Вижте какво е новото в тази актуализация",
+    "gotIt": "Разбрах",
+    "viewAll": "Виж всички",
+    "badgeNew": "Ново",
+    "currentVersion": "Текуща версия",
+    "olderVersions": "По-стари версии",
+    "dateFormat": "{{date}}",
+    "empty": "Все още няма бележки за версията.",
+    "markSeenError": "Не успяхме да отбележим актуализацията като видяна. Опитайте отново.",
+    "category": {
+      "added": "Добавено",
+      "improved": "Подобрено",
+      "fixed": "Поправено"
+    },
+    "releases": {
+      "v2_0_1": {
+        "whatsNew": {
+          "title": "Какво е ново",
+          "description": "Вижте какво е ново във всяка актуализация чрез Настройки или значката за версия в менюто."
+        },
+        "passwordReset": {
+          "title": "Нулиране на парола",
+          "description": "Забравена парола? Натиснете 'Забравена парола?' на екрана за вход и ще ви изпратим връзка за нулиране по имейл."
+        },
+        "changePassword": {
+          "title": "Промяна на парола",
+          "description": "Променете паролата си за вход по всяко време от профила си."
+        },
+        "feedback": {
+          "title": "Изпращане на обратна връзка",
+          "description": "Споделете обратна връзка чрез менюто или бутона за обратна връзка на началния екран и в Библейското училище."
+        }
+      }
+    }
+  },
   "admin": {
     "overview": "Админ обзор",
     "welcome": "Админ панел",
@@ -309,7 +377,8 @@
     "modules": "Модули",
     "voortgang": "Напредък",
     "browse": "Преглед",
-    "latest": "Последни"
+    "latest": "Последни",
+    "feedback": "Обратна връзка"
   },
   "voortgang": {
     "pageTitle": "Вашият напредък",
@@ -366,7 +435,14 @@
     "viewAll": "Виж всички",
     "changeAvatar": "Промени снимка",
     "uploadingAvatar": "Качване...",
-    "avatarUpdateFailed": "Неуспешно обновяване на снимка"
+    "avatarUpdateFailed": "Неуспешно обновяване на снимка",
+    "changePassword": "Промяна на парола",
+    "changePasswordSubtitle": "Актуализирайте паролата си за вход",
+    "currentPassword": "Текуща парола",
+    "currentPasswordPlaceholder": "Въведете текущата си парола",
+    "passwordChanged": "Паролата ви е актуализирана",
+    "passwordChangeFailed": "Неуспешна промяна на паролата. Моля, опитайте отново.",
+    "currentPasswordRequired": "Текущата парола е задължителна"
   },
   "settings": {
     "language": "Език",
@@ -392,7 +468,9 @@
     "videoQualityMedium": "640p",
     "videoQualityLow": "480p",
     "videoQualityDataSaver": "Икономия на данни",
-    "videoQualityDescription": "Влияе на скоростта на зареждане и използването на данни"
+    "videoQualityDescription": "Влияе на скоростта на зареждане и използването на данни",
+    "whatsNew": "Какво е новото",
+    "whatsNewSubtitle": "Бележки за версията и актуализации"
   },
   "loading": {
     "video": "Зареждане на видео...",

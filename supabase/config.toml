@@ -8,6 +8,8 @@ project_id = "faith-app"
 enabled = true
 # Port to use for the API URL.
 port = 54321
+# LAN-reachable URL for auth emails (verify links). Must match EXPO_PUBLIC_LOCAL_DEV_IP in .env.
+external_url = "http://192.168.2.11:54321"
 # Schemas to expose in your API. Tables, views and stored procedures in this schema will get API
 # endpoints. `public` and `graphql_public` schemas are included by default.
 schemas = ["public", "graphql_public"]
@@ -149,7 +151,10 @@ enabled = true
 # in emails.
 site_url = "http://127.0.0.1:3000"
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://127.0.0.1:3000"]
+additional_redirect_urls = [
+  "faithapp://**",
+  "exp://**",
+]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # JWT issuer URL. If not set, defaults to the local API URL (http://127.0.0.1:<port>/auth/v1).
@@ -174,8 +179,8 @@ minimum_password_length = 6
 password_requirements = ""
 
 [auth.rate_limit]
-# Number of emails that can be sent per hour. Requires auth.email.smtp to be enabled.
-email_sent = 2
+# Password-reset / auth emails per hour (local dev: keep high enough for iterative testing).
+email_sent = 30
 # Number of SMS messages that can be sent per hour. Requires auth.sms to be enabled.
 sms_sent = 30
 # Number of anonymous sign-ins that can be made per hour per IP address. Requires enable_anonymous_sign_ins = true.
@@ -210,22 +215,33 @@ max_frequency = "1s"
 # Number of characters used in the email OTP.
 otp_length = 6
 # Number of seconds before the email OTP expires (defaults to 1 hour).
-otp_expiry = 3600
+otp_expiry = 86400
 
-# Use a production-ready SMTP server
-# [auth.email.smtp]
-# enabled = true
-# host = "smtp.sendgrid.net"
-# port = 587
-# user = "apikey"
-# pass = "env(SENDGRID_API_KEY)"
-# admin_email = "admin@email.com"
-# sender_name = "Admin"
+# ── Resend SMTP (lokaal actief) ───────────────────────────────────────────────
+# E-mails gaan via Resend, niet via Inbucket (Inbucket draait nog op :54324 maar wordt overgeslagen).
+# Vereist in project-root .env: RESEND_API_KEY + RESEND_SENDER_EMAIL (geverifieerd Resend-domein).
+# Na wijziging: supabase stop && supabase start  (of: npm run supabase:restart)
+# Verificatie: Resend Dashboard → Emails + forgot-password flow in de app.
+#
+# Productie: zelfde waarden in Supabase Dashboard → Auth → SMTP Settings.
+#
+[auth.email.smtp]
+enabled = true
+host = "smtp.resend.com"
+port = 587
+user = "resend"
+pass = "env(RESEND_API_KEY)"
+admin_email = "env(RESEND_SENDER_EMAIL)"
+sender_name = "Faith Generation"
 
-# Uncomment to customize email template
-# [auth.email.template.invite]
-# subject = "You have been invited"
-# content_path = "./supabase/templates/invite.html"
+# Password reset — {{ .ConfirmationURL }} bevat verify-URL + redirect naar faithapp://
+# Beschikbare variabelen (recovery): .ConfirmationURL, .SiteURL, .TokenHash, .RedirectTo, .Email
+# We gebruiken alleen .ConfirmationURL (Supabase bouwt de volledige link inclusief redirect_to).
+[auth.email.template.recovery]
+subject = "Wachtwoord resetten - Faith Generation"
+content_path = "./supabase/templates/recovery.html"
+
+# Productie: plak dezelfde HTML in Supabase Dashboard → Auth → Email Templates → Reset Password
 
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]
@@ -361,8 +377,10 @@ inspector_port = 8083
 # The Deno major version to use.
 deno_version = 2
 
-# [edge_runtime.secrets]
-# secret_key = "env(SECRET_VALUE)"
+[edge_runtime.secrets]
+RESEND_API_KEY = "env(RESEND_API_KEY)"
+RESEND_SENDER_EMAIL = "env(RESEND_SENDER_EMAIL)"
+FEEDBACK_TO_EMAIL = "env(FEEDBACK_TO_EMAIL)"
 
 [analytics]
 enabled = true

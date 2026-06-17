@@ -10,9 +10,7 @@ import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useUserProfile } from '@/hooks/useUserProfile';
-import { routes } from '@/constants/routes';
-import { saveProfileReturnHref } from '@/hooks/useLastSectionRestore';
-import { APP_VERSION } from '@/constants/version';
+import { VersionWhatsNewBadge } from '@/app/(main)/_components/VersionWhatsNewBadge';
 import { bzzt } from '@/utils/haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
@@ -24,13 +22,15 @@ import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/services/queryKeys';
 import { bibleschoolService } from '@/services/storyblok/bibleschoolService';
+import { routes as appRoutes } from '@/constants/routes';
+import { saveProfileReturnHref } from '@/hooks/useLastSectionRestore';
 
-const CONTENT_SECTIONS: Array<{
+const CONTENT_SECTIONS: {
   name: string;
   icon: keyof typeof Ionicons.glyphMap;
   labelKey: string;
   enabled?: boolean;
-}> = [
+}[] = [
   { name: 'index', icon: 'home', labelKey: 'navbar.home', enabled: true },
   { name: 'bibleschool', icon: 'school', labelKey: 'hub.bibleschool', enabled: true },
   { name: 'faith-business-school', icon: 'business', labelKey: 'hub.faithBusinessSchool', enabled: true },
@@ -44,22 +44,22 @@ const CONTENT_SECTIONS: Array<{
   { name: 'bible-reading-schedule', icon: 'calendar', labelKey: 'hub.bibleReadingSchedule', enabled: false },
 ];
 
-const ACCOUNT_SECTIONS: Array<{
+const ACCOUNT_SECTIONS: {
   name: string;
   icon: keyof typeof Ionicons.glyphMap;
   labelKey: string;
   enabled?: boolean;
-}> = [
+}[] = [
   { name: 'profile', icon: 'person', labelKey: 'navbar.profile', enabled: true },
   { name: 'settings', icon: 'settings', labelKey: 'navbar.settings', enabled: true },
 ];
 
-const ADMIN_SECTIONS: Array<{
+const ADMIN_SECTIONS: {
   name: string;
   icon: keyof typeof Ionicons.glyphMap;
   labelKey: string;
   enabled?: boolean;
-}> = [
+}[] = [
   { name: 'admin', icon: 'stats-chart', labelKey: 'admin.overview', enabled: true },
   { name: 'admin/analytics', icon: 'school', labelKey: 'admin.analytics', enabled: true },
   { name: 'admin/users', icon: 'people', labelKey: 'admin.users', enabled: true },
@@ -100,7 +100,8 @@ export function DrawerContent(props: DrawerContentComponentProps) {
   const { startSectionNavigation } = useSectionNavigation();
   const { state, navigation } = props;
   const pathname = usePathname();
-  const currentRoute = state.routes[state.index]?.name ?? '';
+  const drawerRoutes = state.routes;
+  const currentRoute = drawerRoutes[state.index]?.name ?? '';
   const currentSection = currentRoute === 'index' ? 'index' : currentRoute.split('/')[0] ?? currentRoute;
   const contentSections = isAdmin ? [] : CONTENT_SECTIONS.filter((s) => s.enabled !== false);
   const sections = isAdmin
@@ -134,7 +135,7 @@ export function DrawerContent(props: DrawerContentComponentProps) {
     startSectionNavigation(section.name);
     navigation.closeDrawer();
     if (section.name.includes('/')) {
-      router.push(routes.admin(section.name.replace('admin/', '')) as never);
+      router.push(appRoutes.admin(section.name.replace('admin/', '')) as never);
     } else if (section.name === 'settings') {
       saveProfileReturnHref(pathname || '/(main)').then(() => {
         navigation.navigate('settings' as never);
@@ -338,6 +339,35 @@ export function DrawerContent(props: DrawerContentComponentProps) {
           onPress={() => {
             bzzt();
             navigation.closeDrawer();
+            saveProfileReturnHref(pathname || '/(main)').then(() => {
+              navigation.navigate('feedback/index' as never);
+            });
+          }}
+          activeOpacity={0.7}
+          className="cursor-pointer"
+          style={{
+            paddingVertical: 14,
+            paddingHorizontal: 12,
+          }}
+        >
+          <HStack className="items-center gap-3">
+            <Ionicons
+              name="chatbubble-ellipses-outline"
+              size={22}
+              color={theme.textSecondary}
+            />
+            <Text
+              className="flex-1 text-base font-semibold"
+              style={{ color: theme.textPrimary }}
+            >
+              {t('navbar.feedback')}
+            </Text>
+          </HStack>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            bzzt();
+            navigation.closeDrawer();
             signOut();
           }}
           activeOpacity={0.7}
@@ -356,21 +386,12 @@ export function DrawerContent(props: DrawerContentComponentProps) {
             </Text>
           </HStack>
         </TouchableOpacity>
-        <Box
-          className="px-4 py-2 items-center"
-          style={{
-            backgroundColor: theme.tabInactiveBg,
-            borderRadius: 8,
-            alignSelf: 'center',
+        <VersionWhatsNewBadge
+          onPress={() => {
+            navigation.closeDrawer();
+            router.push(appRoutes.settings('whats-new'));
           }}
-        >
-          <Text
-            className="text-xs font-medium"
-            style={{ color: theme.textTertiary }}
-          >
-            {t('app.versionLabel', { version: APP_VERSION })}
-          </Text>
-        </Box>
+        />
       </VStack>
     </Box>
   );

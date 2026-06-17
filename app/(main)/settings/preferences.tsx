@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef , createElement } from 'react';
 import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
 import { MainTopBar } from '@/app/(main)/_components/MainTopBar';
@@ -8,11 +8,8 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useThemePreference } from '@/contexts/ThemeContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScrollView } from 'react-native';
-import { createElement } from 'react';
-import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
-import { ThemeSwitcher } from './_components/ThemeSwitcher';
-import { LANGUAGES_FOR_UI } from '@/i18n';
 import { THEME_OPTIONS } from './_components/ThemeSwitcher';
+import { LANGUAGES_FOR_UI } from '@/i18n';
 import { useNavigation } from "expo-router/react-navigation";
 import { SETTINGS_SECTIONS } from './_config/settingsSections';
 

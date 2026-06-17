@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import {
   TouchableOpacity,
   Dimensions,
@@ -14,6 +14,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { bzzt } from '@/utils/haptics';
 import { Ionicons } from '@expo/vector-icons';
+import { useSettingsMeasureTarget } from '@/app/(main)/settings/_components/SettingsMeasureTargetContext';
 
 export interface SettingsDropdownOption<T = string> {
   value: T;
@@ -62,6 +63,7 @@ function SettingsDropdownInner<T extends string>(
     width: number;
     height: number;
   } | null>(null);
+  const contextGetMeasureTarget = useSettingsMeasureTarget();
   const triggerRef = useRef<View>(null);
   const isDark = theme.isDark;
   const { width: screenWidth } = Dimensions.get('window');
@@ -84,16 +86,17 @@ function SettingsDropdownInner<T extends string>(
     ? { flex: 1, alignSelf: 'stretch' }
     : { width: switcherWidth, minWidth: switcherWidth };
 
-  const handleOpen = () => {
+  const handleOpen = useCallback(() => {
     bzzt();
-    const target = measureRef?.current ?? triggerRef.current;
+    const target =
+      contextGetMeasureTarget?.() ?? measureRef?.current ?? triggerRef.current;
     target?.measureInWindow((x, y, width, height) => {
       setLayout({ x, y, width, height: height ?? 0 });
       setExpanded(true);
     });
-  };
+  }, [contextGetMeasureTarget, measureRef]);
 
-  useImperativeHandle(ref, () => ({ open: handleOpen }), []);
+  useImperativeHandle(ref, () => ({ open: handleOpen }), [handleOpen]);
 
   const handleClose = () => {
     setExpanded(false);

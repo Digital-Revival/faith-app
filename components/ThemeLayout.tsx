@@ -7,6 +7,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
+import { RecoveryDeepLinkHandler } from '@/components/RecoveryDeepLinkHandler';
 import { useThemePreference } from '@/contexts/ThemeContext';
 import { stackScreenOptions } from '@/constants/screenAnimationOptions';
 
@@ -18,6 +19,7 @@ export function ThemeLayout() {
       <NavThemeProvider
         value={effectiveScheme === 'dark' ? DarkTheme : DefaultTheme}
       >
+        <RecoveryDeepLinkHandler />
         <Stack
           screenOptions={stackScreenOptions({
             headerShown: false,
@@ -27,6 +29,7 @@ export function ThemeLayout() {
           <Stack.Screen name="(auth)" />
           <Stack.Screen name="(main)" />
           <Stack.Screen name="onboarding" />
+          <Stack.Screen name="reset-password" />
         </Stack>
         <StatusBar style={effectiveScheme === 'dark' ? 'light' : 'dark'} />
       </NavThemeProvider>

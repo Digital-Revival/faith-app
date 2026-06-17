@@ -120,19 +120,19 @@ function NotificationItem({
     setTimeout(() => onRemove(), CLOSE_ANIMATION_MS);
   }, [onRemove]);
 
-  if (!isBadgeEarned || !data) return null;
-
-  const badgeName = t(data.name_key as never as string, {
-    count: data.target_value ?? 0,
-    module: data.target_value ?? 0,
-  });
-
   const renderRightActions = useCallback(
     (_progress: SharedValue<number>, translation: SharedValue<number>) => (
       <RightActions translation={translation} theme={theme} onDelete={handleDelete} />
     ),
     [theme, handleDelete],
   );
+
+  if (!isBadgeEarned || !data) return null;
+
+  const badgeName = t(data.name_key as never as string, {
+    count: data.target_value ?? 0,
+    module: data.target_value ?? 0,
+  });
 
   return (
     <Swipeable

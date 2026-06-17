@@ -39,7 +39,11 @@ export function MainTopBar({
           <TouchableOpacity
             onPress={() => {
               bzzt();
-              onBack ? onBack() : router.back();
+              if (onBack) {
+                onBack();
+              } else {
+                router.back();
+              }
             }}
             activeOpacity={0.7}
             className="flex-row items-center gap-2 cursor-pointer rounded-full pl-3 pr-4 py-2 -ml-2"

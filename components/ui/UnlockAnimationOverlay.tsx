@@ -72,7 +72,7 @@ export function UnlockAnimationOverlay({
         if (finished) runOnJS(complete)();
       })
     );
-  }, [visible, onComplete]);
+  }, [visible, onComplete, rotation, scale, overlayOpacity, showOpen]);
 
   const lockedStyle = useAnimatedStyle(() => ({
     transform: [{ rotate: `${rotation.value}deg` }, { scale: scale.value }],

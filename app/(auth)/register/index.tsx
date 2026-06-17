@@ -19,7 +19,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { TouchableOpacity, View } from "react-native";
-import Animated, { FadeIn, FadeInDown, FadeInUp } from "react-native-reanimated";
+import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FormScrollView } from "@/components/ui/FormScrollView";
 import { AuthTopBar } from "../_components/AuthTopBar";

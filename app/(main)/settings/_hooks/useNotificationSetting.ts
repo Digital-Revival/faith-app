@@ -1,6 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { userSettingsService } from '@/services/api/userSettingsService';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export function useNotificationSetting(
   key: string,
@@ -8,14 +8,18 @@ export function useNotificationSetting(
 ): [boolean, (value: boolean) => Promise<void>, boolean] {
   const { user } = useAuth();
   const [value, setValueState] = useState<boolean>(defaultValue);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loadedKey, setLoadedKey] = useState<string | null>(null);
+
+  const cacheKey = useMemo(
+    () => (user?.id ? `${user.id}:${key}` : null),
+    [user, key],
+  );
+  const isLoading = cacheKey !== null && loadedKey !== cacheKey;
 
   useEffect(() => {
-    if (!user?.id) {
-      setIsLoading(false);
-      return;
-    }
+    if (!user?.id) return;
     let cancelled = false;
+    const currentKey = `${user.id}:${key}`;
     const load = async () => {
       try {
         const stored = await userSettingsService.getSetting<boolean>(user.id, key);
@@ -28,7 +32,7 @@ export function useNotificationSetting(
         }
       } finally {
         if (!cancelled) {
-          setIsLoading(false);
+          setLoadedKey(currentKey);
         }
       }
     };
@@ -36,7 +40,7 @@ export function useNotificationSetting(
     return () => {
       cancelled = true;
     };
-  }, [user?.id, key, defaultValue]);
+  }, [user, key, defaultValue]);
 
   const setValue = useCallback(
     async (newValue: boolean) => {
@@ -49,7 +53,7 @@ export function useNotificationSetting(
         throw new Error('Failed to save setting');
       }
     },
-    [user?.id, key, value],
+    [user, key, value],
   );
 
   return [value, setValue, isLoading];

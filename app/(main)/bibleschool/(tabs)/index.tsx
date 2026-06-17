@@ -4,6 +4,7 @@ import { VStack } from '@/components/ui/vstack';
 import { useBibleschoolTab } from '@/contexts/BibleschoolTabContext';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
+import { FeedbackFab } from '@/app/(main)/_components/FeedbackFab';
 import { MainTopBar } from '@/app/(main)/_components/MainTopBar';
 import { routes } from '@/constants/routes';
 import { ContinueLearningCard } from '../_components/ContinueLearningCard';
@@ -91,6 +92,7 @@ export default function BibleSchoolScreen() {
           </VStack>
         </VStack>
       </ScrollView>
+      <FeedbackFab variant="aboveTabBar" />
     </Box>
   );
 }

@@ -14,11 +14,11 @@ import {
 
 export type VideoQualitySelectorRef = SettingsDropdownRef;
 
-export const VIDEO_QUALITY_OPTIONS: Array<{
+export const VIDEO_QUALITY_OPTIONS: {
   value: VideoQualityPreference;
   icon: keyof typeof Ionicons.glyphMap;
   labelKey: string;
-}> = [
+}[] = [
   { value: 'auto', icon: 'phone-portrait', labelKey: 'settings.videoQualityAuto' },
   { value: 'data_saver', icon: 'cellular-outline', labelKey: 'settings.videoQualityDataSaver' },
   { value: 'high', icon: 'desktop', labelKey: 'settings.videoQualityHigh' },

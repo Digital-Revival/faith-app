@@ -1,0 +1,117 @@
+name: Deploy Production
+
+# Auto-deploys Supabase artefacts on push to main (after PR merge).
+# Manual dispatch redeploys all three jobs when confirmed.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "deploy production" to run all deploy jobs'
+        required: true
+        type: string
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    name: Manual confirmation guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: Verify confirmation input
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          if [ "${{ inputs.confirm }}" != "deploy production" ]; then
+            echo "::error::Confirmation string mismatch. Type 'deploy production' to confirm."
+            exit 1
+          fi
+
+  detect-changes:
+    name: Detect changes
+    needs: guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      migrations: ${{ steps.filter.outputs.migrations }}
+      functions: ${{ steps.filter.outputs.functions }}
+      templates: ${{ steps.filter.outputs.templates }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            migrations:
+              - 'supabase/migrations/**'
+            functions:
+              - 'supabase/functions/**'
+            templates:
+              - 'supabase/templates/**'
+              - 'supabase/config.toml'
+
+  supabase-migrate:
+    name: Supabase migrations (production)
+    needs: detect-changes
+    if: needs.detect-changes.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch'
+    environment: production
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Push migrations to production
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+          supabase db push
+
+  supabase-functions:
+    name: Supabase edge functions (production)
+    needs: detect-changes
+    if: needs.detect-changes.outputs.functions == 'true' || github.event_name == 'workflow_dispatch'
+    environment: production
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Deploy edge functions
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+
+  supabase-auth-templates:
+    name: Supabase auth templates (production)
+    needs: detect-changes
+    if: needs.detect-changes.outputs.templates == 'true' || github.event_name == 'workflow_dispatch'
+    environment: production
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22.13.0"
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Deploy recovery auth template
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: node scripts/deploy-auth-templates.mjs

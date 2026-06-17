@@ -28,8 +28,14 @@ export function useAdminAnalyticsLayout() {
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const visibleRef = useRef(visibleGraphIds);
   const collapsedRef = useRef(collapsedGraphIds);
-  visibleRef.current = visibleGraphIds;
-  collapsedRef.current = collapsedGraphIds;
+
+  useEffect(() => {
+    visibleRef.current = visibleGraphIds;
+  }, [visibleGraphIds]);
+
+  useEffect(() => {
+    collapsedRef.current = collapsedGraphIds;
+  }, [collapsedGraphIds]);
 
   useEffect(() => {
     const load = async () => {
@@ -55,7 +61,7 @@ export function useAdminAnalyticsLayout() {
       }
     };
     load();
-  }, [user?.id]);
+  }, [user]);
 
   const scheduleSave = useCallback(() => {
     if (!user?.id) return;
@@ -73,7 +79,7 @@ export function useAdminAnalyticsLayout() {
         .setSetting(user.id, COLLAPSED_KEY, collapsed)
         .catch(() => {});
     }, 400);
-  }, [user?.id]);
+  }, [user]);
 
   useEffect(() => {
     return () => {

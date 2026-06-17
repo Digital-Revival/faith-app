@@ -107,7 +107,7 @@ export default function BibleSchoolModulesScreen() {
     if (!filteredModules?.length) return [];
     if (allModulesCompleted || !currentModuleData) return filteredModules;
     return filteredModules.filter((m) => m.id !== currentModuleData.id);
-  }, [filteredModules, currentModuleData?.id, allModulesCompleted]);
+  }, [filteredModules, currentModuleData, allModulesCompleted]);
 
   const remainingModules = useMemo(() => {
     if (allModulesCompleted) return allModulesExcludingCurrent;
@@ -129,7 +129,7 @@ export default function BibleSchoolModulesScreen() {
     });
     return () => task.cancel();
   }, [
-    moduleToPrefetch?.id,
+    moduleToPrefetch,
     queryClient,
     introductionVimeoId,
     firstModuleId,

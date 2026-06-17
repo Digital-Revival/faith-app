@@ -1,6 +1,7 @@
 {
   "app": {
-    "versionLabel": "Appversie {{version}}"
+    "versionLabel": "Appversie {{version}}",
+    "versionWhatsNewButton": "v{{version}} · Nieuw in de app"
   },
   "splash": {
     "logoFaith": "Faith",
@@ -71,6 +72,21 @@
     "resendConfirmationFailed": "Kon de e-mail niet opnieuw versturen. Probeer het later opnieuw.",
     "invalidCredentials": "Ongeldig e-mailadres of wachtwoord. Controleer je gegevens of maak een account aan.",
     "loginFailed": "Inloggen mislukt. Probeer het opnieuw.",
+    "forgotPassword": "Wachtwoord vergeten?",
+    "forgotPasswordTitle": "Wachtwoord resetten",
+    "forgotPasswordBody": "Vul je e-mailadres in. We sturen je een link om je wachtwoord te resetten.",
+    "forgotPasswordSent": "Als er een account bestaat met dit e-mailadres, hebben we resetinstructies gestuurd.",
+    "forgotPasswordLinkValidity": "De link is 24 uur geldig en kan maar één keer worden gebruikt.",
+    "resetPasswordTitle": "Nieuw wachtwoord instellen",
+    "resetPasswordSubtitle": "Kies een nieuw wachtwoord voor je account.",
+    "newPassword": "Nieuw wachtwoord",
+    "newPasswordPlaceholder": "Vul je nieuwe wachtwoord in",
+    "resetPasswordSuccess": "Je wachtwoord is bijgewerkt. Log opnieuw in.",
+    "resetPasswordFailed": "Wachtwoord resetten mislukt. Probeer het opnieuw.",
+    "passwordResetLinkExpired": "Deze resetlink is verlopen.",
+    "passwordResetLinkUsed": "Deze resetlink is al gebruikt.",
+    "requestNewResetLink": "Nieuwe link aanvragen",
+    "resetPasswordRateLimited": "Te veel pogingen. Probeer het later opnieuw.",
     "next": "Volgende",
     "stepOf": "Stap {{current}} van {{total}}",
     "step1Title": "Account",
@@ -241,6 +257,58 @@
     "bibleReadingScheduleSubtitle": "Dagelijks Bijbelplan",
     "comingSoon": "Binnenkort beschikbaar"
   },
+  "feedback": {
+    "title": "Feedback",
+    "subtitle": "Deel je gedachten, meld bugs of stuur ideeën",
+    "message": "Bericht",
+    "messagePlaceholder": "Vertel ons wat je op je hart hebt...",
+    "categoryBug": "Bug",
+    "categoryIdea": "Idee",
+    "categoryOther": "Overig",
+    "submit": "Verstuur feedback",
+    "submitting": "Verzenden...",
+    "success": "Bedankt! Je feedback is verstuurd.",
+    "error": "Feedback verzenden mislukt. Probeer het opnieuw.",
+    "messageTooShort": "Bericht moet minimaal 10 tekens bevatten",
+    "messageTooLong": "Bericht mag maximaal 2000 tekens bevatten"
+  },
+  "whatsNew": {
+    "title": "Nieuw in de app",
+    "subtitle": "Ontdek wat er nieuw is in deze update",
+    "gotIt": "Begrepen",
+    "viewAll": "Bekijk alles",
+    "badgeNew": "Nieuw",
+    "currentVersion": "Huidige versie",
+    "olderVersions": "Eerdere versies",
+    "dateFormat": "{{date}}",
+    "empty": "Nog geen release notes beschikbaar.",
+    "markSeenError": "Kon deze update niet als gelezen markeren. Probeer het opnieuw.",
+    "category": {
+      "added": "Nieuw",
+      "improved": "Verbeterd",
+      "fixed": "Opgelost"
+    },
+    "releases": {
+      "v2_0_1": {
+        "whatsNew": {
+          "title": "Nieuw in de app",
+          "description": "Bekijk per update wat er nieuw is via Instellingen of de versie-badge in het menu."
+        },
+        "passwordReset": {
+          "title": "Wachtwoord resetten",
+          "description": "Wachtwoord vergeten? Tik op 'Wachtwoord vergeten?' op het inlogscherm en we sturen je een resetlink per e-mail."
+        },
+        "changePassword": {
+          "title": "Wachtwoord wijzigen",
+          "description": "Wijzig je inlogwachtwoord wanneer je wilt via je profiel."
+        },
+        "feedback": {
+          "title": "Feedback sturen",
+          "description": "Deel je feedback via het menu of de feedbackknop op je overzicht en bij de Bijbelschool."
+        }
+      }
+    }
+  },
   "admin": {
     "overview": "Admin overzicht",
     "welcome": "Admin dashboard",
@@ -309,7 +377,8 @@
     "modules": "Modules",
     "voortgang": "Voortgang",
     "browse": "Bladeren",
-    "latest": "Laatste"
+    "latest": "Laatste",
+    "feedback": "Feedback"
   },
   "voortgang": {
     "pageTitle": "Jouw Voortgang",
@@ -365,7 +434,14 @@
     "viewAll": "Bekijk alle",
     "changeAvatar": "Foto wijzigen",
     "uploadingAvatar": "Uploaden...",
-    "avatarUpdateFailed": "Profielfoto bijwerken mislukt"
+    "avatarUpdateFailed": "Profielfoto bijwerken mislukt",
+    "changePassword": "Wachtwoord wijzigen",
+    "changePasswordSubtitle": "Wijzig je inlogwachtwoord",
+    "currentPassword": "Huidig wachtwoord",
+    "currentPasswordPlaceholder": "Vul je huidige wachtwoord in",
+    "passwordChanged": "Je wachtwoord is bijgewerkt",
+    "passwordChangeFailed": "Wachtwoord wijzigen mislukt. Probeer het opnieuw.",
+    "currentPasswordRequired": "Huidig wachtwoord is verplicht"
   },
   "settings": {
     "language": "Taal",
@@ -391,7 +467,9 @@
     "videoQualityMedium": "640p",
     "videoQualityLow": "480p",
     "videoQualityDataSaver": "Data besparen",
-    "videoQualityDescription": "Beïnvloedt laadsnelheid en dataverbruik"
+    "videoQualityDescription": "Beïnvloedt laadsnelheid en dataverbruik",
+    "whatsNew": "Nieuw in de app",
+    "whatsNewSubtitle": "Release notes en updates"
   },
   "loading": {
     "video": "Video laden...",

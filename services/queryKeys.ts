@@ -33,6 +33,8 @@ export const queryKeys = {
       ['userSettings', 'introPosition', userId] as const,
     onboardingSection: (userId: string, section: string) =>
       ['userSettings', 'onboarding', section, userId] as const,
+    lastSeenAppVersion: (userId: string) =>
+      ['userSettings', 'lastSeenAppVersion', userId] as const,
   },
   badges: {
     all: ['badges'] as const,

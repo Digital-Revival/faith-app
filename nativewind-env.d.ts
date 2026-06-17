@@ -1,5 +1,7 @@
 /// <reference types="nativewind/types" />
 
+declare module '@/global.css';
+
 declare module '*.png' {
   const value: number;
   export default value;

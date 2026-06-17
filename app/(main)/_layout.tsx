@@ -1,5 +1,6 @@
 import { BrandedSplashScreen } from "@/components/ui/BrandedSplashScreen";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { routes } from "@/constants/routes";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   SectionNavigationProvider,
@@ -8,35 +9,59 @@ import {
 import { useLastSectionRestore } from "@/hooks/useLastSectionRestore";
 import { useStreak } from "@/hooks/useStreak";
 import { useTheme } from "@/hooks/useTheme";
+import { useToast } from "@/hooks/useToast";
 import { useTranslation } from "@/hooks/useTranslation";
-import { Redirect } from "expo-router";
+import { useWhatsNew } from "@/hooks/useWhatsNew";
+import { Redirect, router } from "expo-router";
 import { Drawer } from "expo-router/drawer";
-import { useEffect, useState } from "react";
+import { useDelayedTrue } from "@/hooks/useDelayedTrue";
+import { useState } from "react";
 import { View } from "react-native";
 import { DrawerContent } from "./_components/DrawerContent";
+import { WhatsNewModal } from "./settings/_components/WhatsNewModal";
 
 const LOADING_DELAY_MS = 300;
 
 function MainLayoutContent() {
   const { session } = useAuth();
   const { isNavigating, targetSection } = useSectionNavigation();
-  const [showLoadingOverlay, setShowLoadingOverlay] = useState(false);
+  const showLoadingOverlay = useDelayedTrue(isNavigating, LOADING_DELAY_MS);
+  const [dismissedUnreadKey, setDismissedUnreadKey] = useState<string | null>(
+    null,
+  );
   useLastSectionRestore();
   useStreak();
   const { t } = useTranslation();
   const theme = useTheme();
+  const toast = useToast();
+  const {
+    hasUnreadWhatsNew,
+    unreadReleases,
+    isLoading: isWhatsNewLoading,
+    markSeen,
+  } = useWhatsNew();
 
-  useEffect(() => {
-    if (!isNavigating) {
-      setShowLoadingOverlay(false);
-      return;
+  const unreadReleaseKey = unreadReleases.map((release) => release.version).join(",");
+
+  const handleWhatsNewDismiss = async () => {
+    setDismissedUnreadKey(unreadReleaseKey);
+    try {
+      await markSeen();
+    } catch {
+      toast.error(t("whatsNew.markSeenError"));
     }
-    const timer = setTimeout(
-      () => setShowLoadingOverlay(true),
-      LOADING_DELAY_MS,
-    );
-    return () => clearTimeout(timer);
-  }, [isNavigating]);
+  };
+
+  const handleWhatsNewViewAll = () => {
+    setDismissedUnreadKey(unreadReleaseKey);
+    router.push(routes.settings("whats-new"));
+  };
+
+  const showWhatsNewModal =
+    !isWhatsNewLoading &&
+    hasUnreadWhatsNew &&
+    unreadReleases.length > 0 &&
+    dismissedUnreadKey !== unreadReleaseKey;
 
   if (!session) return <Redirect href="/(auth)/login" />;
 
@@ -68,6 +93,7 @@ function MainLayoutContent() {
         <Drawer.Screen name="hub-teaser" />
         <Drawer.Screen name="profile" />
         <Drawer.Screen name="badges/index" />
+        <Drawer.Screen name="feedback/index" />
         <Drawer.Screen name="settings" />
       </Drawer>
       {showLoadingOverlay && (
@@ -84,17 +110,26 @@ function MainLayoutContent() {
           <LoadingScreen message={loadingMessage} />
         </View>
       )}
+      <WhatsNewModal
+        visible={showWhatsNewModal}
+        unreadReleases={unreadReleases}
+        onDismiss={() => void handleWhatsNewDismiss()}
+        onViewAll={handleWhatsNewViewAll}
+      />
     </View>
   );
 }
 
 export default function MainLayout() {
-  const { session, isLoading } = useAuth();
+  const { session, isLoading, pendingPasswordRecovery } = useAuth();
 
   if (isLoading) {
     return <BrandedSplashScreen />;
   }
   if (!session) return <Redirect href="/(auth)/login" />;
+  if (pendingPasswordRecovery) {
+    return <Redirect href={routes.authResetPassword()} />;
+  }
 
   return (
     <SectionNavigationProvider>

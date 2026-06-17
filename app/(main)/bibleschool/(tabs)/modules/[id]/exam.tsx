@@ -307,7 +307,7 @@ export default function ExamScreen() {
     setSelectedAnswers({});
     setSubmitted(false);
     scrollRef.current?.scrollTo({ y: 0, animated: true });
-  }, [user?.id, id]);
+  }, [user, id]);
 
   useEffect(() => {
     if (unlocksLoading || !id || !storyModule || showSuccessScreen) return;

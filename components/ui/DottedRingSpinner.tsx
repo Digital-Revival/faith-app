@@ -3,11 +3,11 @@ import {
   DOTTED_RING_DOT_SIZE,
   getDottedRingDotLayouts,
 } from '@/constants/dottedRing';
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, Easing, StyleSheet, View } from 'react-native';
 
 export function DottedRingSpinner() {
-  const spin = useRef(new Animated.Value(0)).current;
+  const [spin] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     const loop = Animated.loop(

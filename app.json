@@ -2,13 +2,13 @@
   "expo": {
     "name": "Faith Generation",
     "slug": "faith-generation",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/logo_icon.png",
     "scheme": "faithapp",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "buildNumber": "10",
+      "buildNumber": "11",
       "supportsTablet": true,
       "bundleIdentifier": "com.tt.faithGeneration",
       "userInterfaceStyle": "automatic",
@@ -26,9 +26,21 @@
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.trinixInteractive.faith_generation",
-      "versionCode": 31,
+      "versionCode": 32,
       "permissions": [
         "android.permission.RECORD_AUDIO"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "faithapp",
+              "host": "reset-password"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
       ]
     },
     "web": {

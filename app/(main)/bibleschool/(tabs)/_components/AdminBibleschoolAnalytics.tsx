@@ -4,7 +4,6 @@ import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { MainTopBar } from '@/app/(main)/_components/MainTopBar';
 import { CollapsibleOverviewCard } from '../../_components/CollapsibleOverviewCard';
-import { OverviewCard } from '../../_components/OverviewCard';
 import { AdminAnalyticsGraphPicker } from './AdminAnalyticsGraphPicker';
 import { useAdminAnalyticsLayout } from '../_hooks/useAdminAnalyticsLayout';
 import { useModules } from '@/hooks/useBibleschoolContent';
@@ -35,7 +34,7 @@ function BarChart({
   theme,
   t,
 }: {
-  stats: Array<{ module: BibleschoolModule; stat: ModuleStat }>;
+  stats: { module: BibleschoolModule; stat: ModuleStat }[];
   maxValue: number;
   theme: ReturnType<typeof useTheme>;
   t: (key: string) => string;
@@ -117,12 +116,15 @@ function TimeSeriesSection({
   t,
 }: {
   title: string;
-  data: Array<{ date: string; count: number }>;
+  data: { date: string; count: number }[];
   theme: ReturnType<typeof useTheme>;
   t: (key: string, params?: Record<string, string | number>) => string;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const safeData = Array.isArray(data) ? data : [];
+  const safeData = useMemo(
+    () => (Array.isArray(data) ? data : []),
+    [data],
+  );
 
   const displayData = useMemo(() => {
     const maxVisible = expanded ? Math.min(30, safeData.length) : 7;
@@ -315,7 +317,6 @@ export function AdminBibleschoolAnalytics() {
     toggleGraphCollapsed,
     setGraphVisible,
     visibleGraphIds,
-    isLoaded,
   } = useAdminAnalyticsLayout();
 
   const { fromDate, toDate, queryFrom, queryTo } = useMemo(() => {
@@ -423,7 +424,7 @@ export function AdminBibleschoolAnalytics() {
         });
         toast.success(t('admin.exportSuccess'));
       }
-    } catch (err) {
+    } catch {
       toast.error(t('admin.exportFailed'));
     } finally {
       setExporting(false);

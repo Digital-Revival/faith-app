@@ -1,6 +1,5 @@
 import { forwardRef } from 'react';
 import { useThemePreference } from '@/contexts/ThemeContext';
-import { useTranslation } from '@/hooks/useTranslation';
 import { Ionicons } from '@expo/vector-icons';
 import type { ThemePreference } from '@/contexts/ThemeContext';
 import {
@@ -12,11 +11,11 @@ import { View } from 'react-native';
 
 export type ThemeSwitcherRef = SettingsDropdownRef;
 
-export const THEME_OPTIONS: Array<{
+export const THEME_OPTIONS: {
   value: ThemePreference;
   icon: keyof typeof Ionicons.glyphMap;
   labelKey: string;
-}> = [
+}[] = [
   { value: 'light', icon: 'sunny', labelKey: 'settings.themeLight' },
   { value: 'dark', icon: 'moon', labelKey: 'settings.themeDark' },
   { value: 'system', icon: 'phone-portrait', labelKey: 'settings.themeSystem' },

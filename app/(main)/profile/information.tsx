@@ -89,14 +89,16 @@ export default function ProfileInformationScreen() {
   };
 
   useEffect(() => {
-    if (profile) {
+    if (!profile) return;
+    const handle = setTimeout(() => {
       setFullName(profile.full_name ?? "");
       setPhone(profile.phone ?? "");
       setBirthdate(profile.birthdate ?? null);
       setCountry(profile.country ?? "");
       setCity(profile.city ?? "");
-    }
-  }, [profile?.id, profile?.full_name, profile?.phone, profile?.birthdate, profile?.country, profile?.city]);
+    }, 0);
+    return () => clearTimeout(handle);
+  }, [profile]);
 
   if (profileLoading && user?.id) {
     return <LoadingScreen message={t("loading.section.profile")} />;

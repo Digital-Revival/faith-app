@@ -1,6 +1,7 @@
 {
   "app": {
-    "versionLabel": "Versi aplikasi {{version}}"
+    "versionLabel": "Versi aplikasi {{version}}",
+    "versionWhatsNewButton": "v{{version}} · Apa yang baru"
   },
   "splash": {
     "logoFaith": "Faith",
@@ -71,6 +72,21 @@
     "resendConfirmationFailed": "Tidak dapat mengirim ulang email. Coba lagi nanti.",
     "invalidCredentials": "Email atau kata sandi tidak valid. Periksa data Anda atau buat akun.",
     "loginFailed": "Login gagal. Silakan coba lagi.",
+    "forgotPassword": "Lupa kata sandi?",
+    "forgotPasswordTitle": "Atur ulang kata sandi",
+    "forgotPasswordBody": "Masukkan alamat email Anda dan kami akan mengirimkan tautan untuk mengatur ulang kata sandi.",
+    "forgotPasswordSent": "Jika akun dengan email ini ada, kami telah mengirim instruksi reset.",
+    "forgotPasswordLinkValidity": "Tautan berlaku selama 24 jam dan hanya dapat digunakan sekali.",
+    "resetPasswordTitle": "Atur kata sandi baru",
+    "resetPasswordSubtitle": "Pilih kata sandi baru untuk akun Anda.",
+    "newPassword": "Kata sandi baru",
+    "newPasswordPlaceholder": "Masukkan kata sandi baru Anda",
+    "resetPasswordSuccess": "Kata sandi Anda telah diperbarui. Silakan masuk kembali.",
+    "resetPasswordFailed": "Tidak dapat mengatur ulang kata sandi. Silakan coba lagi.",
+    "passwordResetLinkExpired": "Tautan reset ini telah kedaluwarsa.",
+    "passwordResetLinkUsed": "Tautan reset ini sudah digunakan.",
+    "requestNewResetLink": "Minta tautan baru",
+    "resetPasswordRateLimited": "Terlalu banyak percobaan. Silakan coba lagi nanti.",
     "next": "Berikutnya",
     "stepOf": "Langkah {{current}} dari {{total}}",
     "step1Title": "Akun",
@@ -241,6 +257,58 @@
     "bibleReadingScheduleSubtitle": "Rencana baca Alkitab harian",
     "comingSoon": "Segera hadir"
   },
+  "feedback": {
+    "title": "Masukan",
+    "subtitle": "Bagikan pemikiran Anda, laporkan bug, atau sarankan ide",
+    "message": "Pesan",
+    "messagePlaceholder": "Ceritakan apa yang ada di pikiran Anda...",
+    "categoryBug": "Bug",
+    "categoryIdea": "Ide",
+    "categoryOther": "Lainnya",
+    "submit": "Kirim masukan",
+    "submitting": "Mengirim...",
+    "success": "Terima kasih! Masukan Anda telah dikirim.",
+    "error": "Gagal mengirim masukan. Silakan coba lagi.",
+    "messageTooShort": "Pesan harus minimal 10 karakter",
+    "messageTooLong": "Pesan maksimal 2000 karakter"
+  },
+  "whatsNew": {
+    "title": "Apa yang Baru",
+    "subtitle": "Lihat yang baru dalam pembaruan ini",
+    "gotIt": "Mengerti",
+    "viewAll": "Lihat semua",
+    "badgeNew": "Baru",
+    "currentVersion": "Versi saat ini",
+    "olderVersions": "Versi lama",
+    "dateFormat": "{{date}}",
+    "empty": "Belum ada catatan rilis.",
+    "markSeenError": "Tidak dapat menandai pembaruan ini sebagai sudah dibaca. Silakan coba lagi.",
+    "category": {
+      "added": "Ditambahkan",
+      "improved": "Ditingkatkan",
+      "fixed": "Diperbaiki"
+    },
+    "releases": {
+      "v2_0_1": {
+        "whatsNew": {
+          "title": "Apa yang baru",
+          "description": "Lihat apa yang baru di setiap pembaruan melalui Pengaturan atau lencana versi di menu."
+        },
+        "passwordReset": {
+          "title": "Atur ulang kata sandi",
+          "description": "Lupa kata sandi? Ketuk 'Lupa kata sandi?' di layar masuk dan kami akan mengirim tautan reset melalui email."
+        },
+        "changePassword": {
+          "title": "Ubah kata sandi",
+          "description": "Perbarui kata sandi login Anda kapan saja dari profil."
+        },
+        "feedback": {
+          "title": "Kirim masukan",
+          "description": "Bagikan masukan melalui menu drawer atau tombol masukan di beranda dan Sekolah Alkitab."
+        }
+      }
+    }
+  },
   "admin": {
     "overview": "Ringkasan Admin",
     "welcome": "Dasbor Admin",
@@ -309,7 +377,8 @@
     "modules": "Modul",
     "voortgang": "Kemajuan",
     "browse": "Jelajahi",
-    "latest": "Terbaru"
+    "latest": "Terbaru",
+    "feedback": "Masukan"
   },
   "voortgang": {
     "pageTitle": "Kemajuan Anda",
@@ -365,7 +434,14 @@
     "viewAll": "Lihat semua",
     "changeAvatar": "Ganti foto",
     "uploadingAvatar": "Mengunggah...",
-    "avatarUpdateFailed": "Gagal memperbarui foto"
+    "avatarUpdateFailed": "Gagal memperbarui foto",
+    "changePassword": "Ubah kata sandi",
+    "changePasswordSubtitle": "Perbarui kata sandi login Anda",
+    "currentPassword": "Kata sandi saat ini",
+    "currentPasswordPlaceholder": "Masukkan kata sandi saat ini",
+    "passwordChanged": "Kata sandi Anda telah diperbarui",
+    "passwordChangeFailed": "Tidak dapat mengubah kata sandi. Silakan coba lagi.",
+    "currentPasswordRequired": "Kata sandi saat ini wajib diisi"
   },
   "settings": {
     "language": "Bahasa",
@@ -391,7 +467,9 @@
     "videoQualityMedium": "640p",
     "videoQualityLow": "480p",
     "videoQualityDataSaver": "Hemat data",
-    "videoQualityDescription": "Mempengaruhi kecepatan pemuatan dan penggunaan data"
+    "videoQualityDescription": "Mempengaruhi kecepatan pemuatan dan penggunaan data",
+    "whatsNew": "Apa yang Baru",
+    "whatsNewSubtitle": "Catatan rilis dan pembaruan"
   },
   "loading": {
     "video": "Memuat video...",
