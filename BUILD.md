@@ -27,7 +27,16 @@ Before each EAS build, `version:sync` runs automatically via `eas-build-pre-inst
 
 ### Build numbers
 
-Build numbers (iOS `CFBundleVersion`, Android `versionCode`) are managed by EAS remotely. You do not set them manually. EAS auto-increments on each build.
+Build numbers (iOS `CFBundleVersion`, Android `versionCode`) are managed **remotely on EAS** (`appVersionSource: remote` in eas.json). They are **not** in `app.json` — EAS auto-increments on each production/testflight build without changing your repo.
+
+**One-time setup** (sync remote counter with the stores after switching to remote):
+
+```bash
+eas build:version:sync -p ios -e testflight
+eas build:version:sync -p android -e production
+```
+
+Only commit when you bump the **app version** (`expo.version`, e.g. 2.0.1 → 2.0.2). Never commit after a build just for build numbers.
 
 ## Creating a TestFlight build
 

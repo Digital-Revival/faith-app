@@ -8,7 +8,6 @@
     "scheme": "faithapp",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "buildNumber": "11",
       "supportsTablet": true,
       "bundleIdentifier": "com.tt.faithGeneration",
       "userInterfaceStyle": "automatic",
@@ -26,7 +25,6 @@
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.trinixInteractive.faith_generation",
-      "versionCode": 32,
       "permissions": [
         "android.permission.RECORD_AUDIO"
       ],
