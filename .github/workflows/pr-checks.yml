@@ -1,0 +1,146 @@
+name: PR Checks
+
+# Runs on every PR to main. Validates Expo health, lint, typecheck,
+# and Supabase migration syntax when relevant paths change.
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: pr-checks-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  detect-changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      app: ${{ steps.filter.outputs.app }}
+      workflows: ${{ steps.filter.outputs.workflows }}
+      migrations: ${{ steps.filter.outputs.migrations }}
+      functions: ${{ steps.filter.outputs.functions }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            app:
+              - 'app/**'
+              - 'components/**'
+              - 'hooks/**'
+              - 'services/**'
+              - 'constants/**'
+              - 'utils/**'
+              - 'contexts/**'
+              - 'providers/**'
+              - 'i18n/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'tsconfig.json'
+              - 'tsconfig.ci.json'
+              - 'app.json'
+              - 'eslint.config.js'
+            workflows:
+              - '.github/workflows/**'
+            migrations:
+              - 'supabase/migrations/**'
+            functions:
+              - 'supabase/functions/**'
+
+  expo-doctor:
+    name: Expo Doctor
+    needs: detect-changes
+    if: needs.detect-changes.outputs.app == 'true' || needs.detect-changes.outputs.workflows == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22.13.0"
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npx expo-doctor
+
+  lint:
+    name: Lint
+    needs: detect-changes
+    if: needs.detect-changes.outputs.app == 'true' || needs.detect-changes.outputs.workflows == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22.13.0"
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npm run lint
+
+  typecheck:
+    name: TypeScript
+    needs: detect-changes
+    if: needs.detect-changes.outputs.app == 'true' || needs.detect-changes.outputs.workflows == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22.13.0"
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - name: Typecheck (dummy env — compile check only)
+        env:
+          EXPO_PUBLIC_SUPABASE_URL: https://example.supabase.co
+          EXPO_PUBLIC_SUPABASE_ANON_KEY: dummy
+          EXPO_PUBLIC_STORYBLOK_ACCESS_TOKEN: dummy
+          EXPO_PUBLIC_VIMEO_ACCESS_TOKEN: dummy
+          EXPO_PUBLIC_LOCAL_DEV_IP: 127.0.0.1
+        run: npm run typecheck
+
+  supabase-validate:
+    name: Supabase migrations syntax
+    needs: detect-changes
+    if: needs.detect-changes.outputs.migrations == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Validate migration filenames
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          files=(supabase/migrations/*.sql)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No migration files found."
+            exit 0
+          fi
+          for f in "${files[@]}"; do
+            base=$(basename "$f")
+            if ! [[ "$base" =~ ^[0-9]{14}_.+\.sql$ ]]; then
+              echo "::error file=$f::Migration filename does not match YYYYMMDDHHMMSS_description.sql"
+              exit 1
+            fi
+          done
+          echo "Migration filenames OK (${#files[@]} files)."
+      - name: Apply migrations locally and lint schema
+        run: |
+          set -euo pipefail
+          supabase db start
+          supabase db reset
+          supabase db lint --local --schema public --level warning --fail-on warning
+          echo "All migrations applied and passed lint."

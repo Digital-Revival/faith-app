@@ -22,6 +22,8 @@ import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/services/queryKeys';
 import { bibleschoolService } from '@/services/storyblok/bibleschoolService';
+import { routes } from '@/constants/routes';
+import { saveProfileReturnHref } from '@/hooks/useLastSectionRestore';
 
 const CONTENT_SECTIONS: Array<{
   name: string;
