@@ -367,8 +367,7 @@ authorization_url_path = "/oauth/consent"
 allow_dynamic_registration = false
 
 [edge_runtime]
-# Disabled: no supabase/functions — avoids intermittent 502 on local health check
-enabled = false
+enabled = true
 # Supported request policies: `oneshot`, `per_worker`.
 # `per_worker` (default) — enables hot reload during local development.
 # `oneshot` — fallback mode if hot reload causes issues (e.g. in large repos or with symlinks).
@@ -378,8 +377,10 @@ inspector_port = 8083
 # The Deno major version to use.
 deno_version = 2
 
-# [edge_runtime.secrets]
-# secret_key = "env(SECRET_VALUE)"
+[edge_runtime.secrets]
+RESEND_API_KEY = "env(RESEND_API_KEY)"
+RESEND_SENDER_EMAIL = "env(RESEND_SENDER_EMAIL)"
+FEEDBACK_TO_EMAIL = "env(FEEDBACK_TO_EMAIL)"
 
 [analytics]
 enabled = true

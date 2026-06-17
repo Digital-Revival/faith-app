@@ -1,3 +1,4 @@
-import Constants from "expo-constants";
+import appConfig from '../app.json';
 
-export const APP_VERSION = Constants.expoConfig?.version ?? "2.0.0";
+/** Single source of truth — matches app.json / package.json version. */
+export const APP_VERSION = appConfig.expo.version;

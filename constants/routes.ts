@@ -32,6 +32,7 @@ export const routes = {
   podcasts: () => "/(main)/podcasts" as Href,
   sermons: () => "/(main)/sermons" as Href,
   faithBusinessSchool: () => "/(main)/faith-business-school" as Href,
+  feedback: () => "/(main)/feedback" as Href,
   hubTeaser: (section: string) =>
     `/(main)/hub-teaser?section=${encodeURIComponent(section)}` as Href,
 };

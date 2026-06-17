@@ -338,6 +338,33 @@ export function DrawerContent(props: DrawerContentComponentProps) {
           onPress={() => {
             bzzt();
             navigation.closeDrawer();
+            router.push(routes.feedback());
+          }}
+          activeOpacity={0.7}
+          className="cursor-pointer"
+          style={{
+            paddingVertical: 14,
+            paddingHorizontal: 12,
+          }}
+        >
+          <HStack className="items-center gap-3">
+            <Ionicons
+              name="chatbubble-ellipses-outline"
+              size={22}
+              color={theme.textSecondary}
+            />
+            <Text
+              className="flex-1 text-base font-semibold"
+              style={{ color: theme.textPrimary }}
+            >
+              {t('navbar.feedback')}
+            </Text>
+          </HStack>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            bzzt();
+            navigation.closeDrawer();
             signOut();
           }}
           activeOpacity={0.7}

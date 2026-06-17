@@ -256,6 +256,21 @@
     "bibleReadingScheduleSubtitle": "Dagelijks Bijbelplan",
     "comingSoon": "Binnenkort beschikbaar"
   },
+  "feedback": {
+    "title": "Feedback",
+    "subtitle": "Deel je gedachten, meld bugs of stuur ideeën",
+    "message": "Bericht",
+    "messagePlaceholder": "Vertel ons wat je op je hart hebt...",
+    "categoryBug": "Bug",
+    "categoryIdea": "Idee",
+    "categoryOther": "Overig",
+    "submit": "Verstuur feedback",
+    "submitting": "Verzenden...",
+    "success": "Bedankt! Je feedback is verstuurd.",
+    "error": "Feedback verzenden mislukt. Probeer het opnieuw.",
+    "messageTooShort": "Bericht moet minimaal 10 tekens bevatten",
+    "messageTooLong": "Bericht mag maximaal 2000 tekens bevatten"
+  },
   "admin": {
     "overview": "Admin overzicht",
     "welcome": "Admin dashboard",
@@ -324,7 +339,8 @@
     "modules": "Modules",
     "voortgang": "Voortgang",
     "browse": "Bladeren",
-    "latest": "Laatste"
+    "latest": "Laatste",
+    "feedback": "Feedback"
   },
   "voortgang": {
     "pageTitle": "Jouw Voortgang",

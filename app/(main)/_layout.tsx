@@ -69,6 +69,7 @@ function MainLayoutContent() {
         <Drawer.Screen name="hub-teaser" />
         <Drawer.Screen name="profile" />
         <Drawer.Screen name="badges/index" />
+        <Drawer.Screen name="feedback/index" />
         <Drawer.Screen name="settings" />
       </Drawer>
       {showLoadingOverlay && (

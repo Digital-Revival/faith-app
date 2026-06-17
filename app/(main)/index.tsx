@@ -14,6 +14,7 @@ import { useEffect } from 'react';
 import { ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { FeedbackFab } from '@/app/(main)/_components/FeedbackFab';
 import { MainTopBar } from '@/app/(main)/_components/MainTopBar';
 import { FaithHeroBanner } from './_components/FaithHeroBanner';
 import { SectionCard } from './_components/SectionCard';
@@ -168,6 +169,7 @@ export default function HubScreen() {
         </Box>
       </Box>
 
+      <FeedbackFab variant="aboveFooter" />
     </Box>
   );
 }

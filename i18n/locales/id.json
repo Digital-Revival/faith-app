@@ -256,6 +256,21 @@
     "bibleReadingScheduleSubtitle": "Rencana baca Alkitab harian",
     "comingSoon": "Segera hadir"
   },
+  "feedback": {
+    "title": "Masukan",
+    "subtitle": "Bagikan pemikiran Anda, laporkan bug, atau sarankan ide",
+    "message": "Pesan",
+    "messagePlaceholder": "Ceritakan apa yang ada di pikiran Anda...",
+    "categoryBug": "Bug",
+    "categoryIdea": "Ide",
+    "categoryOther": "Lainnya",
+    "submit": "Kirim masukan",
+    "submitting": "Mengirim...",
+    "success": "Terima kasih! Masukan Anda telah dikirim.",
+    "error": "Gagal mengirim masukan. Silakan coba lagi.",
+    "messageTooShort": "Pesan harus minimal 10 karakter",
+    "messageTooLong": "Pesan maksimal 2000 karakter"
+  },
   "admin": {
     "overview": "Ringkasan Admin",
     "welcome": "Dasbor Admin",
@@ -324,7 +339,8 @@
     "modules": "Modul",
     "voortgang": "Kemajuan",
     "browse": "Jelajahi",
-    "latest": "Terbaru"
+    "latest": "Terbaru",
+    "feedback": "Masukan"
   },
   "voortgang": {
     "pageTitle": "Kemajuan Anda",

@@ -256,6 +256,21 @@
     "miraclesDescription": "Stories of God's power and testimonies from the body of Christ—this section is in development.",
     "bibleReadingScheduleDescription": "Structured Bible reading plans to help you stay in the Word daily—coming to the app."
   },
+  "feedback": {
+    "title": "Feedback",
+    "subtitle": "Share your thoughts, report bugs, or suggest ideas",
+    "message": "Message",
+    "messagePlaceholder": "Tell us what's on your mind...",
+    "categoryBug": "Bug",
+    "categoryIdea": "Idea",
+    "categoryOther": "Other",
+    "submit": "Send feedback",
+    "submitting": "Sending...",
+    "success": "Thank you! Your feedback has been sent.",
+    "error": "Failed to send feedback. Please try again.",
+    "messageTooShort": "Message must be at least 10 characters",
+    "messageTooLong": "Message must be at most 2000 characters"
+  },
   "admin": {
     "overview": "Admin Overview",
     "welcome": "Admin Dashboard",
@@ -324,7 +339,8 @@
     "modules": "Modules",
     "voortgang": "Progress",
     "browse": "Browse",
-    "latest": "Latest"
+    "latest": "Latest",
+    "feedback": "Feedback"
   },
   "voortgang": {
     "pageTitle": "Your Progress",
