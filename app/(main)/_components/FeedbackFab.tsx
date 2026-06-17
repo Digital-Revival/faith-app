@@ -2,10 +2,11 @@ import { Text } from '@/components/ui/text';
 import { routes } from '@/constants/routes';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
+import { saveProfileReturnHref } from '@/hooks/useLastSectionRestore';
 import { useButtonShadow } from '@/hooks/useShadows';
 import { bzzt } from '@/utils/haptics';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, usePathname } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -20,6 +21,7 @@ export function FeedbackFab({ variant }: FeedbackFabProps) {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const shadow = useButtonShadow();
+  const pathname = usePathname();
 
   const bottom =
     variant === 'aboveTabBar'
@@ -32,7 +34,9 @@ export function FeedbackFab({ variant }: FeedbackFabProps) {
     <TouchableOpacity
       onPress={() => {
         bzzt();
-        router.push(routes.feedback());
+        saveProfileReturnHref(pathname || '/(main)').then(() => {
+          router.push(routes.feedback());
+        });
       }}
       activeOpacity={0.7}
       accessibilityRole="button"

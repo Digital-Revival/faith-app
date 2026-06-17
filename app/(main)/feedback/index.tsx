@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Platform, TouchableOpacity } from 'react-native';
-import { useNavigation } from 'expo-router/react-navigation';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AuthSubmitButton } from '@/app/(auth)/_components/AuthSubmitButton';
@@ -11,13 +10,16 @@ import { HStack } from '@/components/ui/hstack';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { APP_VERSION } from '@/constants/version';
+import { routes } from '@/constants/routes';
 import { useAuth } from '@/contexts/AuthContext';
 import type { User } from '@/types/user';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
+import { getProfileReturnHref } from '@/hooks/useLastSectionRestore';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import type { FeedbackCategory } from '@/types/feedback';
 import { bzzt } from '@/utils/haptics';
+import { router } from 'expo-router';
 
 import { FeedbackMessageField } from './_components/FeedbackMessageField';
 import { useSendFeedback } from './_hooks/useSendFeedback';
@@ -59,7 +61,6 @@ function getCategoryLabel(category: FeedbackCategory, t: (key: string) => string
 
 export default function FeedbackScreen() {
   const { user } = useAuth();
-  const navigation = useNavigation();
   const theme = useTheme();
   const { t, locale } = useTranslation();
   const insets = useSafeAreaInsets();
@@ -71,6 +72,16 @@ export default function FeedbackScreen() {
   const [category, setCategory] = useState<FeedbackCategory>('other');
   const [messageError, setMessageError] = useState('');
   const [messageFocused, setMessageFocused] = useState(false);
+
+  const handleBack = () => {
+    getProfileReturnHref().then((href) => {
+      if (href && !href.includes('feedback')) {
+        router.replace(href as never);
+      } else {
+        router.replace(routes.main() as never);
+      }
+    });
+  };
 
   const clearForm = () => {
     setMessage('');
@@ -129,7 +140,7 @@ export default function FeedbackScreen() {
         title={t('feedback.title')}
         currentSection="feedback"
         showBackButton
-        onBack={() => navigation.goBack()}
+        onBack={handleBack}
       />
       <FormScrollView
         contentContainerStyle={{

@@ -22,7 +22,7 @@ import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/services/queryKeys';
 import { bibleschoolService } from '@/services/storyblok/bibleschoolService';
-import { routes } from '@/constants/routes';
+import { routes as appRoutes } from '@/constants/routes';
 import { saveProfileReturnHref } from '@/hooks/useLastSectionRestore';
 
 const CONTENT_SECTIONS: {
@@ -100,7 +100,8 @@ export function DrawerContent(props: DrawerContentComponentProps) {
   const { startSectionNavigation } = useSectionNavigation();
   const { state, navigation } = props;
   const pathname = usePathname();
-  const currentRoute = state.routes[state.index]?.name ?? '';
+  const drawerRoutes = state.routes;
+  const currentRoute = drawerRoutes[state.index]?.name ?? '';
   const currentSection = currentRoute === 'index' ? 'index' : currentRoute.split('/')[0] ?? currentRoute;
   const contentSections = isAdmin ? [] : CONTENT_SECTIONS.filter((s) => s.enabled !== false);
   const sections = isAdmin
@@ -134,7 +135,7 @@ export function DrawerContent(props: DrawerContentComponentProps) {
     startSectionNavigation(section.name);
     navigation.closeDrawer();
     if (section.name.includes('/')) {
-      router.push(routes.admin(section.name.replace('admin/', '')) as never);
+      router.push(appRoutes.admin(section.name.replace('admin/', '')) as never);
     } else if (section.name === 'settings') {
       saveProfileReturnHref(pathname || '/(main)').then(() => {
         navigation.navigate('settings' as never);
@@ -338,7 +339,9 @@ export function DrawerContent(props: DrawerContentComponentProps) {
           onPress={() => {
             bzzt();
             navigation.closeDrawer();
-            router.push(routes.feedback());
+            saveProfileReturnHref(pathname || '/(main)').then(() => {
+              navigation.navigate('feedback/index' as never);
+            });
           }}
           activeOpacity={0.7}
           className="cursor-pointer"
@@ -386,7 +389,7 @@ export function DrawerContent(props: DrawerContentComponentProps) {
         <VersionWhatsNewBadge
           onPress={() => {
             navigation.closeDrawer();
-            router.push(routes.settings('whats-new'));
+            router.push(appRoutes.settings('whats-new'));
           }}
         />
       </VStack>

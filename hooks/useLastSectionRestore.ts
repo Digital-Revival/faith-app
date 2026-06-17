@@ -13,7 +13,8 @@ export async function saveProfileReturnHref(href: string): Promise<void> {
     if (
       href &&
       !href.includes('/profile') &&
-      !href.includes('/settings')
+      !href.includes('/settings') &&
+      !href.includes('/feedback')
     ) {
       await AsyncStorage.setItem(PROFILE_RETURN_HREF_KEY, href);
     }
