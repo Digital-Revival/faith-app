@@ -55,21 +55,19 @@ export default function VoortgangScreen() {
     setRefreshing(false);
   }, [onRefresh]);
 
-  const { completedModules, activeModules, firstActiveIndex } = useMemo(() => {
+  const { completedModules, activeModules } = useMemo(() => {
     const completed: ModuleProgressData[] = [];
     const active: ModuleProgressData[] = [];
-    let firstActive = -1;
 
     moduleProgressData.forEach((item) => {
       if (item.examStatus === 'passed') {
         completed.push(item);
       } else {
-        if (active.length === 0) firstActive = completed.length;
         active.push(item);
       }
     });
 
-    return { completedModules: completed, activeModules: active, firstActiveIndex: firstActive };
+    return { completedModules: completed, activeModules: active };
   }, [moduleProgressData]);
 
   const shouldCollapse = completedModules.length >= COLLAPSE_THRESHOLD;

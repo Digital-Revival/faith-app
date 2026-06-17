@@ -14,7 +14,6 @@ interface LockOverlayProps {
 }
 
 function DefaultLockContent({ variant }: { variant: 'full' | 'thumbnail' }) {
-  const theme = useTheme();
   const size = variant === 'full' ? 24 : 20;
   return <Ionicons name="lock-closed" size={size} color="#ffffff" />;
 }

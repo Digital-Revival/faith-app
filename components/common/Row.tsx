@@ -6,8 +6,7 @@ import { VStack } from '@/components/ui/vstack';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Ionicons } from '@expo/vector-icons';
-import type { ComponentProps } from 'react';
-import type { ReactNode } from 'react';
+import type { ComponentProps , ReactNode } from 'react';
 import { TouchableOpacity } from 'react-native';
 
 type RowVariant = 'navigation' | 'setting';

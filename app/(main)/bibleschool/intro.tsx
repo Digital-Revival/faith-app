@@ -11,12 +11,14 @@ import { useIntroVideoPosition } from '@/hooks/useIntroVideoPosition';
 import { useIntroVideoWatched } from '@/hooks/useIntroVideoWatched';
 import { routes } from '@/constants/routes';
 import { useVideoPlayer, VideoView } from 'expo-video';
-import { useEvent, useEventListener } from 'expo';
+import { useEventListener } from 'expo';
 import { useNavigation, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFocusEffect } from "expo-router/react-navigation";
+import { useDelayedTrue } from '@/hooks/useDelayedTrue';
+import { useSyncRef } from '@/hooks/useSyncRef';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   ActivityIndicator,
@@ -54,15 +56,15 @@ function IntroVideoPlayer({
 }) {
   const hasMarkedWatchedRef = useRef(false);
   const lastPositionRef = useRef(initialPositionSeconds);
-  const onSavePositionRef = useRef(onSavePosition);
+  const onSavePositionRef = useSyncRef(onSavePosition);
   const hasAppliedInitialSeekRef = useRef(false);
-  onSavePositionRef.current = onSavePosition;
 
   const player = useVideoPlayer(videoUrl, (p) => {
     p.loop = false;
     p.timeUpdateEventInterval = 1;
     if (initialPositionSeconds > 0) {
       p.currentTime = initialPositionSeconds;
+      hasAppliedInitialSeekRef.current = true;
     }
     p.play();
   });
@@ -94,20 +96,14 @@ function IntroVideoPlayer({
     }
   });
 
+  const [playerStatus, setPlayerStatus] = useState(player.status);
+
   useEventListener(player, 'statusChange', ({ status: s }) => {
-    if (
-      s === 'readyToPlay' &&
-      initialPositionSeconds > 0 &&
-      !hasAppliedInitialSeekRef.current
-    ) {
-      hasAppliedInitialSeekRef.current = true;
-      player.currentTime = initialPositionSeconds;
-    }
+    setPlayerStatus(s);
   });
 
-  const { status } = useEvent(player, 'statusChange', { status: player.status });
-  const isLoading = status === 'loading' || status === 'idle';
-  const [showLoader, setShowLoader] = useState(false);
+  const isLoading = playerStatus === 'loading' || playerStatus === 'idle';
+  const showLoader = useDelayedTrue(isLoading, 400);
 
   useEffect(() => {
     if (getCurrentPositionRef) {
@@ -121,32 +117,17 @@ function IntroVideoPlayer({
     };
   }, [player, getCurrentPositionRef]);
 
-  useEffect(() => {
-    if (initialPositionSeconds > 0 && !hasAppliedInitialSeekRef.current) {
-      hasAppliedInitialSeekRef.current = true;
-      player.currentTime = initialPositionSeconds;
-    }
-  }, [initialPositionSeconds, player]);
-
-  useEffect(() => {
-    if (isLoading) {
-      const t = setTimeout(() => setShowLoader(true), 400);
-      return () => clearTimeout(t);
-    }
-    setShowLoader(false);
-  }, [isLoading]);
-
   useFocusEffect(
     useCallback(() => {
       return () => {
         if (savedByHandleBackRef?.current) return;
         try {
           player.pause();
-        } catch (_) {}
+        } catch {}
         const livePos = Math.max(lastPositionRef.current, initialPositionSeconds);
         onSavePositionRef.current(livePos, true);
       };
-    }, [player, initialPositionSeconds, savedByHandleBackRef])
+    }, [player, initialPositionSeconds, savedByHandleBackRef, onSavePositionRef])
   );
 
   return (

@@ -92,11 +92,15 @@ export default function BadgesScreen() {
   });
 
   const lessonCount = completedLessons?.length ?? 0;
-  const completedModules = (moduleProgressList ?? []).filter(
-    (m) => m.status === 'completed',
+  const completedModules = useMemo(
+    () => (moduleProgressList ?? []).filter((m) => m.status === 'completed'),
+    [moduleProgressList],
   );
   const moduleCount = completedModules.length;
-  const completedModuleIds = new Set(completedModules.map((m) => m.module_id));
+  const completedModuleIds = useMemo(
+    () => new Set(completedModules.map((m) => m.module_id)),
+    [completedModules],
+  );
   const { width } = useWindowDimensions();
   const itemWidth = (width - 48 - GAP * (COLS - 1)) / COLS;
   const scrollViewRef = useRef<ScrollView>(null);

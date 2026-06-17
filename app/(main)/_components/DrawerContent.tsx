@@ -25,12 +25,12 @@ import { bibleschoolService } from '@/services/storyblok/bibleschoolService';
 import { routes } from '@/constants/routes';
 import { saveProfileReturnHref } from '@/hooks/useLastSectionRestore';
 
-const CONTENT_SECTIONS: Array<{
+const CONTENT_SECTIONS: {
   name: string;
   icon: keyof typeof Ionicons.glyphMap;
   labelKey: string;
   enabled?: boolean;
-}> = [
+}[] = [
   { name: 'index', icon: 'home', labelKey: 'navbar.home', enabled: true },
   { name: 'bibleschool', icon: 'school', labelKey: 'hub.bibleschool', enabled: true },
   { name: 'faith-business-school', icon: 'business', labelKey: 'hub.faithBusinessSchool', enabled: true },
@@ -44,22 +44,22 @@ const CONTENT_SECTIONS: Array<{
   { name: 'bible-reading-schedule', icon: 'calendar', labelKey: 'hub.bibleReadingSchedule', enabled: false },
 ];
 
-const ACCOUNT_SECTIONS: Array<{
+const ACCOUNT_SECTIONS: {
   name: string;
   icon: keyof typeof Ionicons.glyphMap;
   labelKey: string;
   enabled?: boolean;
-}> = [
+}[] = [
   { name: 'profile', icon: 'person', labelKey: 'navbar.profile', enabled: true },
   { name: 'settings', icon: 'settings', labelKey: 'navbar.settings', enabled: true },
 ];
 
-const ADMIN_SECTIONS: Array<{
+const ADMIN_SECTIONS: {
   name: string;
   icon: keyof typeof Ionicons.glyphMap;
   labelKey: string;
   enabled?: boolean;
-}> = [
+}[] = [
   { name: 'admin', icon: 'stats-chart', labelKey: 'admin.overview', enabled: true },
   { name: 'admin/analytics', icon: 'school', labelKey: 'admin.analytics', enabled: true },
   { name: 'admin/users', icon: 'people', labelKey: 'admin.users', enabled: true },

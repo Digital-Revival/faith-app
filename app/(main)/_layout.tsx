@@ -14,7 +14,8 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useWhatsNew } from "@/hooks/useWhatsNew";
 import { Redirect, router } from "expo-router";
 import { Drawer } from "expo-router/drawer";
-import { useEffect, useState } from "react";
+import { useDelayedTrue } from "@/hooks/useDelayedTrue";
+import { useState } from "react";
 import { View } from "react-native";
 import { DrawerContent } from "./_components/DrawerContent";
 import { WhatsNewModal } from "./settings/_components/WhatsNewModal";
@@ -24,7 +25,7 @@ const LOADING_DELAY_MS = 300;
 function MainLayoutContent() {
   const { session } = useAuth();
   const { isNavigating, targetSection } = useSectionNavigation();
-  const [showLoadingOverlay, setShowLoadingOverlay] = useState(false);
+  const showLoadingOverlay = useDelayedTrue(isNavigating, LOADING_DELAY_MS);
   const [dismissedUnreadKey, setDismissedUnreadKey] = useState<string | null>(
     null,
   );
@@ -61,18 +62,6 @@ function MainLayoutContent() {
     hasUnreadWhatsNew &&
     unreadReleases.length > 0 &&
     dismissedUnreadKey !== unreadReleaseKey;
-
-  useEffect(() => {
-    if (!isNavigating) {
-      setShowLoadingOverlay(false);
-      return;
-    }
-    const timer = setTimeout(
-      () => setShowLoadingOverlay(true),
-      LOADING_DELAY_MS,
-    );
-    return () => clearTimeout(timer);
-  }, [isNavigating]);
 
   if (!session) return <Redirect href="/(auth)/login" />;
 

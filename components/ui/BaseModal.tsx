@@ -1,6 +1,6 @@
 import { useTheme } from '@/hooks/useTheme';
 import { bzzt } from '@/utils/haptics';
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, Modal, Pressable, View } from 'react-native';
 
 interface BaseModalProps {
@@ -21,10 +21,10 @@ export function BaseModal({
   disableScale = false,
 }: BaseModalProps) {
   const theme = useTheme();
-  const scaleAnim = useRef(
-    new Animated.Value(disableScale ? 1 : 0.9),
-  ).current;
-  const opacityAnim = useRef(new Animated.Value(0)).current;
+  const [scaleAnim] = useState(
+    () => new Animated.Value(disableScale ? 1 : 0.9),
+  );
+  const [opacityAnim] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     if (visible) {

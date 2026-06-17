@@ -1,7 +1,6 @@
 import { Row } from '@/components/common/Row';
 import { Ionicons } from '@expo/vector-icons';
-import type { ComponentProps } from 'react';
-import type { ReactNode } from 'react';
+import type { ComponentProps , ReactNode } from 'react';
 
 interface NavigationRowProps {
   icon: ComponentProps<typeof Ionicons>['name'];

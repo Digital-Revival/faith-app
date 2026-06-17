@@ -1,6 +1,8 @@
-import { useEvent, useEventListener } from 'expo';
+import { useEventListener } from 'expo';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { useFocusEffect } from "expo-router/react-navigation";
+import { useDelayedTrue } from '@/hooks/useDelayedTrue';
+import { useSyncRef } from '@/hooks/useSyncRef';
 import {
   useCallback,
   useEffect,
@@ -38,12 +40,10 @@ export function LessonVideoPlayer({
 }: LessonVideoPlayerProps) {
   const videoViewRef = useRef<VideoView>(null);
   const lastPositionRef = useRef(initialPositionSeconds);
-  const onSavePositionRef = useRef(onSavePosition);
-  const onMarkCompleteRef = useRef(onMarkComplete);
+  const onSavePositionRef = useSyncRef(onSavePosition);
+  const onMarkCompleteRef = useSyncRef(onMarkComplete);
   const hasAppliedInitialSeekRef = useRef(false);
   const hasMarkedCompleteRef = useRef(false);
-  onSavePositionRef.current = onSavePosition;
-  onMarkCompleteRef.current = onMarkComplete;
 
   const SEEK_DELTA_THRESHOLD = 4;
   const SEEK_SETTLE_MS = 1500;
@@ -62,6 +62,7 @@ export function LessonVideoPlayer({
     p.staysActiveInBackground = true;
     if (initialPositionSeconds > 0) {
       p.currentTime = initialPositionSeconds;
+      hasAppliedInitialSeekRef.current = true;
     }
     p.play();
   });
@@ -112,25 +113,11 @@ export function LessonVideoPlayer({
     }
   });
 
-  const { status } = useEvent(player, 'statusChange', { status: player.status });
+  const [playerStatus, setPlayerStatus] = useState(player.status);
 
   useEventListener(player, 'statusChange', ({ status: s }) => {
-    if (
-      s === 'readyToPlay' &&
-      initialPositionSeconds > 0 &&
-      !hasAppliedInitialSeekRef.current
-    ) {
-      hasAppliedInitialSeekRef.current = true;
-      player.currentTime = initialPositionSeconds;
-    }
+    setPlayerStatus(s);
   });
-
-  useEffect(() => {
-    if (initialPositionSeconds > 0 && !hasAppliedInitialSeekRef.current) {
-      hasAppliedInitialSeekRef.current = true;
-      player.currentTime = initialPositionSeconds;
-    }
-  }, [initialPositionSeconds, player]);
 
   const safeStopPiP = useCallback(() => {
     try {
@@ -138,7 +125,7 @@ export function LessonVideoPlayer({
       if (result && typeof (result as Promise<unknown>).catch === 'function') {
         (result as Promise<unknown>).catch(() => {});
       }
-    } catch (_) {}
+    } catch {}
   }, []);
 
   const safeStartPiP = useCallback(() => {
@@ -147,7 +134,7 @@ export function LessonVideoPlayer({
       if (result && typeof (result as Promise<unknown>).catch === 'function') {
         (result as Promise<unknown>).catch(() => {});
       }
-    } catch (_) {}
+    } catch {}
   }, []);
 
   useFocusEffect(
@@ -156,10 +143,10 @@ export function LessonVideoPlayer({
         safeStopPiP();
         try {
           player.pause();
-        } catch (_) {}
+        } catch {}
         onSavePositionRef.current(lastPositionRef.current, true);
       };
-    }, [player, safeStopPiP]),
+    }, [player, safeStopPiP, onSavePositionRef]),
   );
 
   useEffect(() => {
@@ -184,22 +171,14 @@ export function LessonVideoPlayer({
         safeStopPiP();
         try {
           player.play();
-        } catch (_) {}
+        } catch {}
       }
     });
     return () => sub.remove();
   }, [player, safeStartPiP, safeStopPiP]);
 
-  const isLoading = status === 'loading' || status === 'idle';
-  const [showLoader, setShowLoader] = useState(false);
-
-  useEffect(() => {
-    if (isLoading) {
-      const t = setTimeout(() => setShowLoader(true), 400);
-      return () => clearTimeout(t);
-    }
-    setShowLoader(false);
-  }, [isLoading]);
+  const isLoading = playerStatus === 'loading' || playerStatus === 'idle';
+  const showLoader = useDelayedTrue(isLoading, 400);
 
   return (
     <View
