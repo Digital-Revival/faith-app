@@ -468,6 +468,8 @@
     "videoQualityLow": "480p",
     "videoQualityDataSaver": "Data saver",
     "videoQualityDescription": "Affects loading speed and data usage",
+    "easyRead": "Easy reading mode",
+    "easyReadDescription": "Larger text and a simplified Bible school experience",
     "whatsNew": "What's New",
     "whatsNewSubtitle": "Release notes and updates"
   },
@@ -529,6 +531,10 @@
   "lessons": {"lessonNumber": "Lesson {{number}}","content": "Content of this lesson","goal": "Goal of this lesson","nextLesson": "Next: Lesson {{number}}","backToModule": "Back to module","completed": "Completed","locked": "Locked","unlockHint": "Complete lesson {{number}} to unlock","videoLoadError": "Video could not load. Tap to retry.","introRequiredMessage": "Watch the introduction video first",
     "introPageLockedMessage": "Finish watching the video above to unlock the first lesson",
     "watchIntro": "Watch intro",
+    "readSummary": "Read summary",
+    "readFullText": "Read full text",
+    "hideSummary": "Hide text",
+    "noTextAvailable": "No text available for this lesson",
     "lockedModalTitle": "Lesson locked","lockedModalMessage": "Complete lesson {{number}} first to continue.","lockedModalMessageWithModule": "Complete lesson {{number}} of {{module}} first to continue.","lockedModalMessageModuleLesson": "Complete module {{moduleNumber}} lesson {{number}} first to continue.","lockedModalMessageExamModule": "Complete the exam of module {{moduleNumber}} first to unlock this lesson.","lockedModalMessageExamWithModule": "Complete the exam of {{module}} first to unlock this lesson.","lockedModalMessageFirstLesson": "Complete the previous module's exam first to unlock this lesson.","lockedModalOk": "Close","lockedModalGoToLesson": "Go to lesson {{number}}","lockedModalGoToLessonModule": "Go to module {{moduleNumber}} lesson {{number}}","lockedModalGoToExam": "Go to exam","lockedModalGoToExamModule": "Go to exam of module {{moduleNumber}}","modules":{"1":{"1":"What is Faith?","2":"The Object of Faith","3":"Growing in Faith","4":"Faith and Works","5":"Living by Faith"},"2":{"1":"God's Heart for Healing","2":"Biblical Foundations of Healing","3":"Receiving Healing","4":"Ministering Healing","5":"Testimonies of Healing"},"3":{"1":"Understanding Bondage","2":"The Authority of Christ","3":"Steps to Freedom","4":"Walking in Deliverance","5":"Helping Others Find Freedom"},"4":{"1":"The Power of Praise","2":"Praise vs. Worship","3":"Entering His Presence","4":"Worship in Spirit and Truth","5":"A Lifestyle of Praise"},"5":{"1":"Heaven: Our Eternal Home","2":"Understanding Hell","3":"The Final Judgment","4":"Living with Eternal Perspective","5":"Preparing for Eternity"},"6":{"1":"Discovering Your Gifts","2":"The Gift of Prophecy","3":"Words of Knowledge and Wisdom","4":"Faith and Healing Gifts","5":"Stewarding Spiritual Gifts"},"7":{"1":"Created for Purpose","2":"Discovering Your Calling","3":"Obstacles to Fulfilling Your Call","4":"Walking in Your Destiny","5":"Finishing Well"},"8":{"1":"The Power of Prayer","2":"Praying God's Word","3":"Intercession Basics","4":"Praying for Your City","5":"Developing a Prayer Life"},"9":{"1":"Who is the Holy Spirit?","2":"Baptism in the Spirit","3":"The Fruit of the Spirit","4":"Hearing the Spirit","5":"Walking in the Spirit Daily"},"10":{"1":"Faith Beyond Words","2":"Faith That Moves Mountains","3":"Overcoming Doubt","4":"Faith in Trials","5":"Legacy of Faith"},"11":{"1":"The Living Word","2":"Studying Scripture","3":"Meditating on God's Word","4":"Applying Scripture","5":"The Word in Your Life"},"12":{"1":"God's Design for Relationships","2":"Marriage and Family","3":"Friendship and Community","4":"Conflict Resolution","5":"Restoring Broken Relationships"},"13":{"1":"Servant Leadership","2":"Leading by Example","3":"Empowering Others","4":"Handling Responsibility","5":"Leadership Under Pressure"},"14":{"1":"The Great Commission","2":"Your Personal Testimony","3":"Sharing with Boldness","4":"Reaching Your World","5":"Making Disciples"},"15":{"1":"Who You Are in Christ","2":"Breaking False Identities","3":"Sons and Daughters","4":"Living from Identity","5":"Your Royal Inheritance"},"16":{"1":"Understanding Fear","2":"Fear vs. Faith","3":"God's Perfect Love","4":"Conquering Common Fears","5":"Freedom from Fear"},"17":{"1":"The Joy of Giving","2":"Biblical Principles of Giving","3":"Tithing and Offerings","4":"Generosity as Worship","5":"Reaping What You Sow"},"18":{"1":"The Sabbath Principle","2":"Rest in God","3":"Managing Your Time","4":"Restoration Through Rest","5":"A Rhythm of Rest"},"19":{"1":"Citizens of Heaven","2":"Kingdom Values","3":"Seeking First the Kingdom","4":"Kingdom Influence","5":"Living for the King"},"20":{"1":"Review: Your Journey","2":"Key Lessons Recap","3":"Next Steps","4":"Graduation Celebration","5":"Continuing the Journey"}}},
   "lessonsPage": {"title": "Lessons", "empty": "No lessons in this module", "lessonsCount": "{{count}} lessons", "currentLesson": "Current lesson", "otherLessons": "Lessons", "remaining": "{{count}} min left"},
   "handouts": {"title": "Handouts","lesson": "Lesson handout","module": "Module handout"},
@@ -537,5 +543,10 @@
     "loadError": "Could not load the latest content. Showing saved or offline data.",
     "retry": "Try again"
   },
-  "exam": {"takeExam": "Take exam","unlockHint": "Complete all lessons to unlock","readyHint": "All lessons completed","passed": "Exam passed","passedHint": "You've completed this module's exam","failedScore": "{{score}}% - {{correct}}/{{total}} correct","failedScorePercent": "{{score}}%","retryHint": "Tap to try again","retryHintWithAttempt": "Attempt {{count}} - Tap to try again","alreadyPassed": "You have already passed this exam"}
+  "exam": {"takeExam": "Take exam","unlockHint": "Complete all lessons to unlock","readyHint": "All lessons completed","passed": "Exam passed","passedHint": "You've completed this module's exam","failedScore": "{{score}}% - {{correct}}/{{total}} correct","failedScorePercent": "{{score}}%","retryHint": "Tap to try again","retryHintWithAttempt": "Attempt {{count}} - Tap to try again","alreadyPassed": "You have already passed this exam","nextQuestion": "Next question","reviewAnswers": "Review answers"},
+  "simple": {
+    "common": {
+      "continue": "Continue"
+    }
+  }
 }

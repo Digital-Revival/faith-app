@@ -1,6 +1,7 @@
 import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
 import { LockOverlay } from '@/components/common/LockOverlay';
+import { useEasyReadTypography } from '@/hooks/useEasyReadTypography';
 import type { ThemeColors } from '@/hooks/useTheme';
 import { useVimeoThumbnail } from '@/hooks/useVimeoThumbnail';
 import type { LessonLike } from '@/types/bibleschool';
@@ -18,6 +19,7 @@ export function NextLessonCard({
   nextLesson,
   theme,
   t,
+  easyReadEnabled = false,
   isLocked,
   onPress,
   onLockedPress,
@@ -25,10 +27,12 @@ export function NextLessonCard({
   nextLesson: LessonLike;
   theme: ThemeColors;
   t: (key: string, params?: Record<string, string | number>) => string;
+  easyReadEnabled?: boolean;
   isLocked: boolean;
   onPress: () => void;
   onLockedPress?: () => void;
 }) {
+  const { minTouchTargetStyle } = useEasyReadTypography();
   const videoIdForThumb = !nextLesson.thumbnailUrl && nextLesson.videoId ? nextLesson.videoId : undefined;
   const { data: vimeoThumbnail, isLoading } = useVimeoThumbnail(videoIdForThumb);
   const thumbnailUrl = nextLesson.thumbnailUrl ?? vimeoThumbnail ?? undefined;
@@ -74,6 +78,7 @@ export function NextLessonCard({
         onPress={handlePress}
         activeOpacity={0.7}
         className="cursor-pointer"
+        style={easyReadEnabled ? minTouchTargetStyle : undefined}
       >
       <Box
         className="rounded-2xl overflow-hidden"
@@ -83,7 +88,10 @@ export function NextLessonCard({
           borderColor: theme.cardBorder,
         }}
       >
-        <Box className="flex-row items-center py-3 pr-4">
+        <Box
+          className="flex-row items-center py-3 pr-4"
+          style={easyReadEnabled ? { minHeight: 64, paddingVertical: 16 } : undefined}
+        >
           <Box className="pl-3 mr-4">
             <Box
               style={{
@@ -103,7 +111,7 @@ export function NextLessonCard({
             </Box>
           </Box>
           <Box className="flex-1 justify-center min-w-0">
-            {showNumberSeparately && (
+            {showNumberSeparately && !easyReadEnabled && (
               <Text
                 className="text-xs font-medium mb-0.5"
                 style={{ color: theme.textSecondary }}
@@ -112,11 +120,11 @@ export function NextLessonCard({
               </Text>
             )}
             <Text
-              className="text-base font-medium"
+              className={easyReadEnabled ? 'text-lg font-semibold' : 'text-base font-medium'}
               style={{ color: theme.textPrimary }}
               numberOfLines={2}
             >
-              {titleStr}
+              {easyReadEnabled ? t('simple.common.continue') : titleStr}
             </Text>
           </Box>
           {isLocked ? (

@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react';
 import type { Ionicons } from '@expo/vector-icons';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
+import { EasyReadToggle } from '../_components/EasyReadToggle';
 import { ThemeSwitcher } from '../_components/ThemeSwitcher';
 import { VideoQualitySelector } from '../_components/VideoQualitySelector';
 import { NotificationToggle } from '../_components/NotificationToggle';
@@ -36,6 +37,14 @@ export const SETTINGS_SECTIONS: SettingsSectionConfig[] = [
         componentProps: { fullWidth: true },
         fullWidthChildren: true,
         useCard: true,
+      },
+      {
+        id: 'easy-read',
+        icon: 'accessibility',
+        labelKey: 'settings.easyRead',
+        descriptionKey: 'settings.easyReadDescription',
+        component: EasyReadToggle,
+        isLast: false,
       },
       {
         id: 'theme',

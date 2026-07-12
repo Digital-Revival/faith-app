@@ -7,6 +7,7 @@ import { usePrefetchLessonThumbnails } from '@/hooks/usePrefetchLessonThumbnails
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useEasyRead } from '@/contexts/EasyReadContext';
 import { useLocalSearchParams, useNavigation, router } from 'expo-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { bzzt, bzztWarning } from '@/utils/haptics';
@@ -52,6 +53,7 @@ export default function ModuleLessonsScreen() {
   const { t, locale } = useTranslation();
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
+  const { enabled: easyReadEnabled } = useEasyRead();
   const userId = user?.id;
 
   const { data: module } = useModule(id, locale);
@@ -283,7 +285,7 @@ export default function ModuleLessonsScreen() {
         }
       >
         <ModuleHeroBanner module={module} />
-        {module.description.trim() ? (
+        {!easyReadEnabled && module.description.trim() ? (
           <Text
             className="text-base mb-6"
             style={{ color: theme.textSecondary }}
@@ -310,6 +312,7 @@ export default function ModuleLessonsScreen() {
         ) : (
           <ModuleLessonList
             moduleId={id!}
+            easyReadEnabled={easyReadEnabled}
             lessons={lessons}
             introductionVimeoId={introductionVimeoId}
             introWatched={introWatched}

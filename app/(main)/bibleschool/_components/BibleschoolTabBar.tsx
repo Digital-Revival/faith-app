@@ -1,17 +1,19 @@
 import { Text } from '@/components/ui/text';
 import { useBibleschoolTab } from '@/contexts/BibleschoolTabContext';
+import { useEasyRead } from '@/contexts/EasyReadContext';
 import { routes } from '@/constants/routes';
+import { useEasyReadTypography } from '@/hooks/useEasyReadTypography';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { bzzt } from '@/utils/haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const TABS = [
+const ALL_TABS = [
   { route: 'index' as const, href: () => routes.bibleschool(), icon: 'home' as const, labelKey: 'navbar.overview' },
   { route: 'modules' as const, href: () => routes.bibleschoolModules(), icon: 'library' as const, labelKey: 'navbar.modules' },
   { route: 'voortgang' as const, href: () => routes.bibleschoolVoortgang(), icon: 'stats-chart' as const, labelKey: 'navbar.voortgang' },
@@ -21,13 +23,30 @@ function BibleschoolTabBarInner() {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const { t } = useTranslation();
+  const { enabled: easyReadEnabled } = useEasyRead();
+  const { scaleFontSize, scaleIconSize, minTouchTargetStyle } =
+    useEasyReadTypography();
   const { activeTab, setActiveTab, setNavigationDirection } = useBibleschoolTab();
   const isDark = theme.isDark;
   const borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
   const inactiveIconColor = theme.tabInactiveText;
   const inactiveTextColor = theme.tabInactiveText;
 
-  const getIsFocused = (tab: (typeof TABS)[0]) => {
+  const tabs = useMemo(
+    () =>
+      easyReadEnabled
+        ? ALL_TABS.filter((tab) => tab.route !== 'voortgang')
+        : ALL_TABS,
+    [easyReadEnabled],
+  );
+
+  const labelFontSize = scaleFontSize(easyReadEnabled ? 14 : 10);
+  const labelLineHeight = scaleFontSize(easyReadEnabled ? 18 : 12);
+  const iconSize = scaleIconSize(20);
+  const iconContainerHeight = scaleIconSize(20);
+  const labelContainerHeight = scaleFontSize(easyReadEnabled ? 18 : 12);
+
+  const getIsFocused = (tab: (typeof ALL_TABS)[0]) => {
     return tab.route === activeTab;
   };
 
@@ -55,14 +74,14 @@ function BibleschoolTabBarInner() {
           borderColor,
         }}
       >
-        {TABS.map((tab) => {
+        {tabs.map((tab) => {
           const isFocused = getIsFocused(tab);
           const config = { icon: tab.icon, label: t(tab.labelKey) };
 
           const onPress = () => {
             bzzt();
-            const currentIndex = TABS.findIndex((t) => t.route === activeTab);
-            const targetIndex = TABS.findIndex((t) => t.route === tab.route);
+            const currentIndex = tabs.findIndex((item) => item.route === activeTab);
+            const targetIndex = tabs.findIndex((item) => item.route === tab.route);
             setNavigationDirection(targetIndex < currentIndex ? 'left' : 'right');
             setActiveTab(tab.route);
             router.navigate(tab.href());
@@ -81,6 +100,7 @@ function BibleschoolTabBarInner() {
                 justifyContent: 'center',
                 paddingVertical: 4,
                 paddingHorizontal: 0,
+                ...minTouchTargetStyle,
               }}
             >
               {isFocused ? (
@@ -103,20 +123,20 @@ function BibleschoolTabBarInner() {
                     width: '100%',
                   }}
                 >
-                  <View style={{ height: 20, justifyContent: 'center' }}>
+                  <View style={{ height: iconContainerHeight, justifyContent: 'center' }}>
                     <Ionicons
                       name={config.icon}
-                      size={20}
+                      size={iconSize}
                       color={theme.buttonPrimaryContrast}
                     />
                   </View>
-                  <View style={{ height: 12, justifyContent: 'center' }}>
+                  <View style={{ height: labelContainerHeight, justifyContent: 'center' }}>
                     <Text
                       style={{
-                        fontSize: 10,
+                        fontSize: labelFontSize,
                         fontWeight: '600',
                         color: theme.buttonPrimaryContrast,
-                        lineHeight: 12,
+                        lineHeight: labelLineHeight,
                       }}
                     >
                       {config.label}
@@ -134,20 +154,20 @@ function BibleschoolTabBarInner() {
                     paddingHorizontal: 8,
                   }}
                 >
-                  <View style={{ height: 20, justifyContent: 'center' }}>
+                  <View style={{ height: iconContainerHeight, justifyContent: 'center' }}>
                     <Ionicons
                       name={`${config.icon}-outline` as keyof typeof Ionicons.glyphMap}
-                      size={20}
+                      size={iconSize}
                       color={inactiveIconColor}
                     />
                   </View>
-                  <View style={{ height: 12, justifyContent: 'center' }}>
+                  <View style={{ height: labelContainerHeight, justifyContent: 'center' }}>
                     <Text
                       style={{
-                        fontSize: 10,
+                        fontSize: labelFontSize,
                         fontWeight: '500',
                         color: inactiveTextColor,
-                        lineHeight: 12,
+                        lineHeight: labelLineHeight,
                       }}
                     >
                       {config.label}

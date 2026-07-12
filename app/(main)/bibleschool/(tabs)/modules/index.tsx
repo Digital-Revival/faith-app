@@ -8,6 +8,7 @@ import {
 } from "@/hooks/useBibleschoolContent";
 import { useLessonUnlocks } from "@/hooks/useLessonUnlocks";
 import { prefetchLessonThumbnailsForModule } from "@/hooks/usePrefetchLessonThumbnails";
+import { useEasyRead } from "@/contexts/EasyReadContext";
 import { useTheme } from "@/hooks/useTheme";
 import { useTranslation } from "@/hooks/useTranslation";
 import type { BibleschoolModule } from "@/types/bibleschool";
@@ -27,6 +28,7 @@ import { useModuleProgress } from "./_hooks/useModuleProgress";
 
 export default function BibleSchoolModulesScreen() {
   const theme = useTheme();
+  const { enabled: easyReadEnabled } = useEasyRead();
   const { t, locale } = useTranslation();
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
@@ -204,7 +206,9 @@ export default function BibleSchoolModulesScreen() {
         >
           {t("navbar.modules")}
         </Text>
-        <ModulesSearchBar value={searchQuery} onChangeText={setSearchQuery} />
+        {!easyReadEnabled ? (
+          <ModulesSearchBar value={searchQuery} onChangeText={setSearchQuery} />
+        ) : null}
         {hasNoSearchResults ? (
           <Text
             className="text-center text-base py-8 px-2"
@@ -215,6 +219,7 @@ export default function BibleSchoolModulesScreen() {
         ) : (
           <ModulesCatalogSections
             theme={theme}
+            easyReadEnabled={easyReadEnabled}
             allModulesCompleted={allModulesCompleted}
             moduleCount={modules.length}
             currentModuleLabel={t("modules.currentModule")}

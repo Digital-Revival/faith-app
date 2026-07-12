@@ -2,6 +2,7 @@ import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
 import { VideoThumbnail } from '@/components/ui/VideoThumbnail';
 import { LockOverlay } from '@/components/common/LockOverlay';
+import { useEasyReadTypography } from '@/hooks/useEasyReadTypography';
 import { useTheme } from '@/hooks/useTheme';
 import { queryKeys } from '@/services/queryKeys';
 import {
@@ -46,6 +47,7 @@ export function LessonRow({
   lesson,
   theme,
   t,
+  easyReadEnabled = false,
   isCompleted,
   isLocked,
   videoPositionSeconds,
@@ -55,12 +57,14 @@ export function LessonRow({
   lesson: LessonLike;
   theme: ReturnType<typeof useTheme>;
   t: (key: string, params?: Record<string, string | number>) => string;
+  easyReadEnabled?: boolean;
   isCompleted: boolean;
   isLocked: boolean;
   videoPositionSeconds?: number;
   onPress: () => void;
   onLockedPress?: (lesson: LessonLike) => void;
 }) {
+  const { scaleFontSize, minTouchTargetStyle } = useEasyReadTypography();
   const videoIdForThumb = !lesson.thumbnailUrl && lesson.videoId ? lesson.videoId : undefined;
   const vimeoMetaEnabled = !!lesson.videoId && (!lesson.thumbnailUrl || !isLocked);
 
@@ -107,12 +111,26 @@ export function LessonRow({
   const titleStr = lesson.title ?? (lesson.titleKey ? t(lesson.titleKey as never) : '');
   const showNumberSeparately = !titleStr.trim().toLowerCase().startsWith(lessonNumberStr.trim().toLowerCase());
 
+  const accessibilityLabel = isLocked
+    ? `${titleStr}, ${t('lessons.locked')}`
+    : isCompleted
+      ? `${titleStr}, ${t('lessons.completed')}`
+      : titleStr;
+
+  const rowPaddingVertical = easyReadEnabled ? scaleFontSize(12) : undefined;
+
   return (
     <TouchableOpacity
       onPress={handlePress}
       activeOpacity={0.7}
       className="cursor-pointer"
-      style={isLocked ? { opacity: 0.6 } : undefined}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityState={{ disabled: isLocked }}
+      style={[
+        isLocked ? { opacity: 0.6 } : undefined,
+        easyReadEnabled ? minTouchTargetStyle : undefined,
+      ]}
     >
       <Box
         className="rounded-2xl overflow-hidden"
@@ -122,7 +140,10 @@ export function LessonRow({
           borderColor: theme.cardBorder,
         }}
       >
-        <Box className="flex-row items-center py-3 pr-4">
+        <Box
+          className="flex-row items-center py-3 pr-4"
+          style={rowPaddingVertical ? { paddingVertical: rowPaddingVertical } : undefined}
+        >
           <Box className="pl-3 mr-4">
             <Box
               style={{

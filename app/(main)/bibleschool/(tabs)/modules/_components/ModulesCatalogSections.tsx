@@ -9,6 +9,7 @@ import { ModulesYearCompleteCard } from '@/components/bibleschool/ModulesYearCom
 
 interface ModulesCatalogSectionsProps {
   theme: ThemeColors;
+  easyReadEnabled?: boolean;
   allModulesCompleted: boolean;
   moduleCount: number;
   currentModuleLabel: string;
@@ -27,8 +28,30 @@ interface ModulesCatalogSectionsProps {
   onModulePress: (module: BibleschoolModule) => void;
 }
 
+function renderModuleCard(
+  module: BibleschoolModule,
+  progressMap: Record<string, ModuleProgress | null | undefined>,
+  attemptCountMap: Record<string, number>,
+  onModulePress: (module: BibleschoolModule) => void,
+) {
+  return (
+    <ModuleCard
+      key={module.id}
+      module={{
+        ...module,
+        title: module.title,
+        backgroundImageUrl: module.backgroundImageUrl,
+      }}
+      progress={progressMap[module.id] ?? null}
+      attemptCount={attemptCountMap[module.id] ?? 0}
+      onPress={() => onModulePress(module)}
+    />
+  );
+}
+
 export function ModulesCatalogSections({
   theme,
+  easyReadEnabled = false,
   allModulesCompleted,
   moduleCount,
   currentModuleLabel,
@@ -50,6 +73,44 @@ export function ModulesCatalogSections({
     ? year1AllModulesLabel
     : allModulesLabel;
 
+  if (easyReadEnabled) {
+    const activeModules = currentModuleData
+      ? [currentModuleData, ...remainingModules.filter((m) => m.id !== currentModuleData.id)]
+      : remainingModules;
+
+    return (
+      <VStack className="gap-6">
+        {allModulesCompleted ? (
+          <ModulesYearCompleteCard theme={theme} moduleCount={moduleCount} />
+        ) : null}
+        <VStack className="gap-2">
+          <Text
+            className="text-xs font-semibold uppercase tracking-wider"
+            style={{ color: theme.textTertiary }}
+          >
+            {catalogTitle}
+          </Text>
+          {activeModules.map((module) =>
+            renderModuleCard(module, progressMap, attemptCountMap, onModulePress),
+          )}
+        </VStack>
+        {completedModules.length > 0 ? (
+          <VStack className="gap-2">
+            <Text
+              className="text-xs font-semibold uppercase tracking-wider"
+              style={{ color: theme.textTertiary }}
+            >
+              {completedModulesLabel}
+            </Text>
+            {completedModules.map((module) =>
+              renderModuleCard(module, progressMap, attemptCountMap, onModulePress),
+            )}
+          </VStack>
+        ) : null}
+      </VStack>
+    );
+  }
+
   return (
     <VStack className="gap-6">
       {allModulesCompleted ? (
@@ -63,17 +124,12 @@ export function ModulesCatalogSections({
           >
             {currentModuleLabel}
           </Text>
-          <ModuleCard
-            key={currentModuleData.id}
-            module={{
-              ...currentModuleData,
-              title: currentModuleData.title,
-              backgroundImageUrl: currentModuleData.backgroundImageUrl,
-            }}
-            progress={progressMap[currentModuleData.id] ?? null}
-            attemptCount={attemptCountMap[currentModuleData.id] ?? 0}
-            onPress={() => onModulePress(currentModuleData)}
-          />
+          {renderModuleCard(
+            currentModuleData,
+            progressMap,
+            attemptCountMap,
+            onModulePress,
+          )}
         </VStack>
       ) : null}
       <VStack className="gap-2">
@@ -83,19 +139,9 @@ export function ModulesCatalogSections({
           onToggle={onToggleAllModules}
           headerBg={theme.tabInactiveBg}
         >
-          {remainingModules.map((module) => (
-            <ModuleCard
-              key={module.id}
-              module={{
-                ...module,
-                title: module.title,
-                backgroundImageUrl: module.backgroundImageUrl,
-              }}
-              progress={progressMap[module.id] ?? null}
-              attemptCount={attemptCountMap[module.id] ?? 0}
-              onPress={() => onModulePress(module)}
-            />
-          ))}
+          {remainingModules.map((module) =>
+            renderModuleCard(module, progressMap, attemptCountMap, onModulePress),
+          )}
         </CollapsibleSection>
         {!allModulesCompleted && completedModules.length > 0 ? (
           <CollapsibleSection
@@ -104,19 +150,9 @@ export function ModulesCatalogSections({
             onToggle={onToggleCompletedModules}
             headerBg={theme.tabInactiveBg}
           >
-            {completedModules.map((module) => (
-              <ModuleCard
-                key={module.id}
-                module={{
-                  ...module,
-                  title: module.title,
-                  backgroundImageUrl: module.backgroundImageUrl,
-                }}
-                progress={progressMap[module.id] ?? null}
-                attemptCount={attemptCountMap[module.id] ?? 0}
-                onPress={() => onModulePress(module)}
-              />
-            ))}
+            {completedModules.map((module) =>
+              renderModuleCard(module, progressMap, attemptCountMap, onModulePress),
+            )}
           </CollapsibleSection>
         ) : null}
       </VStack>

@@ -5,6 +5,7 @@ import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { useAuth } from '@/contexts/AuthContext';
 import { routes } from '@/constants/routes';
+import { useEasyRead } from '@/contexts/EasyReadContext';
 import { useBibleschoolTab } from '@/contexts/BibleschoolTabContext';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -22,6 +23,7 @@ export function ProgressCard() {
   const { user } = useAuth();
   const theme = useTheme();
   const { t, locale } = useTranslation();
+  const { enabled: easyReadEnabled } = useEasyRead();
   const { data: modules = [] } = useModules(locale);
   const totalLessons = useMemo(
     () => totalLessonCountInCurriculum(sortModulesByOrder(modules)),
@@ -38,6 +40,12 @@ export function ProgressCard() {
 
   const handlePress = () => {
     bzzt();
+    if (easyReadEnabled) {
+      setNavigationDirection('right');
+      setActiveTab('modules');
+      router.push(routes.bibleschoolModules());
+      return;
+    }
     setNavigationDirection('right');
     setActiveTab('voortgang');
     router.push(routes.bibleschoolVoortgang());
@@ -62,15 +70,19 @@ export function ProgressCard() {
                 >
                   {t('overview.progressTitle')}
                 </Text>
-                <HStack className="items-center gap-1">
-                  <Text
-                    className="text-sm font-semibold"
-                    style={{ color: theme.textSecondary }}
-                  >
-                    {percentage}%
-                  </Text>
+                {!easyReadEnabled ? (
+                  <HStack className="items-center gap-1">
+                    <Text
+                      className="text-sm font-semibold"
+                      style={{ color: theme.textSecondary }}
+                    >
+                      {percentage}%
+                    </Text>
+                    <Ionicons name="chevron-forward" size={14} color={theme.textTertiary} />
+                  </HStack>
+                ) : (
                   <Ionicons name="chevron-forward" size={14} color={theme.textTertiary} />
-                </HStack>
+                )}
               </HStack>
               <Text
                 className="text-sm mt-1"
@@ -78,9 +90,11 @@ export function ProgressCard() {
               >
                 {t('overview.progressCount', { completed: completedCount, total: totalLessons })}
               </Text>
-              <Box className="mt-3">
-                <ProgressBar value={percentage} />
-              </Box>
+              {!easyReadEnabled ? (
+                <Box className="mt-3">
+                  <ProgressBar value={percentage} />
+                </Box>
+              ) : null}
             </VStack>
           </HStack>
         </Box>

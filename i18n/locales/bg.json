@@ -469,6 +469,8 @@
     "videoQualityLow": "480p",
     "videoQualityDataSaver": "Икономия на данни",
     "videoQualityDescription": "Влияе на скоростта на зареждане и използването на данни",
+    "easyRead": "Лесно четене",
+    "easyReadDescription": "По-голям текст и опростено изживяване в библейското училище",
     "whatsNew": "Какво е новото",
     "whatsNewSubtitle": "Бележки за версията и актуализации"
   },
@@ -589,6 +591,10 @@
     "introRequiredMessage": "Гледайте първо въвеждащото видео",
     "introPageLockedMessage": "Завършете видеото по-горе, за да отключите първия урок",
     "watchIntro": "Гледай въвеждащото",
+    "readSummary": "Прочети обобщение",
+    "readFullText": "Прочети целия текст",
+    "hideSummary": "Скрий текста",
+    "noTextAvailable": "Няма наличен текст за този урок",
     "lockedModalTitle": "Урокът е заключен",
     "lockedModalMessage": "Завършете първо урок {{number}}, за да продължите.",
     "lockedModalMessageWithModule": "Завършете първо урок {{number}} от {{module}}, за да продължите.",
@@ -823,6 +829,13 @@
     "failedScorePercent": "{{score}}%",
     "retryHint": "Докоснете за повторен опит",
     "retryHintWithAttempt": "Опит {{count}} - Докоснете за повторен опит",
-    "alreadyPassed": "Вече сте преминали този изпит"
+    "alreadyPassed": "Вече сте преминали този изпит",
+    "nextQuestion": "Следващ въпрос",
+    "reviewAnswers": "Преглед на отговорите"
+  },
+  "simple": {
+    "common": {
+      "continue": "Продължи"
+    }
   }
 }

@@ -17,6 +17,7 @@ import {
 
 interface ModuleLessonListProps {
   moduleId: string;
+  easyReadEnabled?: boolean;
   lessons: BibleschoolLesson[];
   introductionVimeoId?: string | null;
   introWatched: boolean;
@@ -36,6 +37,7 @@ interface ModuleLessonListProps {
 
 export function ModuleLessonList({
   moduleId,
+  easyReadEnabled = false,
   lessons,
   introductionVimeoId,
   introWatched,
@@ -77,6 +79,7 @@ export function ModuleLessonList({
               lesson={currentLessonRow}
               theme={theme}
               t={t}
+              easyReadEnabled={easyReadEnabled}
               isCompleted={completedLessonIds.has(currentLessonRow.id)}
               isLocked={false}
               videoPositionSeconds={lessonPositionMap.get(currentLessonRow.id)}
@@ -112,6 +115,7 @@ export function ModuleLessonList({
                 lesson={lesson}
                 theme={theme}
                 t={t}
+                easyReadEnabled={easyReadEnabled}
                 isCompleted={completedLessonIds.has(lesson.id)}
                 isLocked={!isLessonUnlocked(moduleId, lesson)}
                 videoPositionSeconds={lessonPositionMap.get(lesson.id)}

@@ -7,6 +7,7 @@ import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { routes } from "@/constants/routes";
 import { useAuth } from "@/contexts/AuthContext";
+import { useEasyRead } from "@/contexts/EasyReadContext";
 import { useModule } from "@/hooks/useBibleschoolContent";
 import { useLessonUnlocks } from "@/hooks/useLessonUnlocks";
 import { useButtonShadow } from "@/hooks/useShadows";
@@ -64,6 +65,7 @@ function upsertModuleProgressList(
 export default function ExamScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuth();
+  const { enabled: easyReadEnabled } = useEasyRead();
   const navigation = useNavigation();
   const theme = useTheme();
   const { t, locale } = useTranslation();
@@ -109,6 +111,8 @@ export default function ExamScreen() {
   } | null>(null);
   const [submitConfirmVisible, setSubmitConfirmVisible] = useState(false);
   const [leaveConfirmVisible, setLeaveConfirmVisible] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [reviewMode, setReviewMode] = useState(false);
   const [alreadyPassedModalVisible, setAlreadyPassedModalVisible] =
     useState(false);
   const alreadyPassedHandledRef = useRef(false);
@@ -159,25 +163,28 @@ export default function ExamScreen() {
               (q) => !valid[q.id],
             );
             if (firstUnansweredIndex >= 0) {
-              runDeferredTask(() => {
-                setTimeout(() => {
-                  const top =
-                    cardTopsRef.current[firstUnansweredIndex] ??
-                    firstUnansweredIndex * 280;
-                  const y = 24 + introHeightRef.current + top;
-                  scrollRef.current?.scrollTo({
-                    y: Math.max(0, y),
-                    animated: true,
-                  });
-                }, 500);
-              });
+              setCurrentQuestionIndex(firstUnansweredIndex);
+              if (!easyReadEnabled) {
+                runDeferredTask(() => {
+                  setTimeout(() => {
+                    const top =
+                      cardTopsRef.current[firstUnansweredIndex] ??
+                      firstUnansweredIndex * 280;
+                    const y = 24 + introHeightRef.current + top;
+                    scrollRef.current?.scrollTo({
+                      y: Math.max(0, y),
+                      animated: true,
+                    });
+                  }, 500);
+                });
+              }
             }
           }
         }
       })
       .catch(() => {})
       .finally(() => setProgressLoaded(true));
-  }, [user?.id, id, questions, progressLoaded]);
+  }, [user?.id, id, questions, progressLoaded, easyReadEnabled]);
 
   useEffect(() => {
     if (!user?.id || !id || Object.keys(selectedAnswers).length === 0) return;
@@ -283,11 +290,11 @@ export default function ExamScreen() {
     (questionId: string, optionId: string, questionIndex: number) => {
       if (submitted) return;
       setSelectedAnswers((prev) => ({ ...prev, [questionId]: optionId }));
-      if (questions && questionIndex < questions.length - 1) {
+      if (!easyReadEnabled && questions && questionIndex < questions.length - 1) {
         setTimeout(() => scrollToQuestion(questionIndex + 1), 300);
       }
     },
-    [submitted, questions, scrollToQuestion],
+    [submitted, questions, scrollToQuestion, easyReadEnabled],
   );
 
   const handleSubmit = useCallback(() => {
@@ -306,6 +313,8 @@ export default function ExamScreen() {
     }
     setSelectedAnswers({});
     setSubmitted(false);
+    setCurrentQuestionIndex(0);
+    setReviewMode(false);
     scrollRef.current?.scrollTo({ y: 0, animated: true });
   }, [user, id]);
 
@@ -501,6 +510,251 @@ export default function ExamScreen() {
           <Text style={{ color: theme.textSecondary }}>
             {t("lessonsPage.empty")}
           </Text>
+        </Box>
+      ) : easyReadEnabled ? (
+        <Box className="flex-1">
+          {reviewMode && submitted ? (
+            <ScrollView
+              className="flex-1"
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingTop: 24, paddingBottom: 24 }}
+            >
+              <VStack className="gap-6">
+                {questions.map((q, index) => (
+                  <QuestionCard
+                    key={q.id}
+                    question={q}
+                    questionNumber={index + 1}
+                    totalQuestions={questions.length}
+                    selectedId={selectedAnswers[q.id]}
+                    onSelect={() => {}}
+                    disabled
+                    showFeedback
+                    easyReadLarge
+                    theme={theme}
+                    t={t}
+                  />
+                ))}
+              </VStack>
+            </ScrollView>
+          ) : (
+            <Box className="flex-1 px-0" style={{ paddingTop: 24 }}>
+              {storyModule ? (
+                <VStack className="mb-4 items-center px-2">
+                  <Text
+                    className="text-xs font-semibold uppercase tracking-wider text-center mb-1.5"
+                    style={{ color: theme.textSecondary }}
+                  >
+                    {t('overview.moduleWithNumber', { number: storyModule.order })}
+                  </Text>
+                  <Text
+                    className="text-lg font-semibold text-center"
+                    style={{ color: theme.textPrimary }}
+                  >
+                    {storyModule.title}
+                  </Text>
+                </VStack>
+              ) : null}
+              {!submitted ? (
+                <Text
+                  className="text-base mb-4"
+                  style={{ color: theme.textSecondary }}
+                >
+                  {t("quiz.intro", {
+                    minCorrect: getMinCorrectRequired(questions.length),
+                    total: questions.length,
+                  })}
+                </Text>
+              ) : null}
+              {!submitted && questions[currentQuestionIndex] ? (
+                <QuestionCard
+                  question={questions[currentQuestionIndex]}
+                  questionNumber={currentQuestionIndex + 1}
+                  totalQuestions={questions.length}
+                  selectedId={selectedAnswers[questions[currentQuestionIndex].id]}
+                  onSelect={(optionId) =>
+                    handleSelectAnswer(
+                      questions[currentQuestionIndex].id,
+                      optionId,
+                      currentQuestionIndex,
+                    )
+                  }
+                  disabled={submitted}
+                  showFeedback={false}
+                  easyReadLarge
+                  theme={theme}
+                  t={t}
+                />
+              ) : null}
+            </Box>
+          )}
+          <Box
+            className="px-6 pt-4 pb-6"
+            style={{
+              paddingBottom: insets.bottom + 24,
+              backgroundColor: theme.pageBg,
+              borderTopWidth: 1,
+              borderTopColor: theme.cardBorder,
+            }}
+          >
+            {submitted ? (
+              <VStack className="gap-3">
+                {!reviewMode && questions.length > 0 ? (
+                  <Box
+                    className="rounded-xl px-4 py-3"
+                    style={{
+                      backgroundColor: theme.cardBg,
+                      borderWidth: 1,
+                      borderColor: theme.cardBorder,
+                    }}
+                    accessibilityLiveRegion="polite"
+                  >
+                    <Box className="flex-row items-center justify-between mb-2">
+                      <Text
+                        className="text-sm font-semibold uppercase tracking-wide"
+                        style={{ color: theme.textTertiary }}
+                      >
+                        {t("quiz.attemptNumber", { number: completedAttemptCount })}
+                      </Text>
+                      <Text
+                        className="text-base font-semibold"
+                        style={{ color: theme.textPrimary }}
+                      >
+                        {t("quiz.scoreSummary", {
+                          score: scorePercentage,
+                          correct: correctCount,
+                          total: questions.length,
+                        })}
+                      </Text>
+                    </Box>
+                    <Text
+                      className="text-base"
+                      style={{ color: theme.textSecondary }}
+                    >
+                      {t("quiz.fail", {
+                        minCorrect: getMinCorrectRequired(questions.length),
+                        total: questions.length,
+                      })}
+                    </Text>
+                  </Box>
+                ) : null}
+                {!reviewMode ? (
+                  <Button
+                    onPress={() => setReviewMode(true)}
+                    action="primary"
+                    variant="outline"
+                    size="lg"
+                    className="h-14 cursor-pointer rounded-full"
+                    style={{ borderColor: theme.cardBorder }}
+                  >
+                    <ButtonText
+                      className="text-base font-semibold"
+                      style={{ color: theme.textPrimary }}
+                    >
+                      {t("exam.reviewAnswers")}
+                    </ButtonText>
+                  </Button>
+                ) : null}
+                <Button
+                  onPress={handleRetry}
+                  action="primary"
+                  variant="solid"
+                  size="lg"
+                  className="h-14 cursor-pointer rounded-full"
+                  style={{
+                    backgroundColor: theme.buttonPrimary,
+                    ...buttonShadow,
+                    shadowColor: theme.buttonPrimary,
+                  }}
+                >
+                  <ButtonText
+                    className="text-base font-semibold"
+                    style={{ color: theme.buttonPrimaryContrast }}
+                  >
+                    {t("quiz.retry")}
+                  </ButtonText>
+                </Button>
+              </VStack>
+            ) : (
+              <VStack className="gap-3">
+                <Box>
+                  <Text
+                    className="text-base font-medium mb-1.5"
+                    style={{ color: theme.textSecondary }}
+                  >
+                    {t("quiz.questionOf", {
+                      current: currentQuestionIndex + 1,
+                      total: questions.length,
+                    })}
+                  </Text>
+                  <View
+                    className="h-2 rounded-full overflow-hidden"
+                    style={{ backgroundColor: theme.cardBorder }}
+                  >
+                    <View
+                      className="h-full rounded-full"
+                      style={{
+                        backgroundColor: theme.buttonPrimary,
+                        width: `${((currentQuestionIndex + 1) / questions.length) * 100}%`,
+                      }}
+                    />
+                  </View>
+                </Box>
+                {currentQuestionIndex < questions.length - 1 ? (
+                  <Button
+                    onPress={() => {
+                      if (!selectedAnswers[questions[currentQuestionIndex].id]) {
+                        toast.error(t("quiz.answerAll"));
+                        return;
+                      }
+                      setCurrentQuestionIndex((index) => index + 1);
+                    }}
+                    action="primary"
+                    variant="solid"
+                    size="lg"
+                    isDisabled={!selectedAnswers[questions[currentQuestionIndex]?.id]}
+                    className="h-14 cursor-pointer rounded-full"
+                    style={{
+                      backgroundColor: theme.buttonPrimary,
+                      ...buttonShadow,
+                      shadowColor: theme.buttonPrimary,
+                    }}
+                  >
+                    <ButtonText
+                      className="text-base font-semibold"
+                      style={{ color: theme.buttonPrimaryContrast }}
+                    >
+                      {t("exam.nextQuestion")}
+                    </ButtonText>
+                  </Button>
+                ) : (
+                  <Button
+                    onPress={handleSubmit}
+                    action="primary"
+                    variant="solid"
+                    size="lg"
+                    isDisabled={!allAnswered || submitMutation.isPending}
+                    className="h-14 cursor-pointer rounded-full"
+                    style={{
+                      backgroundColor: theme.buttonPrimary,
+                      ...buttonShadow,
+                      shadowColor: theme.buttonPrimary,
+                    }}
+                  >
+                    {submitMutation.isPending && (
+                      <ButtonSpinner className="mr-2" />
+                    )}
+                    <ButtonText
+                      className="text-base font-semibold"
+                      style={{ color: theme.buttonPrimaryContrast }}
+                    >
+                      {t("quiz.submit")}
+                    </ButtonText>
+                  </Button>
+                )}
+              </VStack>
+            )}
+          </Box>
         </Box>
       ) : (
         <Box className="flex-1">
@@ -746,6 +1000,7 @@ function QuestionCard({
   onSelect,
   disabled,
   showFeedback,
+  easyReadLarge = false,
   theme,
   t,
 }: {
@@ -756,11 +1011,16 @@ function QuestionCard({
   onSelect: (optionId: string) => void;
   disabled: boolean;
   showFeedback: boolean;
+  easyReadLarge?: boolean;
   theme: ReturnType<typeof useTheme>;
   t: (key: string, params?: Record<string, string | number>) => string;
 }) {
   const correctOptionId = question.options.find((o) => o.correct)?.id;
   const isCorrect = selectedId === correctOptionId;
+
+  const optionTextClass = easyReadLarge ? 'text-lg' : 'text-sm';
+  const optionPaddingClass = easyReadLarge ? 'p-4' : 'p-3';
+  const questionTextClass = easyReadLarge ? 'text-lg' : 'text-base';
 
   return (
     <Box
@@ -787,7 +1047,10 @@ function QuestionCard({
         </Text>
       </Box>
       {showFeedback && (
-        <Box className="flex-row items-center gap-2 mb-3">
+        <Box
+          className="flex-row items-center gap-2 mb-3"
+          accessibilityLiveRegion="polite"
+        >
           <Ionicons
             name={isCorrect ? "checkmark-circle" : "close-circle"}
             size={28}
@@ -804,7 +1067,7 @@ function QuestionCard({
         </Box>
       )}
       <Text
-        className="text-base font-semibold mb-4"
+        className={`${questionTextClass} font-semibold mb-4`}
         style={{ color: theme.textPrimary }}
       >
         {question.question ?? t(question.questionKey as never)}
@@ -836,20 +1099,25 @@ function QuestionCard({
               optionTextColor = theme.textSecondary;
             }
           } else if (isUserSelection) {
-            if (theme.isDark) {
-              optionBg = "#FFFFFF";
-              optionBorder = theme.cardBorder;
-              optionTextColor = "#171717";
-            } else {
-              optionBg = "#171717";
-              optionBorder = "#171717";
-              optionTextColor = "#FFFFFF";
-            }
+            optionBg = theme.buttonPrimary;
+            optionBorder = theme.buttonPrimary;
+            optionTextColor = theme.buttonPrimaryContrast;
           }
+
+          const optionLabel = opt.answer ?? t(opt.key as never);
+          const optionAccessibilityLabel = showFeedback
+            ? `${letterLabel}. ${optionLabel}${
+                showAsCorrect
+                  ? `, ${t('quiz.correct')}`
+                  : showAsIncorrect
+                    ? `, ${t('quiz.incorrect')}`
+                    : ''
+              }`
+            : `${letterLabel}. ${optionLabel}`;
 
           const optionContent = (
             <Box
-              className="rounded-xl p-3 flex-row items-center justify-between"
+              className={`rounded-xl ${optionPaddingClass} flex-row items-center justify-between`}
               style={{
                 backgroundColor: optionBg,
                 borderWidth: 1,
@@ -858,7 +1126,7 @@ function QuestionCard({
             >
               <Box className="flex-1 flex-row items-start gap-2">
                 <Text
-                  className="text-sm font-bold"
+                  className={`${easyReadLarge ? 'text-base' : 'text-sm'} font-bold`}
                   style={{
                     color: optionTextColor,
                     minWidth: 22,
@@ -868,10 +1136,10 @@ function QuestionCard({
                   {letterLabel}.
                 </Text>
                 <Text
-                  className="text-sm flex-1"
+                  className={`${optionTextClass} flex-1`}
                   style={{ color: optionTextColor }}
                 >
-                  {opt.answer ?? t(opt.key as never)}
+                  {optionLabel}
                 </Text>
               </Box>
               {showFeedback && (
@@ -907,6 +1175,9 @@ function QuestionCard({
               }}
               activeOpacity={0.7}
               className="cursor-pointer"
+              accessibilityRole="button"
+              accessibilityLabel={optionAccessibilityLabel}
+              accessibilityState={{ selected: isUserSelection, disabled }}
             >
               {optionContent}
             </TouchableOpacity>

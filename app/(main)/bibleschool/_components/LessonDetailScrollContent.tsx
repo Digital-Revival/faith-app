@@ -1,5 +1,6 @@
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
+import { useEasyRead } from '@/contexts/EasyReadContext';
 import type { ThemeColors } from '@/hooks/useTheme';
 import type { BibleschoolLesson, BibleschoolModule } from '@/types/bibleschool';
 import { HandoutButton } from './HandoutButton';
@@ -37,6 +38,7 @@ export function LessonDetailScrollContent({
   onLessonHandout: () => void;
   onModuleHandout: () => void;
 }) {
+  const { enabled: easyReadEnabled } = useEasyRead();
   const moduleHandoutUrl = module.moduleHandoutUrl ?? lesson.moduleHandoutUrl;
   const hasLessonHandout = !!lesson.lessonHandoutUrl;
   const hasModuleHandout = !!moduleHandoutUrl;
@@ -46,7 +48,7 @@ export function LessonDetailScrollContent({
     <>
       <LessonLessonBodyCard lesson={lesson} theme={theme} t={t} />
 
-      {hasAnyHandout ? (
+      {!easyReadEnabled && hasAnyHandout ? (
         <>
           <Text
             className="text-sm font-semibold uppercase tracking-wider mb-3"
@@ -78,7 +80,9 @@ export function LessonDetailScrollContent({
         style={{ color: theme.textSecondary }}
       >
         {nextLesson
-          ? t('lessons.nextLesson', { number: nextLesson.order })
+          ? easyReadEnabled
+            ? t('simple.common.continue')
+            : t('lessons.nextLesson', { number: nextLesson.order })
           : t('exam.takeExam')}
       </Text>
       {nextLesson ? (
@@ -86,6 +90,7 @@ export function LessonDetailScrollContent({
           nextLesson={nextLesson}
           theme={theme}
           t={t}
+          easyReadEnabled={easyReadEnabled}
           isLocked={!isLessonUnlocked(moduleId, nextLesson)}
           onPress={onNextLessonPress}
           onLockedPress={onLockedPress}

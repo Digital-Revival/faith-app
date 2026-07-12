@@ -15,6 +15,7 @@ import "react-native-reanimated";
 
 import { ThemeLayout } from "@/components/ThemeLayout";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { EasyReadProvider } from "@/contexts/EasyReadContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ToastProvider } from "@/contexts/ToastContext";
@@ -57,13 +58,15 @@ export default function RootLayout() {
           <TypographyProvider>
             <QueryProvider>
               <AuthProvider>
-                <ThemeProvider>
-                  <LanguageProvider>
+                <EasyReadProvider>
+                  <ThemeProvider>
+                    <LanguageProvider>
                     <ToastProvider>
                       <ThemeLayout />
                     </ToastProvider>
-                  </LanguageProvider>
-                </ThemeProvider>
+                    </LanguageProvider>
+                  </ThemeProvider>
+                </EasyReadProvider>
               </AuthProvider>
             </QueryProvider>
           </TypographyProvider>
