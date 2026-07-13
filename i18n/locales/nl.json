@@ -326,6 +326,16 @@
       "fixed": "Opgelost"
     },
     "releases": {
+      "v2_0_2": {
+        "simpleMode": {
+          "title": "Eenvoudige modus voor de Bijbelschool",
+          "description": "Gebruik grotere tekst, minder stappen en directe toegang tot de lesvideo's. Je kunt deze modus kiezen bij registratie of later via Instellingen."
+        },
+        "registration": {
+          "title": "Duidelijker registreren",
+          "description": "Het aanmaken van een account is verbeterd en helpt je direct de Bijbelschoolweergave te kiezen die bij je past."
+        }
+      },
       "v2_0_1": {
         "whatsNew": {
           "title": "Nieuw in de app",

@@ -326,6 +326,16 @@
       "fixed": "Diperbaiki"
     },
     "releases": {
+      "v2_0_2": {
+        "simpleMode": {
+          "title": "Mode sederhana untuk Sekolah Alkitab",
+          "description": "Gunakan teks lebih besar, langkah lebih sedikit, dan akses langsung ke video pelajaran. Pilih mode ini saat mendaftar atau nanti melalui Pengaturan."
+        },
+        "registration": {
+          "title": "Pendaftaran yang lebih jelas",
+          "description": "Pembuatan akun telah ditingkatkan dan kini membantu Anda langsung memilih tampilan Sekolah Alkitab yang sesuai."
+        }
+      },
       "v2_0_1": {
         "whatsNew": {
           "title": "Apa yang baru",

@@ -326,6 +326,16 @@
       "fixed": "Fixed"
     },
     "releases": {
+      "v2_0_2": {
+        "simpleMode": {
+          "title": "Simple mode for Bible School",
+          "description": "Use larger text, fewer steps, and direct access to lesson videos. Choose this mode during registration or later in Settings."
+        },
+        "registration": {
+          "title": "Clearer registration",
+          "description": "Creating an account has been improved and now helps you choose the Bible School layout that suits you right away."
+        }
+      },
       "v2_0_1": {
         "whatsNew": {
           "title": "What's New",
