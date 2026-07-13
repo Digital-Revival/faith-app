@@ -332,8 +332,12 @@
           "description": "Gebruik grotere tekst, minder stappen en directe toegang tot de lesvideo's. Je kunt deze modus kiezen bij registratie of later via Instellingen."
         },
         "registration": {
-          "title": "Duidelijker registreren",
-          "description": "Het aanmaken van een account is verbeterd en helpt je direct de Bijbelschoolweergave te kiezen die bij je past."
+          "title": "Registreren werkt weer",
+          "description": "Het probleem waardoor je geen account kon aanmaken is opgelost. Je kunt je nu weer normaal registreren."
+        },
+        "languageSwitcher": {
+          "title": "Sneller van taal wisselen",
+          "description": "Wissel direct van taal via de taalkeuze in het navigatiemenu, zonder eerst naar Instellingen te gaan."
         }
       },
       "v2_0_1": {

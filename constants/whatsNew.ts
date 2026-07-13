@@ -37,6 +37,14 @@ export const WHATS_NEW_RELEASES: WhatsNewRelease[] = [
         descriptionKey: 'whatsNew.releases.v2_0_2.registration.description',
         category: 'fixed',
       },
+      {
+        id: 'languageSwitcher',
+        icon: 'language-outline',
+        titleKey: 'whatsNew.releases.v2_0_2.languageSwitcher.title',
+        descriptionKey:
+          'whatsNew.releases.v2_0_2.languageSwitcher.description',
+        category: 'added',
+      },
     ],
   },
   {

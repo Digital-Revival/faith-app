@@ -332,8 +332,12 @@
           "description": "Gunakan teks lebih besar, langkah lebih sedikit, dan akses langsung ke video pelajaran. Pilih mode ini saat mendaftar atau nanti melalui Pengaturan."
         },
         "registration": {
-          "title": "Pendaftaran yang lebih jelas",
-          "description": "Pembuatan akun telah ditingkatkan dan kini membantu Anda langsung memilih tampilan Sekolah Alkitab yang sesuai."
+          "title": "Pendaftaran berfungsi kembali",
+          "description": "Masalah yang membuat akun tidak dapat dibuat telah diperbaiki. Sekarang Anda dapat mendaftar kembali seperti biasa."
+        },
+        "languageSwitcher": {
+          "title": "Ganti bahasa lebih cepat",
+          "description": "Ubah bahasa aplikasi langsung dari menu navigasi tanpa harus membuka Pengaturan terlebih dahulu."
         }
       },
       "v2_0_1": {

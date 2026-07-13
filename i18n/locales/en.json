@@ -332,8 +332,12 @@
           "description": "Use larger text, fewer steps, and direct access to lesson videos. Choose this mode during registration or later in Settings."
         },
         "registration": {
-          "title": "Clearer registration",
-          "description": "Creating an account has been improved and now helps you choose the Bible School layout that suits you right away."
+          "title": "Registration works again",
+          "description": "The issue that prevented you from creating an account has been fixed. You can now register normally again."
+        },
+        "languageSwitcher": {
+          "title": "Switch languages faster",
+          "description": "Change the app language directly from the navigation menu, without going to Settings first."
         }
       },
       "v2_0_1": {
