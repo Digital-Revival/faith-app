@@ -33,6 +33,11 @@ export const decline = {
 
 export const success = '#4d7c59';
 
+export const dataViz = {
+  light: { primary: '#2563EB', comparison: '#64748B', warning: '#B45309', risk: '#B91C1C' },
+  dark: { primary: '#60A5FA', comparison: '#94A3B8', warning: '#FBBF24', risk: '#F87171' },
+} as const;
+
 export const accept = {
   light: '#10b981',
   dark: '#10b981',

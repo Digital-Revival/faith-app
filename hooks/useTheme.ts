@@ -6,6 +6,7 @@ import {
   quizCorrect,
   quizIncorrect,
   success,
+  dataViz,
 } from '@/constants/themeTokens';
 import { useThemePreference } from '@/contexts/ThemeContext';
 
@@ -43,6 +44,10 @@ export interface ThemeColors {
   starSuccess: string;
   badgeSuccessBg: string;
   badgeInfoBg: string;
+  dataVizPrimary: string;
+  dataVizComparison: string;
+  dataVizWarning: string;
+  dataVizRisk: string;
   isDark: boolean;
 }
 
@@ -80,6 +85,10 @@ const lightTheme: ThemeColors = {
   starSuccess: success,
   badgeSuccessBg: 'rgba(74, 222, 128, 0.35)',
   badgeInfoBg: 'rgba(96, 165, 250, 0.35)',
+  dataVizPrimary: dataViz.light.primary,
+  dataVizComparison: dataViz.light.comparison,
+  dataVizWarning: dataViz.light.warning,
+  dataVizRisk: dataViz.light.risk,
   isDark: false,
 };
 
@@ -117,6 +126,10 @@ const darkTheme: ThemeColors = {
   starSuccess: success,
   badgeSuccessBg: 'rgba(74, 222, 128, 0.35)',
   badgeInfoBg: 'rgba(96, 165, 250, 0.35)',
+  dataVizPrimary: dataViz.dark.primary,
+  dataVizComparison: dataViz.dark.comparison,
+  dataVizWarning: dataViz.dark.warning,
+  dataVizRisk: dataViz.dark.risk,
   isDark: true,
 };
 

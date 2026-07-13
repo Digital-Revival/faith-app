@@ -1,12 +1,13 @@
 import { StreakPill } from '@/components/ui/StreakPill';
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import { useStreak } from '@/hooks/useStreak';
 import { Box } from '@/components/ui/box';
 import { HStack } from '@/components/ui/hstack';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
+import { useAdminViewMode } from '@/contexts/AdminViewModeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSectionNavigation } from '@/contexts/SectionNavigationContext';
-import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useUserProfile } from '@/hooks/useUserProfile';
@@ -17,7 +18,7 @@ import { Image } from 'expo-image';
 import { usePathname, router } from 'expo-router';
 import type { DrawerContentComponentProps } from 'expo-router/drawer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ScrollView, TouchableOpacity } from 'react-native';
+import { ScrollView, Switch, TouchableOpacity } from 'react-native';
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/services/queryKeys';
@@ -67,20 +68,6 @@ const ADMIN_SECTIONS: {
   { name: 'settings', icon: 'settings', labelKey: 'navbar.settings', enabled: true },
 ];
 
-const buttonStyle = (theme: ReturnType<typeof useTheme>) => ({
-  paddingHorizontal: 12,
-  paddingVertical: 8,
-  borderRadius: 10,
-  backgroundColor: theme.cardBg,
-  borderWidth: 1,
-  borderColor: theme.cardBorder,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: theme.isDark ? 0.2 : 0.05,
-  shadowRadius: 4,
-  elevation: 2,
-});
-
 export function DrawerContent(props: DrawerContentComponentProps) {
   const theme = useTheme();
   const { t, locale } = useTranslation();
@@ -93,7 +80,12 @@ export function DrawerContent(props: DrawerContentComponentProps) {
     });
   }, [queryClient, locale]);
   const insets = useSafeAreaInsets();
-  const isAdmin = useIsAdmin();
+  const {
+    canUseAdminView,
+    isAdminView,
+    isTransitioning: isAdminViewTransitioning,
+    requestViewMode,
+  } = useAdminViewMode();
   const { user, signOut } = useAuth();
   const { data: profile } = useUserProfile(user?.id);
   const { days: streakDays } = useStreak();
@@ -103,8 +95,8 @@ export function DrawerContent(props: DrawerContentComponentProps) {
   const drawerRoutes = state.routes;
   const currentRoute = drawerRoutes[state.index]?.name ?? '';
   const currentSection = currentRoute === 'index' ? 'index' : currentRoute.split('/')[0] ?? currentRoute;
-  const contentSections = isAdmin ? [] : CONTENT_SECTIONS.filter((s) => s.enabled !== false);
-  const sections = isAdmin
+  const contentSections = CONTENT_SECTIONS.filter((s) => s.enabled !== false);
+  const sections = isAdminView
     ? ADMIN_SECTIONS
     : [...contentSections, ...ACCOUNT_SECTIONS];
   const displayName = profile?.full_name ?? t('navbar.profile');
@@ -119,7 +111,7 @@ export function DrawerContent(props: DrawerContentComponentProps) {
     if (sectionName === 'settings') {
       return pathname.includes('settings');
     }
-    if (isAdmin && sectionName.startsWith('admin')) {
+    if (isAdminView && sectionName.startsWith('admin')) {
       if (sectionName === 'admin') {
         const onAdminIndex = pathname.endsWith('/admin') || pathname.endsWith('/admin/');
         return onAdminIndex && !pathname.includes('/admin/analytics') && !pathname.includes('/admin/users');
@@ -157,6 +149,13 @@ export function DrawerContent(props: DrawerContentComponentProps) {
     }
   };
 
+  const handleAdminViewToggle = (enabled: boolean) => {
+    if (isAdminViewTransitioning) return;
+    bzzt();
+    navigation.closeDrawer();
+    requestViewMode(enabled ? 'admin' : 'member');
+  };
+
   return (
     <Box
       className="flex-1"
@@ -167,17 +166,46 @@ export function DrawerContent(props: DrawerContentComponentProps) {
     >
       <HStack className="items-center justify-between px-4 pb-3">
         <StreakPill days={streakDays} />
-        <TouchableOpacity
-          onPress={() => {
-            bzzt();
-            navigation.closeDrawer();
+        <Box
+          className="flex-row items-center overflow-hidden"
+          style={{
+            backgroundColor: theme.cardBg,
+            borderWidth: 1,
+            borderColor: theme.cardBorder,
+            borderRadius: 10,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: theme.isDark ? 0.2 : 0.05,
+            shadowRadius: 4,
+            elevation: 2,
           }}
-          activeOpacity={0.7}
-          className="items-center justify-center cursor-pointer"
-          style={buttonStyle(theme)}
         >
-          <Ionicons name="close" size={20} color={theme.textPrimary} />
-        </TouchableOpacity>
+          <LanguageSwitcher
+            variant="inline"
+            matchDropdownToTrigger
+            showTriggerLabel={false}
+          />
+          <Box
+            style={{
+              width: 1,
+              height: 20,
+              backgroundColor: theme.cardBorder,
+            }}
+          />
+          <TouchableOpacity
+            onPress={() => {
+              bzzt();
+              navigation.closeDrawer();
+            }}
+            activeOpacity={0.7}
+            className="items-center justify-center cursor-pointer"
+            style={{ paddingHorizontal: 12, paddingVertical: 10 }}
+            accessibilityRole="button"
+            accessibilityLabel={t('common.close')}
+          >
+            <Ionicons name="close" size={20} color={theme.textPrimary} />
+          </TouchableOpacity>
+        </Box>
       </HStack>
       <Box
         className="px-4 pb-4"
@@ -225,6 +253,83 @@ export function DrawerContent(props: DrawerContentComponentProps) {
           </VStack>
         </HStack>
       </Box>
+      {canUseAdminView ? (
+        <Box
+          className="px-4 py-3"
+          style={{
+            borderBottomWidth: 1,
+            borderBottomColor: theme.cardBorder,
+            backgroundColor: isAdminView
+              ? theme.quizCorrectBg
+              : theme.pageBg,
+          }}
+        >
+          <HStack className="items-center gap-3">
+            <Box
+              className="w-10 h-10 rounded-full items-center justify-center"
+              style={{
+                backgroundColor: isAdminView
+                  ? theme.buttonAccept
+                  : theme.avatarPrimary,
+              }}
+            >
+              <Ionicons
+                name={isAdminView ? 'shield-checkmark' : 'rocket-outline'}
+                size={21}
+                color={
+                  isAdminView
+                    ? theme.buttonPrimaryContrast
+                    : theme.textSecondary
+                }
+              />
+            </Box>
+            <VStack className="flex-1 min-w-0">
+              <Text
+                className="text-sm font-semibold"
+                style={{ color: theme.textPrimary }}
+              >
+                {t('admin.viewModeTitle')}
+              </Text>
+              <Text
+                className="text-xs"
+                style={{ color: theme.textSecondary }}
+                numberOfLines={2}
+              >
+                {t(
+                  isAdminView
+                    ? 'admin.viewModeAdminDescription'
+                    : 'admin.viewModeNormalDescription',
+                )}
+              </Text>
+            </VStack>
+            <Switch
+              value={isAdminView}
+              onValueChange={handleAdminViewToggle}
+              disabled={isAdminViewTransitioning}
+              trackColor={{
+                false: theme.cardBorder,
+                true: theme.buttonAccept,
+              }}
+              thumbColor={theme.cardBg}
+              ios_backgroundColor={theme.cardBorder}
+              accessibilityLabel={t(
+                isAdminView
+                  ? 'admin.viewModeExitLabel'
+                  : 'admin.viewModeEnterLabel',
+              )}
+              accessibilityHint={t(
+                isAdminView
+                  ? 'admin.viewModeNormalDescription'
+                  : 'admin.viewModeAdminDescription',
+              )}
+              accessibilityState={{
+                checked: isAdminView,
+                disabled: isAdminViewTransitioning,
+              }}
+            />
+          </HStack>
+        </Box>
+      ) : null}
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
@@ -239,7 +344,7 @@ export function DrawerContent(props: DrawerContentComponentProps) {
             const isSelected = isSectionSelected(section.name);
             const enabled = section.enabled !== false;
             const isFirstAccountSection =
-              !isAdmin &&
+              !isAdminView &&
               section.name === 'profile' &&
               CONTENT_SECTIONS.length > 0;
             return (

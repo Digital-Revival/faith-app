@@ -17,7 +17,7 @@ import {
 } from '@/utils/unlockLogic';
 import { resolveQuizAttemptCounts } from '@/utils/quizAttemptScore';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 const QUIZ_ATTEMPTS_STALE_MS = 5 * 60 * 1000;
 
@@ -34,15 +34,33 @@ export interface ExamStatusForModule {
 export function useLessonUnlocks() {
   const { user } = useAuth();
   const { locale } = useTranslation();
-  const { data: modules = [], isLoading: modulesLoading } = useModules(locale);
+  const {
+    data: modules = [],
+    isLoading: modulesLoading,
+    isError: modulesError,
+    refetch: refetchModules,
+  } = useModules(locale);
   const curriculum = useMemo(() => sortModulesByOrder(modules), [modules]);
 
-  const { data: completedLessons, isLoading: completedLoading } =
-    useCompletedLessons(user?.id);
-  const { hasWatched: introVideoWatched, isLoading: introLoading } =
-    useIntroVideoWatched();
+  const {
+    data: completedLessons,
+    isLoading: completedLoading,
+    isError: completedError,
+    refetch: refetchCompleted,
+  } = useCompletedLessons(user?.id);
+  const {
+    hasWatched: introVideoWatched,
+    isLoading: introLoading,
+    isError: introError,
+    refetch: refetchIntro,
+  } = useIntroVideoWatched();
 
-  const { data: allQuizAttempts, isLoading: quizAttemptsLoading } = useQuery({
+  const {
+    data: allQuizAttempts,
+    isLoading: quizAttemptsLoading,
+    isError: quizAttemptsError,
+    refetch: refetchQuizAttempts,
+  } = useQuery({
     queryKey: queryKeys.progress.allQuizAttempts(user?.id ?? ''),
     queryFn: () => quizAttemptService.listAllByUser(user!.id),
     enabled: !!user?.id,
@@ -74,6 +92,22 @@ export function useLessonUnlocks() {
     introLoading ||
     quizAttemptsLoading ||
     modulesLoading;
+  const isError =
+    completedError || introError || quizAttemptsError || modulesError;
+
+  const refetch = useCallback(async () => {
+    await Promise.all([
+      refetchModules(),
+      refetchCompleted(),
+      refetchIntro(),
+      refetchQuizAttempts(),
+    ]);
+  }, [
+    refetchCompleted,
+    refetchIntro,
+    refetchModules,
+    refetchQuizAttempts,
+  ]);
 
   const checkLessonUnlocked = useMemo(
     () => (moduleId: string, lesson: { id: string; moduleId: string; order: number }) =>
@@ -150,5 +184,7 @@ export function useLessonUnlocks() {
     nextUnlockedLesson,
     nextUnlockedTarget,
     isLoading,
+    isError,
+    refetch,
   };
 }

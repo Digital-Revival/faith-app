@@ -32,6 +32,7 @@ interface SettingsDropdownProps<T> {
   options: SettingsDropdownOption<T>[];
   value: T;
   onSelect: (value: T) => Promise<void>;
+  accessibilityLabel?: string;
   measureRef?: React.RefObject<View | null>;
   fullWidth?: boolean;
   isLoading?: boolean;
@@ -45,6 +46,7 @@ function SettingsDropdownInner<T extends string>(
     options,
     value,
     onSelect,
+    accessibilityLabel,
     measureRef,
     fullWidth = false,
     isLoading = false,
@@ -139,6 +141,9 @@ function SettingsDropdownInner<T extends string>(
         onPress={handleOpen}
         activeOpacity={0.7}
         style={triggerStyle}
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel ?? displayLabel}
+        accessibilityState={{ expanded, disabled: isLoading }}
       >
         <HStack
           className={`items-center gap-2 ${triggerCompact ? 'w-full justify-between' : ''}`}
@@ -226,6 +231,9 @@ function SettingsDropdownInner<T extends string>(
                       key={String(opt.value)}
                       onPress={() => handleSelect(opt.value)}
                       activeOpacity={0.7}
+                      accessibilityRole="button"
+                      accessibilityLabel={itemLabel}
+                      accessibilityState={{ selected: isSelected }}
                       style={{
                         paddingVertical: opt.flag ? 12 : 18,
                         paddingHorizontal: opt.flag ? 14 : 20,

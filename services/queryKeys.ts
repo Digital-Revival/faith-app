@@ -10,6 +10,10 @@ export const queryKeys = {
     detail: (id: string) => ['users', id] as const,
   },
   admin: {
+    overviewV2: (period: string, timezone: string) => ['admin', 'overviewV2', period, timezone] as const,
+    learningV2: (period: string, timezone: string, filters: unknown) => ['admin', 'learningV2', period, timezone, filters] as const,
+    usersV2: (filters: unknown) => ['admin', 'usersV2', filters] as const,
+    userDetailV2: (userId: string) => ['admin', 'userDetailV2', userId] as const,
     bibleschoolAnalytics: (from?: string, to?: string) =>
       ['admin', 'bibleschoolAnalytics', from, to] as const,
     quizAnalytics: (from?: string, to?: string) =>
@@ -35,6 +39,8 @@ export const queryKeys = {
       ['userSettings', 'onboarding', section, userId] as const,
     lastSeenAppVersion: (userId: string) =>
       ['userSettings', 'lastSeenAppVersion', userId] as const,
+    simpleMode: (userId: string) =>
+      ['userSettings', 'simpleMode', userId] as const,
   },
   badges: {
     all: ['badges'] as const,

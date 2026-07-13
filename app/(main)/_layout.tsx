@@ -3,6 +3,10 @@ import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { routes } from "@/constants/routes";
 import { useAuth } from "@/contexts/AuthContext";
 import {
+  AdminViewModeProvider,
+  useAdminViewMode,
+} from "@/contexts/AdminViewModeContext";
+import {
   SectionNavigationProvider,
   useSectionNavigation,
 } from "@/contexts/SectionNavigationContext";
@@ -18,12 +22,19 @@ import { useDelayedTrue } from "@/hooks/useDelayedTrue";
 import { useState } from "react";
 import { View } from "react-native";
 import { DrawerContent } from "./_components/DrawerContent";
+import { AdminViewTransitionOverlay } from "./_components/AdminViewTransitionOverlay";
 import { WhatsNewModal } from "./settings/_components/WhatsNewModal";
 
 const LOADING_DELAY_MS = 300;
 
 function MainLayoutContent() {
   const { session } = useAuth();
+  const {
+    isInitialized: isAdminViewInitialized,
+    isTransitioning: isAdminViewTransitioning,
+    transitionTarget,
+    completeViewTransition,
+  } = useAdminViewMode();
   const { isNavigating, targetSection } = useSectionNavigation();
   const showLoadingOverlay = useDelayedTrue(isNavigating, LOADING_DELAY_MS);
   const [dismissedUnreadKey, setDismissedUnreadKey] = useState<string | null>(
@@ -41,7 +52,9 @@ function MainLayoutContent() {
     markSeen,
   } = useWhatsNew();
 
-  const unreadReleaseKey = unreadReleases.map((release) => release.version).join(",");
+  const unreadReleaseKey = unreadReleases
+    .map((release) => release.version)
+    .join(",");
 
   const handleWhatsNewDismiss = async () => {
     setDismissedUnreadKey(unreadReleaseKey);
@@ -64,6 +77,7 @@ function MainLayoutContent() {
     dismissedUnreadKey !== unreadReleaseKey;
 
   if (!session) return <Redirect href="/(auth)/login" />;
+  if (!isAdminViewInitialized) return <BrandedSplashScreen />;
 
   const loadingMessage =
     targetSection === "index"
@@ -116,6 +130,11 @@ function MainLayoutContent() {
         onDismiss={() => void handleWhatsNewDismiss()}
         onViewAll={handleWhatsNewViewAll}
       />
+      <AdminViewTransitionOverlay
+        visible={isAdminViewTransitioning}
+        targetMode={transitionTarget}
+        onComplete={completeViewTransition}
+      />
     </View>
   );
 }
@@ -132,8 +151,10 @@ export default function MainLayout() {
   }
 
   return (
-    <SectionNavigationProvider>
-      <MainLayoutContent />
-    </SectionNavigationProvider>
+    <AdminViewModeProvider>
+      <SectionNavigationProvider>
+        <MainLayoutContent />
+      </SectionNavigationProvider>
+    </AdminViewModeProvider>
   );
 }

@@ -31,6 +31,7 @@
   },
   "auth": {
     "back": "Kembali",
+    "retry": "Coba lagi", "clear": "Hapus", "previous": "Sebelumnya", "next": "Berikutnya",
     "welcomeBack": "Selamat datang kembali",
     "loginSubtitle": "Masuk untuk melacak kemajuan sekolah Alkitab Anda",
     "loginBrandTitle": "SELAMAT DATANG DI FAITH GENERATION",
@@ -91,6 +92,12 @@
     "stepOf": "Langkah {{current}} dari {{total}}",
     "step1Title": "Akun",
     "step2Title": "Profil",
+    "simpleModeTitle": "Buat Sekolah Alkitab lebih mudah?",
+    "simpleModeSubtitle": "Anda bisa mengubahnya nanti di Pengaturan.",
+    "simpleModeYesTitle": "Ya, buat sederhana",
+    "simpleModeYesBody": "Tombol lebih besar, layar lebih sedikit, dan langsung ke video.",
+    "simpleModeNoTitle": "Tidak, tampilan biasa",
+    "simpleModeNoBody": "Semua bagian Sekolah Alkitab tetap terlihat seperti biasa.",
     "phone": "Nomor telepon",
     "phonePlaceholder": "Opsional",
     "phoneMinLength": "Nomor telepon minimal 8 digit",
@@ -217,7 +224,8 @@
     "back": "Kembali",
     "yesterday": "Kemarin",
     "daysAgo": "{{count}}h yang lalu",
-    "weeksAgo": "{{count}}mgu yang lalu"
+    "weeksAgo": "{{count}}mgu yang lalu",
+    "error": "Terjadi kesalahan. Silakan coba lagi."
   },
   "comingSoon": {
     "badge": "Segera hadir",
@@ -256,6 +264,35 @@
     "bibleReadingSchedule": "Jadwal baca Alkitab",
     "bibleReadingScheduleSubtitle": "Rencana baca Alkitab harian",
     "comingSoon": "Segera hadir"
+  },
+  "bibleschool": {
+    "simpleMode": {
+      "nextLesson": "Pelajaran berikutnya {{number}}",
+      "tabWatch": "Tonton",
+      "tabLessons": "Pelajaran",
+      "introContext": "Mulai di sini dengan pengantar",
+      "lessonContext": "Pelajaran {{lesson}}, modul {{module}}",
+      "examContext": "Ujian modul {{module}}",
+      "startVideo": "Mulai video",
+      "continueWatching": "Lanjut menonton",
+      "nextLessonLabel": "Pelajaran berikutnya",
+      "loadingWatch": "Mencari video berikutnya...",
+      "loadError": "Pelajaran tidak dapat dimuat. Periksa koneksi dan coba lagi.",
+      "retry": "Coba lagi",
+      "allDoneTitle": "Anda telah menyelesaikan Sekolah Alkitab",
+      "allDoneContext": "Anda dapat menonton ulang pelajaran apa pun.",
+      "viewLessons": "Lihat pelajaran",
+      "allLessons": "Semua pelajaran",
+      "openMenu": "Buka menu",
+      "lessonCompleted": "Pelajaran selesai",
+      "continueCountdown": "Melanjutkan dalam {{count}} detik",
+      "stayHere": "Tetap di sini",
+      "completionSaveError": "Pelajaran tidak dapat disimpan sebagai selesai. Periksa koneksi dan coba lagi.",
+      "watchToContinue": "Tonton video untuk melanjutkan ke pelajaran berikutnya.",
+      "tapToOpen": "Ketuk untuk membuka",
+      "tapToWatch": "Ketuk untuk menonton",
+      "lockedHint": "Selesaikan pelajaran sebelumnya terlebih dahulu"
+    }
   },
   "feedback": {
     "title": "Masukan",
@@ -312,6 +349,13 @@
   "admin": {
     "overview": "Ringkasan Admin",
     "welcome": "Dasbor Admin",
+    "viewModeTitle": "Mode admin",
+    "viewModeNormalDescription": "Aplikasi biasa aktif",
+    "viewModeAdminDescription": "Area admin aktif",
+    "viewModeEnterLabel": "Beralih ke area admin",
+    "viewModeExitLabel": "Beralih ke aplikasi biasa",
+    "viewModeEntering": "Menuju area admin",
+    "viewModeLeaving": "Kembali ke aplikasi",
     "analytics": "Analitik Sekolah Alkitab",
     "users": "Pengguna",
     "quickLinks": "Tautan cepat",
@@ -363,7 +407,23 @@
     "exportUnavailable": "Berbagi tidak tersedia",
     "exportAnalytics": "Ekspor Analitik Sekolah Alkitab",
     "customizeGraphs": "Sesuaikan",
-    "selectGraphs": "Pilih analitik yang akan ditampilkan"
+    "selectGraphs": "Pilih analitik yang akan ditampilkan",
+    "v2": {
+      "schoolHealth": "Kesehatan sekolah", "updatedAt": "Diperbarui pukul {{time}}", "customize": "Sesuaikan ringkasan", "loadError": "Analitik tidak dapat dimuat.", "showData": "Tampilkan data", "hideData": "Sembunyikan data",
+      "active": "Aktif", "engaged": "Terlibat", "newUsers": "Baru", "modulesCompleted": "Modul selesai", "noComparison": "Tidak ada perbandingan", "previousPeriod": "dibanding periode sebelumnya", "highest": "Nilai tertinggi",
+      "lessonCompletions": "Pelajaran", "moduleCompletions": "Modul", "activityTrend": "Tren aktivitas", "attention": "Perlu perhatian", "modulePulse": "Pulsa kurikulum", "examPulse": "Pulsa ujian",
+      "starters": "memulai", "completers": "selesai", "dropoff": "berhenti", "firstAttempt": "Percobaan pertama", "retries": "Pengulangan", "medianDays": "Waktu median: {{count}} hari",
+      "filters": "Filter", "languages": "Bahasa", "modes": "Mode", "modules": "Modul", "selectedCount": "{{count}} dipilih", "clearFilter": "Hapus filter", "applyFilters": "Terapkan", "sortBy": "Urutkan berdasarkan", "pageNumber": "Halaman {{count}}",
+      "programCompleted": "Program selesai", "allModulesCompleted": "Semua modul selesai", "modulePosition": "Modul {{current}} dari {{total}}", "completedModulesShort": "{{count}} modul selesai", "completedLessonsShort": "{{count}} pelajaran selesai", "currentPosition": "Posisi saat ini", "inProgress": "Sedang berjalan", "readyForNext": "Siap untuk modul berikutnya", "lessonsInModule": "{{completed}} dari {{total}} pelajaran selesai", "lastLesson": "Pelajaran terakhir", "curriculumProgress": "Progres per modul", "completed": "Selesai", "examHistory": "Percobaan ujian", "attemptNumber": "Percobaan {{count}}",
+      "allLanguages": "Semua bahasa", "allModes": "Semua mode", "simpleMode": "Mode sederhana", "normalMode": "Mode normal", "allModules": "Semua modul", "allSignals": "Semua sinyal", "simpleShort": "Sederhana", "normalShort": "Normal", "notStarted": "Belum mulai", "hasAttention": "Memiliki sinyal perhatian",
+      "exportUsers": "Ekspor pengguna", "retentionBuilding": "Data retensi sedang dibangun. Ringkasan ini dapat diandalkan setelah empat belas hari.", "progressTimeline": "Linimasa kemajuan", "noTimeline": "Belum ada aktivitas belajar", "sendEmail": "Kirim email", "emailSubject": "Faith Generation Bible School", "emailCopied": "Alamat email disalin", "moveUp": "Naik", "moveDown": "Turun",
+      "tabs": { "path": "Jalur belajar", "modules": "Modul", "exams": "Ujian", "retention": "Retensi" },
+      "funnel": { "registered": "Terdaftar", "started": "Memulai", "lessonCompleted": "Pelajaran selesai", "moduleCompleted": "Modul selesai", "examPassed": "Lulus ujian" },
+      "signals": { "no_first_lesson": "Belum ada pelajaran pertama setelah 7 hari", "inactive_after_start": "Tidak aktif 14 hari setelah memulai", "stalled_module": "Tidak ada kemajuan di modul aktif selama 7 hari", "repeated_exam_failure": "Beberapa percobaan ujian gagal" },
+      "sort": { "last_activity": "Aktivitas terakhir", "progress": "Kemajuan", "created_at": "Pendaftaran", "name": "Nama" },
+      "timeline": { "lesson_completed": "Pelajaran selesai", "module_completed": "Modul selesai", "exam_attempt": "Percobaan ujian" },
+      "widgets": { "schoolHealth": "Metrik utama", "activityTrend": "Tren aktivitas", "attention": "Perhatian", "learningFunnel": "Jalur belajar", "modulePulse": "Kurikulum", "examPulse": "Ujian", "retention": "Retensi" }
+    }
   },
   "navbar": {
     "home": "Beranda",
@@ -468,6 +528,9 @@
     "videoQualityLow": "480p",
     "videoQualityDataSaver": "Hemat data",
     "videoQualityDescription": "Mempengaruhi kecepatan pemuatan dan penggunaan data",
+    "simpleMode": "Mode sederhana",
+    "simpleModeDescription": "Sekolah Alkitab yang disederhanakan dengan teks lebih besar, langkah lebih sedikit, dan akses video langsung",
+    "simpleModeAccessibilityHint": "Mengaktifkan tampilan Sekolah Alkitab yang lebih sederhana dengan teks lebih besar dan langkah lebih sedikit",
     "whatsNew": "Apa yang Baru",
     "whatsNewSubtitle": "Catatan rilis dan pembaruan"
   },

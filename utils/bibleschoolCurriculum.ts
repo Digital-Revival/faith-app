@@ -15,3 +15,8 @@ export function totalLessonCountInCurriculum(modules: BibleschoolModule[]): numb
 export function getFirstModuleId(modules: BibleschoolModule[]): string | undefined {
   return sortModulesByOrder(modules)[0]?.id;
 }
+
+/** Storyblok module `order` is 0-based; UI labels use 1-based human numbers. */
+export function getDisplayModuleNumber(order: number): number {
+  return order + 1;
+}

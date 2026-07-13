@@ -1,6 +1,7 @@
 import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
 import { LockOverlay } from '@/components/common/LockOverlay';
+import { useBibleschoolSimpleMode } from '@/contexts/BibleschoolSimpleModeContext';
 import type { ThemeColors } from '@/hooks/useTheme';
 import { useVimeoThumbnail } from '@/hooks/useVimeoThumbnail';
 import type { LessonLike } from '@/types/bibleschool';
@@ -29,6 +30,7 @@ export function NextLessonCard({
   onPress: () => void;
   onLockedPress?: () => void;
 }) {
+  const { enabled: simpleMode } = useBibleschoolSimpleMode();
   const videoIdForThumb = !nextLesson.thumbnailUrl && nextLesson.videoId ? nextLesson.videoId : undefined;
   const { data: vimeoThumbnail, isLoading } = useVimeoThumbnail(videoIdForThumb);
   const thumbnailUrl = nextLesson.thumbnailUrl ?? vimeoThumbnail ?? undefined;
@@ -40,16 +42,21 @@ export function NextLessonCard({
   useEffect(() => {
     if (!isLocked) {
       cardOpacity.value = withSpring(1, { damping: 18, stiffness: 100 });
-      cardScale.value = withDelay(
-        2400,
-        withSequence(withSpring(1.03, { damping: 15, stiffness: 120 }), withSpring(1, { damping: 15, stiffness: 120 }))
-      );
+      cardScale.value = simpleMode
+        ? 1
+        : withDelay(
+            2400,
+            withSequence(
+              withSpring(1.03, { damping: 15, stiffness: 120 }),
+              withSpring(1, { damping: 15, stiffness: 120 }),
+            ),
+          );
     } else {
       cardOpacity.value = 0.6;
       cardScale.value = 1;
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLocked]);
+  }, [isLocked, simpleMode]);
 
   const cardAnimatedStyle = useAnimatedStyle(() => ({
     opacity: cardOpacity.value,
@@ -67,6 +74,68 @@ export function NextLessonCard({
   const lessonNumberStr = t('lessons.lessonNumber', { number: nextLesson.order });
   const titleStr = nextLesson.title ?? (nextLesson.titleKey ? t(nextLesson.titleKey as never) : '');
   const showNumberSeparately = !titleStr.trim().toLowerCase().startsWith(lessonNumberStr.trim().toLowerCase());
+  const accessibilityLabel = t('bibleschool.simpleMode.nextLesson', {
+    number: nextLesson.order,
+  });
+
+  if (simpleMode) {
+    return (
+      <Animated.View style={cardAnimatedStyle}>
+        <TouchableOpacity
+          onPress={handlePress}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel={accessibilityLabel}
+          style={{
+            minHeight: 88,
+            borderRadius: 16,
+            backgroundColor: theme.cardBg,
+            borderWidth: 1,
+            borderColor: theme.cardBorder,
+            flexDirection: 'row',
+            alignItems: 'center',
+            padding: 12,
+            opacity: isLocked ? 0.6 : 1,
+          }}
+        >
+          <Box
+            className="rounded-xl overflow-hidden"
+            style={{
+              width: NEXT_THUMBNAIL_WIDTH,
+              height: NEXT_THUMBNAIL_HEIGHT,
+            }}
+          >
+            <NextLessonThumbnail
+              thumbnailUrl={thumbnailUrl}
+              theme={theme}
+              isLoading={thumbnailLoading}
+            />
+            <LockOverlay isLocked={isLocked} variant="thumbnail" />
+          </Box>
+          <Box className="flex-1 ml-4">
+            <Text
+              className="text-base font-medium"
+              style={{ color: theme.textSecondary }}
+            >
+              {lessonNumberStr}
+            </Text>
+            <Text
+              className="text-lg font-semibold"
+              style={{ color: theme.textPrimary }}
+              numberOfLines={2}
+            >
+              {titleStr}
+            </Text>
+          </Box>
+          <Ionicons
+            name={isLocked ? 'lock-closed' : 'chevron-forward'}
+            size={24}
+            color={theme.textSecondary}
+          />
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  }
 
   return (
     <Animated.View style={cardAnimatedStyle}>

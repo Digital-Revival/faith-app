@@ -1,5 +1,6 @@
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
+import { useBibleschoolSimpleMode } from '@/contexts/BibleschoolSimpleModeContext';
 import type { ThemeColors } from '@/hooks/useTheme';
 import type { BibleschoolLesson, BibleschoolModule } from '@/types/bibleschool';
 import { HandoutButton } from './HandoutButton';
@@ -37,6 +38,12 @@ export function LessonDetailScrollContent({
   onLessonHandout: () => void;
   onModuleHandout: () => void;
 }) {
+  const { enabled: simpleMode } = useBibleschoolSimpleMode();
+
+  if (simpleMode) {
+    return null;
+  }
+
   const moduleHandoutUrl = module.moduleHandoutUrl ?? lesson.moduleHandoutUrl;
   const hasLessonHandout = !!lesson.lessonHandoutUrl;
   const hasModuleHandout = !!moduleHandoutUrl;

@@ -31,6 +31,7 @@
   },
   "auth": {
     "back": "Terug",
+    "retry": "Opnieuw proberen", "clear": "Wissen", "previous": "Vorige", "next": "Volgende",
     "welcomeBack": "Welkom terug",
     "loginSubtitle": "Log in om je voortgang bij de Bijbelschool te volgen",
     "loginBrandTitle": "WELKOM BIJ FAITH GENERATION",
@@ -91,6 +92,12 @@
     "stepOf": "Stap {{current}} van {{total}}",
     "step1Title": "Account",
     "step2Title": "Profiel",
+    "simpleModeTitle": "Wil je de Bijbelschool makkelijker maken?",
+    "simpleModeSubtitle": "Je kunt dit later altijd aanpassen bij Instellingen.",
+    "simpleModeYesTitle": "Ja, maak het eenvoudig",
+    "simpleModeYesBody": "Grotere knoppen, minder schermen en direct verder kijken.",
+    "simpleModeNoTitle": "Nee, normale weergave",
+    "simpleModeNoBody": "Alle onderdelen blijven zichtbaar zoals normaal.",
     "phone": "Telefoonnummer",
     "phonePlaceholder": "Optioneel",
     "phoneMinLength": "Telefoonnummer moet minimaal 8 cijfers bevatten",
@@ -217,7 +224,8 @@
     "back": "Terug",
     "yesterday": "Gisteren",
     "daysAgo": "{{count}}d geleden",
-    "weeksAgo": "{{count}}w geleden"
+    "weeksAgo": "{{count}}w geleden",
+    "error": "Er is iets misgegaan. Probeer het opnieuw."
   },
   "comingSoon": {
     "badge": "Binnenkort",
@@ -256,6 +264,35 @@
     "bibleReadingSchedule": "Bijbelleesrooster",
     "bibleReadingScheduleSubtitle": "Dagelijks Bijbelplan",
     "comingSoon": "Binnenkort beschikbaar"
+  },
+  "bibleschool": {
+    "simpleMode": {
+      "nextLesson": "Volgende les {{number}}",
+      "tabWatch": "Kijken",
+      "tabLessons": "Lessen",
+      "introContext": "Begin hier met de introductie",
+      "lessonContext": "Les {{lesson}}, module {{module}}",
+      "examContext": "Examen van module {{module}}",
+      "startVideo": "Start video",
+      "continueWatching": "Verder kijken",
+      "nextLessonLabel": "Volgende les",
+      "loadingWatch": "Je volgende video zoeken...",
+      "loadError": "Je lessen konden niet laden. Controleer je verbinding en probeer opnieuw.",
+      "retry": "Probeer opnieuw",
+      "allDoneTitle": "Je hebt de Bijbelschool afgerond",
+      "allDoneContext": "Je kunt elke les opnieuw bekijken.",
+      "viewLessons": "Bekijk lessen",
+      "allLessons": "Alle lessen",
+      "openMenu": "Menu openen",
+      "lessonCompleted": "Les afgerond",
+      "continueCountdown": "We gaan verder over {{count}} seconden",
+      "stayHere": "Blijf hier",
+      "completionSaveError": "De les kon niet als afgerond worden opgeslagen. Controleer je verbinding en probeer opnieuw.",
+      "watchToContinue": "Bekijk de video om door te gaan naar de volgende les.",
+      "tapToOpen": "Tik om te openen",
+      "tapToWatch": "Tik om te kijken",
+      "lockedHint": "Voltooi eerst de vorige les"
+    }
   },
   "feedback": {
     "title": "Feedback",
@@ -312,6 +349,13 @@
   "admin": {
     "overview": "Admin overzicht",
     "welcome": "Admin dashboard",
+    "viewModeTitle": "Adminmodus",
+    "viewModeNormalDescription": "Normale app actief",
+    "viewModeAdminDescription": "Adminomgeving actief",
+    "viewModeEnterLabel": "Schakel naar de adminomgeving",
+    "viewModeExitLabel": "Schakel naar de normale app",
+    "viewModeEntering": "Naar de adminomgeving",
+    "viewModeLeaving": "Terug naar de app",
     "analytics": "Bijbelschool Analytics",
     "users": "Gebruikers",
     "quickLinks": "Snelle links",
@@ -363,7 +407,23 @@
     "exportUnavailable": "Delen is niet beschikbaar",
     "exportAnalytics": "Exporteer Bijbelschool Analytics",
     "customizeGraphs": "Aanpassen",
-    "selectGraphs": "Selecteer welke analyses te tonen"
+    "selectGraphs": "Selecteer welke analyses te tonen",
+    "v2": {
+      "schoolHealth": "Gezondheid van de school", "updatedAt": "Bijgewerkt om {{time}}", "customize": "Overzicht aanpassen", "loadError": "De analytics konden niet worden geladen.", "showData": "Toon gegevens", "hideData": "Verberg gegevens",
+      "active": "Actief", "engaged": "Betrokken", "newUsers": "Nieuw", "modulesCompleted": "Modules afgerond", "noComparison": "Geen vergelijking", "previousPeriod": "t.o.v. vorige periode", "highest": "Hoogste waarde",
+      "lessonCompletions": "Lessen", "moduleCompletions": "Modules", "activityTrend": "Activiteitstrend", "attention": "Aandacht nodig", "modulePulse": "Curriculumpuls", "examPulse": "Examenpuls",
+      "starters": "starters", "completers": "afgerond", "dropoff": "afgehaakt", "firstAttempt": "Eerste poging", "retries": "Herhalingen", "medianDays": "Mediane doorlooptijd: {{count}} dagen",
+      "filters": "Filters", "languages": "Talen", "modes": "Modi", "modules": "Modules", "selectedCount": "{{count}} geselecteerd", "clearFilter": "Filter wissen", "applyFilters": "Toepassen", "sortBy": "Sorteren op", "pageNumber": "Pagina {{count}}",
+      "programCompleted": "Opleiding voltooid", "allModulesCompleted": "Alle modules afgerond", "modulePosition": "Module {{current}} van {{total}}", "completedModulesShort": "{{count}} modules afgerond", "completedLessonsShort": "{{count}} lessen afgerond", "currentPosition": "Huidige positie", "inProgress": "Bezig", "readyForNext": "Klaar voor de volgende module", "lessonsInModule": "{{completed}} van {{total}} lessen afgerond", "lastLesson": "Laatste les", "curriculumProgress": "Voortgang per module", "completed": "Afgerond", "examHistory": "Examenpogingen", "attemptNumber": "Poging {{count}}",
+      "allLanguages": "Alle talen", "allModes": "Alle modi", "simpleMode": "Eenvoudige modus", "normalMode": "Normale modus", "allModules": "Alle modules", "allSignals": "Alle signalen", "simpleShort": "Eenvoudig", "normalShort": "Normaal", "notStarted": "Nog niet gestart", "hasAttention": "Heeft een aandachtssignaal",
+      "exportUsers": "Gebruikers exporteren", "retentionBuilding": "Retentiedata wordt opgebouwd. Na veertien dagen wordt dit overzicht betrouwbaar.", "progressTimeline": "Voortgangstijdlijn", "noTimeline": "Nog geen leeractiviteit", "sendEmail": "Stuur e-mail", "emailSubject": "Faith Generation Bijbelschool", "emailCopied": "E-mailadres gekopieerd", "moveUp": "Omhoog", "moveDown": "Omlaag",
+      "tabs": { "path": "Leerpad", "modules": "Modules", "exams": "Examens", "retention": "Retentie" },
+      "funnel": { "registered": "Geregistreerd", "started": "Gestart", "lessonCompleted": "Les voltooid", "moduleCompleted": "Module voltooid", "examPassed": "Examen gehaald" },
+      "signals": { "no_first_lesson": "Na 7 dagen nog geen eerste les", "inactive_after_start": "14 dagen inactief na start", "stalled_module": "7 dagen geen voortgang in actieve module", "repeated_exam_failure": "Meerdere mislukte examenpogingen" },
+      "sort": { "last_activity": "Laatste activiteit", "progress": "Voortgang", "created_at": "Registratie", "name": "Naam" },
+      "timeline": { "lesson_completed": "Les voltooid", "module_completed": "Module voltooid", "exam_attempt": "Examenpoging" },
+      "widgets": { "schoolHealth": "Kerncijfers", "activityTrend": "Activiteitstrend", "attention": "Aandacht", "learningFunnel": "Leerpad", "modulePulse": "Curriculumpuls", "examPulse": "Examenpuls", "retention": "Retentie" }
+    }
   },
   "navbar": {
     "home": "Home",
@@ -468,6 +528,9 @@
     "videoQualityLow": "480p",
     "videoQualityDataSaver": "Data besparen",
     "videoQualityDescription": "Beïnvloedt laadsnelheid en dataverbruik",
+    "simpleMode": "Eenvoudige modus",
+    "simpleModeDescription": "Vereenvoudigde bijbelschool met grotere tekst, minder stappen en directe videotoegang",
+    "simpleModeAccessibilityHint": "Zet een eenvoudigere Bijbelschoolweergave aan met grotere tekst en minder stappen",
     "whatsNew": "Nieuw in de app",
     "whatsNewSubtitle": "Release notes en updates"
   },

@@ -38,16 +38,20 @@ export const LanguageSwitcher = forwardRef<
   },
   ref,
 ) {
-  const { locale, changeLanguage } = useTranslation();
+  const { t, locale, changeLanguage } = useTranslation();
 
   const displayValue =
     LANGUAGES_FOR_UI.some((l) => l.code === locale) ? locale : (LANGUAGES_FOR_UI[0]?.code ?? locale);
+  const displayLanguage = LANGUAGES_FOR_UI.find(
+    (language) => language.code === displayValue,
+  );
 
   return (
     <SettingsDropdown<SupportedLocale>
       ref={ref}
       options={LANGUAGE_OPTIONS}
       value={displayValue}
+      accessibilityLabel={`${t('settings.language')}: ${displayLanguage?.nativeName ?? displayValue}`}
       onSelect={async (v) => {
         await changeLanguage(v);
       }}

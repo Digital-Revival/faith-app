@@ -5,6 +5,7 @@ import * as Haptics from 'expo-haptics';
 import { useState } from 'react';
 
 import { REGISTRATION_ONBOARDING_SECTIONS } from '@/constants/onboarding';
+import { BIBLEschool_SIMPLE_MODE_KEY } from '@/constants/bibleschoolSimpleMode';
 import { routes } from '@/constants/routes';
 import { THEME_STORAGE_KEY } from '@/contexts/ThemeContext';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -29,6 +30,7 @@ export interface RegisterData {
   birthdate?: string | null;
   country?: string;
   city?: string;
+  bibleschoolSimpleModeEnabled?: boolean;
 }
 
 interface UseRegisterReturn {
@@ -65,9 +67,14 @@ export function useRegister(): UseRegisterReturn {
       return {
         authData,
         contactEmail: data.email.trim().toLowerCase(),
+        bibleschoolSimpleModeEnabled: data.bibleschoolSimpleModeEnabled,
       };
     },
-    onSuccess: async ({ authData, contactEmail }) => {
+    onSuccess: async ({
+      authData,
+      contactEmail,
+      bibleschoolSimpleModeEnabled,
+    }) => {
       const userId = authData.user?.id;
       if (!userId) {
         return;
@@ -114,6 +121,22 @@ export function useRegister(): UseRegisterReturn {
         );
       }
 
+      if (typeof bibleschoolSimpleModeEnabled === 'boolean') {
+        bestEffort.push(
+          userSettingsService
+            .setSetting(
+              userId,
+              BIBLEschool_SIMPLE_MODE_KEY,
+              bibleschoolSimpleModeEnabled,
+            )
+            .catch(() => undefined),
+        );
+        queryClient.setQueryData(
+          queryKeys.userSettings.simpleMode(userId),
+          bibleschoolSimpleModeEnabled,
+        );
+      }
+
       await Promise.allSettled(bestEffort);
 
       try {
@@ -122,6 +145,9 @@ export function useRegister(): UseRegisterReturn {
             queryKey: queryKeys.userSettings.onboardingSection(userId, section),
           });
         }
+        await queryClient.invalidateQueries({
+          queryKey: queryKeys.userSettings.simpleMode(userId),
+        });
       } catch {
         //
       }

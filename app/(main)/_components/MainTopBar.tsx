@@ -15,6 +15,8 @@ interface MainTopBarProps {
   currentSection: string;
   showBackButton?: boolean;
   showNotifications?: boolean;
+  /** Same layout as default; slightly larger touch targets and text (simple mode). */
+  enlarged?: boolean;
   onBack?: () => void;
 }
 
@@ -23,39 +25,66 @@ export function MainTopBar({
   currentSection,
   showBackButton = false,
   showNotifications = true,
+  enlarged = false,
   onBack,
 }: MainTopBarProps) {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
 
+  const handleBack = () => {
+    bzzt();
+    if (onBack) {
+      onBack();
+    } else {
+      router.back();
+    }
+  };
+
+  const handleOpenDrawer = () => {
+    bzzt();
+    navigation.dispatch(DrawerActions.openDrawer());
+  };
+
+  const barMinHeight = enlarged ? 52 : 44;
+  const backIconSize = enlarged ? 24 : 22;
+  const backTextClass = enlarged ? 'text-lg font-medium' : 'text-base font-medium';
+  const backPadding = enlarged ? 'gap-2 pl-4 pr-5 py-3' : 'gap-2 pl-3 pr-4 py-2';
+  const titleClass = enlarged ? 'text-2xl font-semibold' : 'text-xl font-semibold';
+  const menuIconSize = enlarged ? 22 : 20;
+  const menuPaddingH = enlarged ? 14 : 12;
+  const menuPaddingV = enlarged ? 10 : 8;
+  const titleInsetLeft = showBackButton ? (enlarged ? 128 : 118) : enlarged ? 98 : 88;
+
   return (
     <HStack
-      className="items-center justify-between py-3 mb-2"
-      style={{ minHeight: 44 }}
+      className="items-center justify-between mb-2"
+      style={{ minHeight: barMinHeight, paddingVertical: enlarged ? 4 : 12 }}
     >
-      <Box className="w-20 items-start justify-center" style={{ minHeight: 44 }}>
+      <Box
+        className="items-start justify-center"
+        style={{ minHeight: barMinHeight, minWidth: enlarged ? 108 : 80 }}
+      >
         {showBackButton ? (
           <TouchableOpacity
-            onPress={() => {
-              bzzt();
-              if (onBack) {
-                onBack();
-              } else {
-                router.back();
-              }
-            }}
+            onPress={handleBack}
             activeOpacity={0.7}
-            className="flex-row items-center gap-2 cursor-pointer rounded-full pl-3 pr-4 py-2 -ml-2"
+            accessibilityRole="button"
+            accessibilityLabel={t('common.back')}
+            className={`flex-row items-center cursor-pointer rounded-full -ml-2 ${backPadding}`}
             style={{
               backgroundColor: theme.cardBg,
               borderWidth: 1,
               borderColor: theme.cardBorder,
             }}
           >
-            <Ionicons name="chevron-back" size={22} color={theme.textPrimary} />
+            <Ionicons
+              name="chevron-back"
+              size={backIconSize}
+              color={theme.textPrimary}
+            />
             <Text
-              className="text-base font-medium"
+              className={backTextClass}
               style={{ color: theme.textPrimary }}
             >
               {t('common.back')}
@@ -67,15 +96,15 @@ export function MainTopBar({
         className="flex-1 items-center justify-center px-2"
         style={{
           position: 'absolute',
-          left: showBackButton ? 118 : 88,
-          right: 100,
+          left: titleInsetLeft,
+          right: enlarged ? 108 : 100,
           top: 0,
           bottom: 0,
         }}
         pointerEvents="box-none"
       >
         <Text
-          className="text-xl font-semibold text-center"
+          className={`${titleClass} text-center`}
           style={{ color: theme.textPrimary }}
           numberOfLines={1}
           ellipsizeMode="tail"
@@ -85,20 +114,19 @@ export function MainTopBar({
       </Box>
       <Box
         className="flex-row items-center justify-end gap-2"
-        style={{ minHeight: 44 }}
+        style={{ minHeight: barMinHeight }}
       >
-        {showNotifications && <NotificationDropdown />}
+        {showNotifications && !enlarged ? <NotificationDropdown /> : null}
         <TouchableOpacity
-          onPress={() => {
-            bzzt();
-            navigation.dispatch(DrawerActions.openDrawer());
-          }}
+          onPress={handleOpenDrawer}
           activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel={t('bibleschool.simpleMode.openMenu')}
           className="cursor-pointer"
           style={{
-            paddingHorizontal: 12,
-            paddingVertical: 8,
-            borderRadius: 10,
+            paddingHorizontal: menuPaddingH,
+            paddingVertical: menuPaddingV,
+            borderRadius: enlarged ? 12 : 10,
             backgroundColor: theme.cardBg,
             borderWidth: 1,
             borderColor: theme.cardBorder,
@@ -109,7 +137,7 @@ export function MainTopBar({
             elevation: 2,
           }}
         >
-          <Ionicons name="menu" size={20} color={theme.textPrimary} />
+          <Ionicons name="menu" size={menuIconSize} color={theme.textPrimary} />
         </TouchableOpacity>
       </Box>
     </HStack>

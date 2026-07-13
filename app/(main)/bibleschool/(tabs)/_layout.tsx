@@ -4,11 +4,15 @@ import {
   STACK_ANIMATION,
 } from '@/constants/screenAnimationOptions';
 import { useBibleschoolTab } from '@/contexts/BibleschoolTabContext';
+import { useBibleschoolSimpleMode } from '@/contexts/BibleschoolSimpleModeContext';
+import { routes } from '@/constants/routes';
 import { useTheme } from '@/hooks/useTheme';
-import { Stack } from 'expo-router';
+import { Redirect, Stack, usePathname } from 'expo-router';
 
 export default function BibleSchoolTabsLayout() {
   const theme = useTheme();
+  const pathname = usePathname();
+  const { enabled: simpleMode } = useBibleschoolSimpleMode();
   const { navigationDirection } = useBibleschoolTab();
 
   const baseOptions = stackScreenOptions({
@@ -18,6 +22,10 @@ export default function BibleSchoolTabsLayout() {
 
   const modulesAnimation =
     navigationDirection === 'left' ? STACK_ANIMATION.pop : STACK_ANIMATION.push;
+
+  if (simpleMode && pathname.includes('/voortgang')) {
+    return <Redirect href={routes.bibleschool()} />;
+  }
 
   return (
     <Stack screenOptions={baseOptions}>

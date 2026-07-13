@@ -3,6 +3,7 @@ import { Text } from '@/components/ui/text';
 import { VideoThumbnail } from '@/components/ui/VideoThumbnail';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
+import { useBibleschoolSimpleMode } from '@/contexts/BibleschoolSimpleModeContext';
 import { bzzt } from '@/utils/haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -33,6 +34,7 @@ export function IntroVideoRow({
 }: IntroVideoRowProps) {
   const theme = useTheme();
   const { t } = useTranslation();
+  const { enabled: simpleMode } = useBibleschoolSimpleMode();
 
   return (
     <TouchableOpacity
@@ -41,6 +43,8 @@ export function IntroVideoRow({
         router.push(routes.bibleschoolIntro());
       }}
       activeOpacity={0.7}
+      accessibilityRole="button"
+      accessibilityLabel={t('overview.introVideoTitle')}
       className="cursor-pointer"
     >
       <Box
@@ -51,20 +55,22 @@ export function IntroVideoRow({
           borderColor: theme.cardBorder,
         }}
       >
-        <Box className="flex-row items-center py-3 pr-4">
+        <Box
+          className={`flex-row items-center pr-4 ${simpleMode ? 'py-4 min-h-24' : 'py-3'}`}
+        >
           <Box className="pl-3 mr-4">
             <IntroRowThumbnail introductionVimeoId={introductionVimeoId} />
           </Box>
           <Box className="flex-1 justify-center min-w-0">
             <Text
-              className="text-base font-medium"
+              className={simpleMode ? 'text-xl font-semibold' : 'text-base font-medium'}
               style={{ color: theme.textPrimary }}
               numberOfLines={2}
             >
               {t('overview.introVideoTitle')}
             </Text>
             <Text
-              className="text-xs font-medium mt-0.5"
+              className={simpleMode ? 'text-base font-medium mt-1' : 'text-xs font-medium mt-0.5'}
               style={{ color: theme.textSecondary }}
             >
               {t('overview.introVideoSubtitle')}

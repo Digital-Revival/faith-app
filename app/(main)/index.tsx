@@ -3,13 +3,11 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { useAuth } from '@/contexts/AuthContext';
-import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { routes } from '@/constants/routes';
 import { router } from 'expo-router';
-import { useEffect } from 'react';
 import { ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -21,23 +19,12 @@ import { SectionCard } from './_components/SectionCard';
 
 export default function HubScreen() {
   const { user } = useAuth();
-  const isAdmin = useIsAdmin();
   const theme = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { data: profile, isLoading: profileLoading } = useUserProfile(user?.id);
 
-  useEffect(() => {
-    if (!profileLoading && user?.id && isAdmin) {
-      router.replace(routes.admin());
-    }
-  }, [profileLoading, user?.id, isAdmin]);
-
   if (profileLoading && user?.id) {
-    return <LoadingScreen message={t('common.loading')} />;
-  }
-
-  if (isAdmin) {
     return <LoadingScreen message={t('common.loading')} />;
   }
 

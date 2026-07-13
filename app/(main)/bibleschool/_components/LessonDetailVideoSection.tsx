@@ -16,6 +16,8 @@ export function LessonDetailVideoSection({
   onRefetchVimeo,
   onSavePosition,
   onMarkComplete,
+  onPlaybackStarted,
+  onPlaybackEngaged,
   pipRef,
   initialPositionSeconds,
 }: {
@@ -29,6 +31,8 @@ export function LessonDetailVideoSection({
   onRefetchVimeo: () => void;
   onSavePosition: (seconds: number, immediate?: boolean) => void;
   onMarkComplete?: () => void;
+  onPlaybackStarted?: () => void;
+  onPlaybackEngaged?: () => void;
   pipRef: MutableRefObject<{
     start: () => void;
     stop: () => void;
@@ -46,6 +50,8 @@ export function LessonDetailVideoSection({
         initialPositionSeconds={initialPositionSeconds}
         onSavePosition={onSavePosition}
         onMarkComplete={onMarkComplete}
+        onPlaybackStarted={onPlaybackStarted}
+        onPlaybackEngaged={onPlaybackEngaged}
         pipRef={pipRef}
       />
     );

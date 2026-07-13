@@ -71,6 +71,7 @@ export async function getLastSectionHref(): Promise<Href> {
   try {
     const last = await AsyncStorage.getItem(LAST_SECTION_KEY);
     if (!last || last === 'index') return '/(main)' as Href;
+    if (last === 'admin') return '/(main)' as Href;
     if (RESTORABLE_SECTIONS.includes(last as (typeof RESTORABLE_SECTIONS)[number])) {
       return getHrefForSection(last);
     }

@@ -2,6 +2,7 @@ import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
 import { VideoThumbnail } from '@/components/ui/VideoThumbnail';
 import { LockOverlay } from '@/components/common/LockOverlay';
+import { useBibleschoolSimpleMode } from '@/contexts/BibleschoolSimpleModeContext';
 import { useTheme } from '@/hooks/useTheme';
 import { queryKeys } from '@/services/queryKeys';
 import {
@@ -48,6 +49,7 @@ export function LessonRow({
   t,
   isCompleted,
   isLocked,
+  isCurrent = false,
   videoPositionSeconds,
   onPress,
   onLockedPress,
@@ -57,10 +59,12 @@ export function LessonRow({
   t: (key: string, params?: Record<string, string | number>) => string;
   isCompleted: boolean;
   isLocked: boolean;
+  isCurrent?: boolean;
   videoPositionSeconds?: number;
   onPress: () => void;
   onLockedPress?: (lesson: LessonLike) => void;
 }) {
+  const { enabled: simpleMode } = useBibleschoolSimpleMode();
   const videoIdForThumb = !lesson.thumbnailUrl && lesson.videoId ? lesson.videoId : undefined;
   const vimeoMetaEnabled = !!lesson.videoId && (!lesson.thumbnailUrl || !isLocked);
 
@@ -106,6 +110,121 @@ export function LessonRow({
   const lessonNumberStr = t('lessons.lessonNumber', { number: lesson.order });
   const titleStr = lesson.title ?? (lesson.titleKey ? t(lesson.titleKey as never) : '');
   const showNumberSeparately = !titleStr.trim().toLowerCase().startsWith(lessonNumberStr.trim().toLowerCase());
+
+  if (simpleMode) {
+    const statusLabel = isCompleted
+      ? t('lessons.completed')
+      : isLocked
+        ? t('lessons.locked')
+        : isCurrent
+          ? t('lessonsPage.currentLesson')
+          : t('bibleschool.simpleMode.tapToWatch');
+    const actionHint = isLocked
+      ? t('bibleschool.simpleMode.lockedHint')
+      : t('bibleschool.simpleMode.tapToWatch');
+
+    return (
+      <TouchableOpacity
+        onPress={handlePress}
+        activeOpacity={0.7}
+        accessibilityRole="button"
+        accessibilityLabel={`${titleStr}. ${statusLabel}`}
+      >
+        <Box
+          className="min-h-24 rounded-2xl p-3 flex-row items-center"
+          style={{
+            backgroundColor: theme.cardBg,
+            borderWidth: isCurrent ? 2 : 1,
+            borderColor: isCurrent
+              ? theme.buttonPrimary
+              : isLocked
+                ? theme.cardBorder
+                : theme.textSecondary,
+            opacity: isLocked ? 0.78 : 1,
+          }}
+        >
+          <Box className="rounded-xl overflow-hidden">
+            <VideoThumbnail
+              thumbnailUrl={thumbnailUrl}
+              isLoading={thumbnailLoading}
+              width={120}
+              height={68}
+              showPlayIcon={!isLocked}
+            />
+            <LockOverlay isLocked={isLocked} variant="thumbnail" />
+          </Box>
+          <Box className="flex-1 ml-4">
+            <Text
+              className="text-base font-medium"
+              style={{ color: theme.textSecondary }}
+            >
+              {lessonNumberStr}
+            </Text>
+            <Text
+              className="text-lg font-semibold"
+              style={{ color: theme.textPrimary, lineHeight: 26 }}
+              numberOfLines={2}
+            >
+              {titleStr}
+            </Text>
+            <Box className="mt-1 flex-row items-center gap-2">
+              <Ionicons
+                name={
+                  isCompleted
+                    ? 'checkmark-circle'
+                    : isLocked
+                      ? 'lock-closed'
+                      : 'play-circle'
+                }
+                size={20}
+                color={
+                  isCompleted
+                    ? theme.quizCorrect
+                    : isCurrent
+                      ? theme.buttonPrimary
+                      : theme.textSecondary
+                }
+              />
+              <Text
+                className="text-base font-medium"
+                style={{
+                  color: isCurrent ? theme.buttonPrimary : theme.textSecondary,
+                }}
+              >
+                {statusLabel}
+              </Text>
+            </Box>
+            <Text
+              className="mt-1 text-sm"
+              style={{ color: theme.textTertiary }}
+            >
+              {actionHint}
+            </Text>
+          </Box>
+          {isLocked ? (
+            <Box
+              className="flex-row items-center gap-1.5 rounded-lg px-2.5 py-2"
+              style={{ backgroundColor: theme.cardBorder }}
+            >
+              <Ionicons name="lock-closed" size={16} color={theme.textSecondary} />
+              <Text
+                className="text-sm font-semibold"
+                style={{ color: theme.textSecondary }}
+              >
+                {t('lessons.locked')}
+              </Text>
+            </Box>
+          ) : (
+            <Ionicons
+              name="chevron-forward"
+              size={24}
+              color={isCurrent ? theme.buttonPrimary : theme.textSecondary}
+            />
+          )}
+        </Box>
+      </TouchableOpacity>
+    );
+  }
 
   return (
     <TouchableOpacity

@@ -5,9 +5,15 @@ import { getLastSectionHref } from '@/hooks/useLastSectionRestore';
 import { useOnboardingSection } from '@/hooks/useOnboardingSection';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { isUserProfileNotFoundError } from '@/services/api/userService';
+import { getStoredAdminViewMode } from '@/services/adminViewModeStorage';
 import type { Href } from 'expo-router';
 import { Redirect, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
+
+interface MainDestination {
+  userId: string;
+  href: Href;
+}
 
 export default function Index() {
   const {
@@ -18,7 +24,8 @@ export default function Index() {
     pendingPasswordRecovery,
   } = useAuth();
   const router = useRouter();
-  const [mainHref, setMainHref] = useState<Href | null>(null);
+  const [mainDestination, setMainDestination] =
+    useState<MainDestination | null>(null);
   const userId = user?.id ?? session?.user?.id;
   const {
     data: profile,
@@ -26,7 +33,8 @@ export default function Index() {
     isFetching,
     error: profileError,
   } = useUserProfile(userId);
-  const { onboardingCompleted, isLoading: onboardingLoading } = useOnboardingSection('home');
+  const { onboardingCompleted, isLoading: onboardingLoading } =
+    useOnboardingSection('home');
 
   useEffect(() => {
     const handleProfileNotFound = async () => {
@@ -45,18 +53,39 @@ export default function Index() {
   }, [profileError, session, signOut, router]);
 
   useEffect(() => {
-    if (!session || profileLoading || isFetching || !profile || onboardingLoading) return;
+    if (
+      !session ||
+      profileLoading ||
+      isFetching ||
+      !profile ||
+      onboardingLoading
+    )
+      return;
 
     if (profileError && isUserProfileNotFoundError(profileError)) return;
 
     let cancelled = false;
-    getLastSectionHref().then((href) => {
-      if (!cancelled) setMainHref(href);
-    });
+    void (async () => {
+      const storedMode = await getStoredAdminViewMode(userId!);
+      const href =
+        profile.role === 'admin' && storedMode === 'admin'
+          ? routes.admin()
+          : await getLastSectionHref();
+
+      if (!cancelled) setMainDestination({ userId: userId!, href });
+    })();
     return () => {
       cancelled = true;
     };
-  }, [session, profile, profileLoading, isFetching, profileError, onboardingLoading]);
+  }, [
+    session,
+    userId,
+    profile,
+    profileLoading,
+    isFetching,
+    profileError,
+    onboardingLoading,
+  ]);
 
   if (authLoading) {
     return <BrandedSplashScreen />;
@@ -93,9 +122,9 @@ export default function Index() {
     return <Redirect href={'/onboarding?section=home' as Href} />;
   }
 
-  if (mainHref === null) {
+  if (!mainDestination || mainDestination.userId !== userId) {
     return <BrandedSplashScreen />;
   }
 
-  return <Redirect href={mainHref} />;
+  return <Redirect href={mainDestination.href} />;
 }

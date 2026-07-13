@@ -10,12 +10,19 @@ export function useIntroVideoWatched(): {
   hasWatched: boolean;
   markWatched: () => Promise<void>;
   isLoading: boolean;
+  isError: boolean;
+  refetch: () => Promise<unknown>;
 } {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const userId = user?.id ?? '';
 
-  const { data: hasWatched = false, isLoading } = useQuery({
+  const {
+    data: hasWatched = false,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: queryKeys.userSettings.introWatched(userId),
     queryFn: async () => {
       const stored = await userSettingsService.getSetting<boolean>(
@@ -51,5 +58,7 @@ export function useIntroVideoWatched(): {
     hasWatched,
     markWatched,
     isLoading: isLoading || mutation.isPending,
+    isError,
+    refetch,
   };
 }

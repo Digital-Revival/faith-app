@@ -305,6 +305,7 @@ export function useLessonDetailProgress({
 
   const lastSaveTimeRef = useRef(0);
   const lastSavePositionRef = useRef<number | null>(null);
+  const completionInFlightRef = useRef(false);
 
   const handleSavePosition = useCallback(
     (seconds: number, immediate = false) => {
@@ -331,10 +332,32 @@ export function useLessonDetailProgress({
     [savePositionMutation, userId],
   );
 
-  const handleMarkComplete = useCallback(() => {
-    if (!userId || progress?.completed) return;
-    markCompleteMutation.mutate();
-  }, [markCompleteMutation, progress?.completed, userId]);
+  const handleMarkComplete = useCallback(async (): Promise<boolean> => {
+    const cachedProgress =
+      queryClient.getQueryData<LessonProgress | null>(lessonProgressKey);
+    if (
+      !userId ||
+      progress?.completed ||
+      cachedProgress?.completed ||
+      completionInFlightRef.current
+    ) {
+      return false;
+    }
+
+    completionInFlightRef.current = true;
+    try {
+      await markCompleteMutation.mutateAsync();
+      return true;
+    } finally {
+      completionInFlightRef.current = false;
+    }
+  }, [
+    lessonProgressKey,
+    markCompleteMutation,
+    progress?.completed,
+    queryClient,
+    userId,
+  ]);
 
   return {
     progress,

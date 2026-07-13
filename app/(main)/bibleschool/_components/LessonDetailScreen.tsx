@@ -1,24 +1,31 @@
 import { Box } from '@/components/ui/box';
 import { MainTopBar } from '@/app/(main)/_components/MainTopBar';
 import { useAuth } from '@/contexts/AuthContext';
+import { useBibleschoolSimpleMode } from '@/contexts/BibleschoolSimpleModeContext';
+import { useLearningActivity } from '@/contexts/LearningActivityContext';
 import { routes } from '@/constants/routes';
+import { SIMPLE_MODE_AUTO_ADVANCE_MS } from '@/constants/bibleschoolSimpleMode';
 import { useModule, useModules } from '@/hooks/useBibleschoolContent';
 import { useLessonDetailProgress } from '@/hooks/useLessonDetailProgress';
 import { useLessonUnlocks } from '@/hooks/useLessonUnlocks';
 import { useNetworkQuality } from '@/hooks/useNetworkQuality';
 import { useTheme } from '@/hooks/useTheme';
+import { useToast } from '@/hooks/useToast';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useVimeoPlaybackUrl } from '@/hooks/useVimeoPlaybackUrl';
 import { bzzt, bzztWarning } from '@/utils/haptics';
 import { useNavigation, router } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LockedLessonModal } from '@/app/(main)/bibleschool/(tabs)/modules/[id]/_components/LockedLessonModal';
+import { getDisplayModuleNumber } from '@/utils/bibleschoolCurriculum';
+import { useFocusEffect } from 'expo-router/react-navigation';
 import { LessonDetailScrollContent } from './LessonDetailScrollContent';
 import { LessonDetailVideoSection } from './LessonDetailVideoSection';
 import { NextLessonPreloader } from './NextLessonPreloader';
+import { SimpleModeLessonOrientation } from './SimpleModeLessonOrientation';
 
 interface LessonDetailScreenProps {
   moduleId: string;
@@ -29,10 +36,18 @@ export function LessonDetailScreen({ moduleId, lessonId }: LessonDetailScreenPro
   const navigation = useNavigation();
   const theme = useTheme();
   const { t, locale } = useTranslation();
+  const toast = useToast();
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
+  const { enabled: simpleMode } = useBibleschoolSimpleMode();
+  const { recordLessonStarted, recordLessonEngaged } = useLearningActivity();
   const { isLessonUnlocked, isExamUnlocked, nextUnlockedTarget } = useLessonUnlocks();
   const networkQuality = useNetworkQuality();
+  const autoAdvanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [awaitingAutoAdvance, setAwaitingAutoAdvance] = useState(false);
+  const [autoAdvanceCountdown, setAutoAdvanceCountdown] = useState<
+    number | null
+  >(null);
 
   const { data: moduleData } = useModule(moduleId, locale);
   const { data: modules } = useModules(locale);
@@ -82,6 +97,90 @@ export function LessonDetailScreen({ moduleId, lessonId }: LessonDetailScreenPro
     stop: () => void;
     onPiPStop: (() => void) | null;
   } | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (autoAdvanceTimerRef.current) {
+        clearTimeout(autoAdvanceTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleMarkCompleteWithAutoAdvance = useCallback(async () => {
+    let changed = false;
+    try {
+      changed = await handleMarkComplete();
+    } catch {
+      toast.error(t('bibleschool.simpleMode.completionSaveError'));
+      return;
+    }
+    if (simpleMode && changed) {
+      setAwaitingAutoAdvance(true);
+    }
+  }, [handleMarkComplete, simpleMode, t, toast]);
+
+  const handleMarkCompleteStandard = useCallback(() => {
+    void handleMarkComplete().catch(() => {
+      toast.error(t('bibleschool.simpleMode.completionSaveError'));
+    });
+  }, [handleMarkComplete, t, toast]);
+
+  const cancelAutoAdvance = useCallback(() => {
+    if (autoAdvanceTimerRef.current) {
+      clearTimeout(autoAdvanceTimerRef.current);
+      autoAdvanceTimerRef.current = null;
+    }
+    setAwaitingAutoAdvance(false);
+    setAutoAdvanceCountdown(null);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      return cancelAutoAdvance;
+    }, [cancelAutoAdvance]),
+  );
+
+  useEffect(() => {
+    if (!simpleMode || !awaitingAutoAdvance || autoAdvanceTimerRef.current) {
+      return;
+    }
+
+    const targetUnlocked = nextLesson
+      ? isLessonUnlocked(moduleId, nextLesson)
+      : isExamUnlocked(moduleId);
+    if (!targetUnlocked) {
+      const resetTimer = setTimeout(() => {
+        setAwaitingAutoAdvance(false);
+      }, 0);
+      return () => clearTimeout(resetTimer);
+    }
+
+    const nextHref = nextLesson
+      ? routes.bibleschoolModuleLesson(moduleId, nextLesson.id)
+      : routes.bibleschoolModuleExam(moduleId);
+    const initialCountdown = Math.ceil(SIMPLE_MODE_AUTO_ADVANCE_MS / 1000);
+    const tick = (count: number) => {
+      if (count <= 0) {
+        cancelAutoAdvance();
+        requestAnimationFrame(() => router.replace(nextHref));
+        return;
+      }
+      setAutoAdvanceCountdown(count);
+      autoAdvanceTimerRef.current = setTimeout(() => tick(count - 1), 1000);
+    };
+    autoAdvanceTimerRef.current = setTimeout(
+      () => tick(initialCountdown),
+      0,
+    );
+  }, [
+    awaitingAutoAdvance,
+    cancelAutoAdvance,
+    isExamUnlocked,
+    isLessonUnlocked,
+    moduleId,
+    nextLesson,
+    simpleMode,
+  ]);
 
   const module = moduleData;
   if (!module || !lesson) {
@@ -182,7 +281,11 @@ export function LessonDetailScreen({ moduleId, lessonId }: LessonDetailScreenPro
           title={lesson.title ?? ''}
           currentSection="bibleschool"
           showBackButton
-          onBack={() => navigation.goBack()}
+          enlarged={simpleMode}
+          onBack={() => {
+            cancelAutoAdvance();
+            navigation.goBack();
+          }}
         />
       </Box>
       <Box className="px-6 rounded-2xl overflow-hidden">
@@ -198,38 +301,80 @@ export function LessonDetailScreen({ moduleId, lessonId }: LessonDetailScreenPro
             void refetchVimeo();
           }}
           onSavePosition={handleSavePosition}
-          onMarkComplete={handleMarkComplete}
+          onPlaybackStarted={() => recordLessonStarted(moduleId, lessonId)}
+          onPlaybackEngaged={() => recordLessonEngaged(moduleId, lessonId)}
+          onMarkComplete={
+            simpleMode
+              ? handleMarkCompleteWithAutoAdvance
+              : handleMarkCompleteStandard
+          }
           pipRef={pipRef}
           initialPositionSeconds={progress?.video_position_seconds ?? 0}
         />
       </Box>
-      <ScrollView
-        className="flex-1 px-6"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingTop: 24,
-          paddingBottom: insets.bottom + 100,
-        }}
-      >
-        <LessonDetailScrollContent
-          lesson={lesson}
-          module={module}
-          theme={theme}
-          t={t}
-          moduleId={moduleId}
-          nextLesson={nextLesson}
-          isLessonUnlocked={isLessonUnlocked}
-          isExamUnlocked={isExamUnlocked}
-          onNextLessonPress={() => {
-            if (!nextLesson) return;
-            bzzt();
-            router.replace(routes.bibleschoolModuleLesson(moduleId, nextLesson.id));
+      {!simpleMode ? (
+        <ScrollView
+          className="flex-1 px-6"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingTop: 24,
+            paddingBottom: insets.bottom + 100,
           }}
-          onLockedPress={handleLockedPress}
-          onLessonHandout={handleLessonHandout}
-          onModuleHandout={handleModuleHandout}
-        />
-      </ScrollView>
+        >
+          <LessonDetailScrollContent
+            lesson={lesson}
+            module={module}
+            theme={theme}
+            t={t}
+            moduleId={moduleId}
+            nextLesson={nextLesson}
+            isLessonUnlocked={isLessonUnlocked}
+            isExamUnlocked={isExamUnlocked}
+            onNextLessonPress={() => {
+              if (!nextLesson) return;
+              bzzt();
+              router.replace(routes.bibleschoolModuleLesson(moduleId, nextLesson.id));
+            }}
+            onLockedPress={handleLockedPress}
+            onLessonHandout={handleLessonHandout}
+            onModuleHandout={handleModuleHandout}
+          />
+        </ScrollView>
+      ) : (
+        <ScrollView
+          className="flex-1 px-6"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingTop: 20,
+            paddingBottom: insets.bottom + 112,
+          }}
+        >
+          <SimpleModeLessonOrientation
+            lesson={lesson}
+            moduleOrder={getDisplayModuleNumber(module.order)}
+            nextLesson={nextLesson}
+            nextUnlocked={
+              nextLesson
+                ? isLessonUnlocked(moduleId, nextLesson)
+                : isExamUnlocked(moduleId)
+            }
+            countdown={autoAdvanceCountdown}
+            theme={theme}
+            t={t}
+            onNextPress={() => {
+              cancelAutoAdvance();
+              bzzt();
+              router.replace(
+                nextLesson
+                  ? routes.bibleschoolModuleLesson(moduleId, nextLesson.id)
+                  : routes.bibleschoolModuleExam(moduleId),
+              );
+            }}
+            onLockedPress={handleLockedPress}
+            onStay={cancelAutoAdvance}
+          />
+        </ScrollView>
+      )}
       <LockedLessonModal
         visible={lockedModal !== null}
         message={lockedModal?.message ?? ''}
