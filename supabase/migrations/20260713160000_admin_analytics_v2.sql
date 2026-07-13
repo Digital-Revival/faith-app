@@ -23,7 +23,11 @@ SET search_path = public
 AS $$
 BEGIN
   IF NEW.role IS DISTINCT FROM OLD.role
-     AND COALESCE(auth.role(), '') <> 'service_role' THEN
+     AND COALESCE(auth.role(), '') <> 'service_role'
+     AND NOT (
+       SESSION_USER = 'postgres'
+       AND COALESCE(auth.role(), '') = ''
+     ) THEN
     RAISE EXCEPTION 'Role changes require the service role';
   END IF;
   RETURN NEW;
