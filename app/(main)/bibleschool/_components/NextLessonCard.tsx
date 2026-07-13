@@ -1,6 +1,7 @@
 import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
 import { LockOverlay } from '@/components/common/LockOverlay';
+import { useBibleschoolEasyReadClasses } from '@/hooks/useBibleschoolEasyReadClasses';
 import { useEasyReadTypography } from '@/hooks/useEasyReadTypography';
 import type { ThemeColors } from '@/hooks/useTheme';
 import { useVimeoThumbnail } from '@/hooks/useVimeoThumbnail';
@@ -33,6 +34,7 @@ export function NextLessonCard({
   onLockedPress?: () => void;
 }) {
   const { minTouchTargetStyle } = useEasyReadTypography();
+  const easyReadClasses = useBibleschoolEasyReadClasses();
   const videoIdForThumb = !nextLesson.thumbnailUrl && nextLesson.videoId ? nextLesson.videoId : undefined;
   const { data: vimeoThumbnail, isLoading } = useVimeoThumbnail(videoIdForThumb);
   const thumbnailUrl = nextLesson.thumbnailUrl ?? vimeoThumbnail ?? undefined;
@@ -120,7 +122,11 @@ export function NextLessonCard({
               </Text>
             )}
             <Text
-              className={easyReadEnabled ? 'text-lg font-semibold' : 'text-base font-medium'}
+              className={
+                easyReadEnabled
+                  ? `${easyReadClasses.title} font-semibold`
+                  : 'text-base font-medium'
+              }
               style={{ color: theme.textPrimary }}
               numberOfLines={2}
             >

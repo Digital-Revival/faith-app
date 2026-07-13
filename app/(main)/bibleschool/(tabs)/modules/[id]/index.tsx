@@ -285,7 +285,7 @@ export default function ModuleLessonsScreen() {
         }
       >
         <ModuleHeroBanner module={module} />
-        {!easyReadEnabled && module.description.trim() ? (
+        {module.description.trim() ? (
           <Text
             className="text-base mb-6"
             style={{ color: theme.textSecondary }}

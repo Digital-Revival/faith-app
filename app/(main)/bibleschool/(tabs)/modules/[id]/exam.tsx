@@ -8,6 +8,8 @@ import { VStack } from "@/components/ui/vstack";
 import { routes } from "@/constants/routes";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEasyRead } from "@/contexts/EasyReadContext";
+import { useBibleschoolEasyReadClasses } from "@/hooks/useBibleschoolEasyReadClasses";
+import { useEasyReadTypography } from "@/hooks/useEasyReadTypography";
 import { useModule } from "@/hooks/useBibleschoolContent";
 import { useLessonUnlocks } from "@/hooks/useLessonUnlocks";
 import { useButtonShadow } from "@/hooks/useShadows";
@@ -1015,12 +1017,16 @@ function QuestionCard({
   theme: ReturnType<typeof useTheme>;
   t: (key: string, params?: Record<string, string | number>) => string;
 }) {
+  const easyReadClasses = useBibleschoolEasyReadClasses();
+  const { minTouchTargetStyle } = useEasyReadTypography();
   const correctOptionId = question.options.find((o) => o.correct)?.id;
   const isCorrect = selectedId === correctOptionId;
 
-  const optionTextClass = easyReadLarge ? 'text-lg' : 'text-sm';
+  const optionTextClass = easyReadLarge ? 'text-base' : 'text-sm';
   const optionPaddingClass = easyReadLarge ? 'p-4' : 'p-3';
-  const questionTextClass = easyReadLarge ? 'text-lg' : 'text-base';
+  const questionTextClass = easyReadLarge
+    ? `${easyReadClasses.body} font-semibold`
+    : 'text-base font-semibold';
 
   return (
     <Box
@@ -1067,7 +1073,7 @@ function QuestionCard({
         </Box>
       )}
       <Text
-        className={`${questionTextClass} font-semibold mb-4`}
+        className={`${questionTextClass} mb-4`}
         style={{ color: theme.textPrimary }}
       >
         {question.question ?? t(question.questionKey as never)}
@@ -1178,6 +1184,7 @@ function QuestionCard({
               accessibilityRole="button"
               accessibilityLabel={optionAccessibilityLabel}
               accessibilityState={{ selected: isUserSelection, disabled }}
+              style={easyReadLarge ? minTouchTargetStyle : undefined}
             >
               {optionContent}
             </TouchableOpacity>

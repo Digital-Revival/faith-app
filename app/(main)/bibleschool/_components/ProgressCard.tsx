@@ -40,12 +40,6 @@ export function ProgressCard() {
 
   const handlePress = () => {
     bzzt();
-    if (easyReadEnabled) {
-      setNavigationDirection('right');
-      setActiveTab('modules');
-      router.push(routes.bibleschoolModules());
-      return;
-    }
     setNavigationDirection('right');
     setActiveTab('voortgang');
     router.push(routes.bibleschoolVoortgang());

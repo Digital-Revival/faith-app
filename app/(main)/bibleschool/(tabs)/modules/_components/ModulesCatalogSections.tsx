@@ -9,7 +9,6 @@ import { ModulesYearCompleteCard } from '@/components/bibleschool/ModulesYearCom
 
 interface ModulesCatalogSectionsProps {
   theme: ThemeColors;
-  easyReadEnabled?: boolean;
   allModulesCompleted: boolean;
   moduleCount: number;
   currentModuleLabel: string;
@@ -51,7 +50,6 @@ function renderModuleCard(
 
 export function ModulesCatalogSections({
   theme,
-  easyReadEnabled = false,
   allModulesCompleted,
   moduleCount,
   currentModuleLabel,
@@ -72,44 +70,6 @@ export function ModulesCatalogSections({
   const catalogTitle = allModulesCompleted
     ? year1AllModulesLabel
     : allModulesLabel;
-
-  if (easyReadEnabled) {
-    const activeModules = currentModuleData
-      ? [currentModuleData, ...remainingModules.filter((m) => m.id !== currentModuleData.id)]
-      : remainingModules;
-
-    return (
-      <VStack className="gap-6">
-        {allModulesCompleted ? (
-          <ModulesYearCompleteCard theme={theme} moduleCount={moduleCount} />
-        ) : null}
-        <VStack className="gap-2">
-          <Text
-            className="text-xs font-semibold uppercase tracking-wider"
-            style={{ color: theme.textTertiary }}
-          >
-            {catalogTitle}
-          </Text>
-          {activeModules.map((module) =>
-            renderModuleCard(module, progressMap, attemptCountMap, onModulePress),
-          )}
-        </VStack>
-        {completedModules.length > 0 ? (
-          <VStack className="gap-2">
-            <Text
-              className="text-xs font-semibold uppercase tracking-wider"
-              style={{ color: theme.textTertiary }}
-            >
-              {completedModulesLabel}
-            </Text>
-            {completedModules.map((module) =>
-              renderModuleCard(module, progressMap, attemptCountMap, onModulePress),
-            )}
-          </VStack>
-        ) : null}
-      </VStack>
-    );
-  }
 
   return (
     <VStack className="gap-6">

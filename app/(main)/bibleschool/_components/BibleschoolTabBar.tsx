@@ -2,14 +2,13 @@ import { Text } from '@/components/ui/text';
 import { useBibleschoolTab } from '@/contexts/BibleschoolTabContext';
 import { useEasyRead } from '@/contexts/EasyReadContext';
 import { routes } from '@/constants/routes';
-import { useEasyReadTypography } from '@/hooks/useEasyReadTypography';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { bzzt } from '@/utils/haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { memo, useMemo } from 'react';
+import { memo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -24,27 +23,17 @@ function BibleschoolTabBarInner() {
   const theme = useTheme();
   const { t } = useTranslation();
   const { enabled: easyReadEnabled } = useEasyRead();
-  const { scaleFontSize, scaleIconSize, minTouchTargetStyle } =
-    useEasyReadTypography();
   const { activeTab, setActiveTab, setNavigationDirection } = useBibleschoolTab();
   const isDark = theme.isDark;
   const borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
   const inactiveIconColor = theme.tabInactiveText;
   const inactiveTextColor = theme.tabInactiveText;
 
-  const tabs = useMemo(
-    () =>
-      easyReadEnabled
-        ? ALL_TABS.filter((tab) => tab.route !== 'voortgang')
-        : ALL_TABS,
-    [easyReadEnabled],
-  );
-
-  const labelFontSize = scaleFontSize(easyReadEnabled ? 14 : 10);
-  const labelLineHeight = scaleFontSize(easyReadEnabled ? 18 : 12);
-  const iconSize = scaleIconSize(20);
-  const iconContainerHeight = scaleIconSize(20);
-  const labelContainerHeight = scaleFontSize(easyReadEnabled ? 18 : 12);
+  const labelFontSize = easyReadEnabled ? 12 : 10;
+  const labelLineHeight = easyReadEnabled ? 14 : 12;
+  const iconSize = 20;
+  const iconContainerHeight = 20;
+  const labelContainerHeight = easyReadEnabled ? 14 : 12;
 
   const getIsFocused = (tab: (typeof ALL_TABS)[0]) => {
     return tab.route === activeTab;
@@ -74,14 +63,14 @@ function BibleschoolTabBarInner() {
           borderColor,
         }}
       >
-        {tabs.map((tab) => {
+        {ALL_TABS.map((tab) => {
           const isFocused = getIsFocused(tab);
           const config = { icon: tab.icon, label: t(tab.labelKey) };
 
           const onPress = () => {
             bzzt();
-            const currentIndex = tabs.findIndex((item) => item.route === activeTab);
-            const targetIndex = tabs.findIndex((item) => item.route === tab.route);
+            const currentIndex = ALL_TABS.findIndex((item) => item.route === activeTab);
+            const targetIndex = ALL_TABS.findIndex((item) => item.route === tab.route);
             setNavigationDirection(targetIndex < currentIndex ? 'left' : 'right');
             setActiveTab(tab.route);
             router.navigate(tab.href());
@@ -100,7 +89,6 @@ function BibleschoolTabBarInner() {
                 justifyContent: 'center',
                 paddingVertical: 4,
                 paddingHorizontal: 0,
-                ...minTouchTargetStyle,
               }}
             >
               {isFocused ? (

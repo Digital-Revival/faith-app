@@ -2,8 +2,10 @@ import { useRef , createElement } from 'react';
 import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
 import { MainTopBar } from '@/app/(main)/_components/MainTopBar';
+import { SettingRow } from './_components/SettingRow';
 import { SettingsCard } from './_components/SettingsCard';
 import { useTheme } from '@/hooks/useTheme';
+import { useCardShadow } from '@/hooks/useShadows';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useThemePreference } from '@/contexts/ThemeContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -15,6 +17,7 @@ import { SETTINGS_SECTIONS } from './_config/settingsSections';
 
 export default function PreferencesSettingsScreen() {
   const theme = useTheme();
+  const cardShadow = useCardShadow();
   const { t, locale } = useTranslation();
   const { preference } = useThemePreference();
   const insets = useSafeAreaInsets();
@@ -65,27 +68,45 @@ export default function PreferencesSettingsScreen() {
             {rows.map((row) => {
               const Component = row.component;
               const componentProps = (row.componentProps ?? {}) as Record<string, unknown>;
-              const ref =
-                row.id === 'language' ? languageRef : row.id === 'theme' ? themeRef : null;
-              const valueLabel =
-                row.id === 'language'
-                  ? languageValue
-                  : row.id === 'theme'
-                    ? t(themeValue)
-                    : '';
 
-              if (!ref) return null;
+              if (row.id === 'language' || row.id === 'theme') {
+                const ref = row.id === 'language' ? languageRef : themeRef;
+                const valueLabel =
+                  row.id === 'language' ? languageValue : t(themeValue);
+
+                return (
+                  <SettingsCard
+                    key={row.id}
+                    icon={row.icon}
+                    titleKey={row.labelKey}
+                    valueLabel={valueLabel}
+                    openRef={ref}
+                  >
+                    {createElement(Component, { ...componentProps, ref })}
+                  </SettingsCard>
+                );
+              }
 
               return (
-                <SettingsCard
+                <Box
                   key={row.id}
-                  icon={row.icon}
-                  titleKey={row.labelKey}
-                  valueLabel={valueLabel}
-                  openRef={ref}
+                  className="rounded-2xl overflow-hidden"
+                  style={{
+                    backgroundColor: theme.cardBg,
+                    borderWidth: 1,
+                    borderColor: theme.cardBorder,
+                    ...cardShadow,
+                  }}
                 >
-                  {createElement(Component, { ...componentProps, ref })}
-                </SettingsCard>
+                  <SettingRow
+                    icon={row.icon}
+                    labelKey={row.labelKey}
+                    descriptionKey={row.descriptionKey}
+                    isLast
+                  >
+                    {createElement(Component, componentProps)}
+                  </SettingRow>
+                </Box>
               );
             })}
           </Box>

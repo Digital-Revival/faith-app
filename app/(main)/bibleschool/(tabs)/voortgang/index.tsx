@@ -3,14 +3,13 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Text } from '@/components/ui/text';
 import { MainTopBar } from '@/app/(main)/_components/MainTopBar';
 import { useBibleschoolTab } from '@/contexts/BibleschoolTabContext';
-import { useEasyRead } from '@/contexts/EasyReadContext';
 import { routes } from '@/constants/routes';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { bzzt } from '@/utils/haptics';
 import { useFocusEffect } from "expo-router/react-navigation";
 import { router } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FlatList, RefreshControl, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ModuleProgressRow } from './_components/ModuleProgressRow';
@@ -24,7 +23,6 @@ const COLLAPSED_VISIBLE = 2;
 
 export default function VoortgangScreen() {
   const { setActiveTab } = useBibleschoolTab();
-  const { enabled: easyReadEnabled } = useEasyRead();
   const theme = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
@@ -44,12 +42,6 @@ export default function VoortgangScreen() {
     recentBadges,
     onRefresh,
   } = useVoortgangData();
-
-  useEffect(() => {
-    if (easyReadEnabled) {
-      router.replace(routes.bibleschool());
-    }
-  }, [easyReadEnabled]);
 
   useFocusEffect(
     useCallback(() => {

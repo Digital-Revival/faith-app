@@ -3,6 +3,7 @@ import { Button, ButtonText } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { useEasyRead } from '@/contexts/EasyReadContext';
+import { useBibleschoolEasyReadClasses } from '@/hooks/useBibleschoolEasyReadClasses';
 import type { ThemeColors } from '@/hooks/useTheme';
 import type { BibleschoolLesson } from '@/types/bibleschool';
 import {
@@ -21,6 +22,7 @@ export function LessonLessonBodyCard({
   t: (key: string, params?: Record<string, string | number>) => string;
 }) {
   const { enabled: easyReadEnabled } = useEasyRead();
+  const easyReadClasses = useBibleschoolEasyReadClasses();
   const [expanded, setExpanded] = useState<ExpandState>(
     easyReadEnabled ? 'collapsed' : 'full',
   );
@@ -86,7 +88,7 @@ export function LessonLessonBodyCard({
 
           {display.body ? (
             <Text
-              className="text-base"
+              className={easyReadClasses.body}
               style={{ color: theme.textPrimary }}
             >
               {display.body}
@@ -104,7 +106,7 @@ export function LessonLessonBodyCard({
 
           {easyReadEnabled && expanded !== 'collapsed' && !display.body ? (
             <Text
-              className="text-base"
+              className={easyReadClasses.body}
               style={{ color: theme.textSecondary }}
             >
               {t('lessons.noTextAvailable')}
@@ -156,7 +158,7 @@ export function LessonLessonBodyCard({
               {t('lessons.goal')}
             </Text>
             <Text
-              className="text-base"
+              className={easyReadClasses.body}
               style={{ color: theme.textPrimary }}
             >
               {lesson.goal}

@@ -2,7 +2,6 @@ import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { useBibleschoolTab } from '@/contexts/BibleschoolTabContext';
-import { useEasyRead } from '@/contexts/EasyReadContext';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { FeedbackFab } from '@/app/(main)/_components/FeedbackFab';
@@ -36,7 +35,6 @@ export default function BibleSchoolScreen() {
   );
   const theme = useTheme();
   const { t } = useTranslation();
-  const { enabled: easyReadEnabled } = useEasyRead();
   const insets = useSafeAreaInsets();
   const [refreshing, setRefreshing] = useState(false);
 
@@ -88,10 +86,9 @@ export default function BibleSchoolScreen() {
             {t('overview.sectionTitle')}
           </Text>
           <VStack className="gap-4">
-            {easyReadEnabled ? <ContinueLearningCard /> : null}
             <ProgressCard />
-            {!easyReadEnabled ? <CurrentVideoCard /> : null}
-            {!easyReadEnabled ? <ContinueLearningCard /> : null}
+            <CurrentVideoCard />
+            <ContinueLearningCard />
           </VStack>
         </VStack>
       </ScrollView>

@@ -2,6 +2,7 @@ import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
 import { VideoThumbnail } from '@/components/ui/VideoThumbnail';
 import { LockOverlay } from '@/components/common/LockOverlay';
+import { useBibleschoolEasyReadClasses } from '@/hooks/useBibleschoolEasyReadClasses';
 import { useEasyReadTypography } from '@/hooks/useEasyReadTypography';
 import { useTheme } from '@/hooks/useTheme';
 import { queryKeys } from '@/services/queryKeys';
@@ -64,7 +65,8 @@ export function LessonRow({
   onPress: () => void;
   onLockedPress?: (lesson: LessonLike) => void;
 }) {
-  const { scaleFontSize, minTouchTargetStyle } = useEasyReadTypography();
+  const { minTouchTargetStyle } = useEasyReadTypography();
+  const easyReadClasses = useBibleschoolEasyReadClasses();
   const videoIdForThumb = !lesson.thumbnailUrl && lesson.videoId ? lesson.videoId : undefined;
   const vimeoMetaEnabled = !!lesson.videoId && (!lesson.thumbnailUrl || !isLocked);
 
@@ -117,7 +119,7 @@ export function LessonRow({
       ? `${titleStr}, ${t('lessons.completed')}`
       : titleStr;
 
-  const rowPaddingVertical = easyReadEnabled ? scaleFontSize(12) : undefined;
+  const rowPaddingVertical = easyReadEnabled ? 12 : undefined;
 
   return (
     <TouchableOpacity
@@ -169,7 +171,7 @@ export function LessonRow({
               </Text>
             )}
             <Text
-              className="text-base font-medium"
+              className={`${easyReadClasses.title} font-medium`}
               style={{ color: theme.textPrimary }}
               numberOfLines={2}
             >

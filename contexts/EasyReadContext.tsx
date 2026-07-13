@@ -11,26 +11,19 @@ import {
 } from 'react';
 
 import { useAuth } from './AuthContext';
-import { useTypography } from './TypographyContext';
 
 export const EASY_READ_STORAGE_KEY = '@faith_app:easy_read';
 export const EASY_READ_SETTING_KEY = 'accessibility.easy_read';
 
 const NORMAL_TYPOGRAPHY = {
-  fontSizeScale: 1.0,
-  lineHeightMultiplier: 1.0,
   minTouchTarget: 44,
 } as const;
 
 const EASY_READ_TYPOGRAPHY = {
-  fontSizeScale: 1.25,
-  lineHeightMultiplier: 1.5,
   minTouchTarget: 48,
 } as const;
 
 interface EasyReadTypography {
-  fontSizeScale: number;
-  lineHeightMultiplier: number;
   minTouchTarget: number;
 }
 
@@ -57,7 +50,6 @@ function getTypographyForEnabled(enabled: boolean): EasyReadTypography {
 
 export function EasyReadProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-  const { setFontSizeScale } = useTypography();
   const [enabled, setEnabledState] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -67,9 +59,8 @@ export function EasyReadProvider({ children }: { children: React.ReactNode }) {
   );
 
   useEffect(() => {
-    setFontSizeScale(typography.fontSizeScale);
     setEasyReadHapticsDisabled(enabled);
-  }, [enabled, typography.fontSizeScale, setFontSizeScale]);
+  }, [enabled]);
 
   useEffect(() => {
     const load = async () => {
