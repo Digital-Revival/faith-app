@@ -5,7 +5,6 @@ import * as Haptics from 'expo-haptics';
 import { useState } from 'react';
 
 import { REGISTRATION_ONBOARDING_SECTIONS } from '@/constants/onboarding';
-import { BIBLEschool_SIMPLE_MODE_KEY } from '@/constants/bibleschoolSimpleMode';
 import { routes } from '@/constants/routes';
 import { THEME_STORAGE_KEY } from '@/contexts/ThemeContext';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -51,6 +50,7 @@ export function useRegister(): UseRegisterReturn {
         email: data.email,
         password: data.password,
         fullName: data.name,
+        bibleschoolSimpleModeEnabled: data.bibleschoolSimpleModeEnabled,
       });
       if (!authData?.user?.id) {
         throw new Error(t('auth.registrationFailed'));
@@ -122,15 +122,6 @@ export function useRegister(): UseRegisterReturn {
       }
 
       if (typeof bibleschoolSimpleModeEnabled === 'boolean') {
-        bestEffort.push(
-          userSettingsService
-            .setSetting(
-              userId,
-              BIBLEschool_SIMPLE_MODE_KEY,
-              bibleschoolSimpleModeEnabled,
-            )
-            .catch(() => undefined),
-        );
         queryClient.setQueryData(
           queryKeys.userSettings.simpleMode(userId),
           bibleschoolSimpleModeEnabled,

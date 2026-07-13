@@ -4,10 +4,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useBibleschoolSimpleMode } from '@/contexts/BibleschoolSimpleModeContext';
 import { useLearningActivity } from '@/contexts/LearningActivityContext';
 import { routes } from '@/constants/routes';
-import { SIMPLE_MODE_AUTO_ADVANCE_MS } from '@/constants/bibleschoolSimpleMode';
 import { useModule, useModules } from '@/hooks/useBibleschoolContent';
 import { useLessonDetailProgress } from '@/hooks/useLessonDetailProgress';
 import { useLessonUnlocks } from '@/hooks/useLessonUnlocks';
+import { useSimpleModeAutoAdvance } from '@/hooks/useSimpleModeAutoAdvance';
 import { useNetworkQuality } from '@/hooks/useNetworkQuality';
 import { useTheme } from '@/hooks/useTheme';
 import { useToast } from '@/hooks/useToast';
@@ -16,12 +16,11 @@ import { useVimeoPlaybackUrl } from '@/hooks/useVimeoPlaybackUrl';
 import { bzzt, bzztWarning } from '@/utils/haptics';
 import { useNavigation, router } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LockedLessonModal } from '@/app/(main)/bibleschool/(tabs)/modules/[id]/_components/LockedLessonModal';
 import { getDisplayModuleNumber } from '@/utils/bibleschoolCurriculum';
-import { useFocusEffect } from 'expo-router/react-navigation';
 import { LessonDetailScrollContent } from './LessonDetailScrollContent';
 import { LessonDetailVideoSection } from './LessonDetailVideoSection';
 import { NextLessonPreloader } from './NextLessonPreloader';
@@ -43,11 +42,6 @@ export function LessonDetailScreen({ moduleId, lessonId }: LessonDetailScreenPro
   const { recordLessonStarted, recordLessonEngaged } = useLearningActivity();
   const { isLessonUnlocked, isExamUnlocked, nextUnlockedTarget } = useLessonUnlocks();
   const networkQuality = useNetworkQuality();
-  const autoAdvanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [awaitingAutoAdvance, setAwaitingAutoAdvance] = useState(false);
-  const [autoAdvanceCountdown, setAutoAdvanceCountdown] = useState<
-    number | null
-  >(null);
 
   const { data: moduleData } = useModule(moduleId, locale);
   const { data: modules } = useModules(locale);
@@ -98,89 +92,30 @@ export function LessonDetailScreen({ moduleId, lessonId }: LessonDetailScreenPro
     onPiPStop: (() => void) | null;
   } | null>(null);
 
-  useEffect(() => {
-    return () => {
-      if (autoAdvanceTimerRef.current) {
-        clearTimeout(autoAdvanceTimerRef.current);
-      }
-    };
-  }, []);
+  const showCompletionError = useCallback(
+    () => toast.error(t('bibleschool.simpleMode.completionSaveError')),
+    [t, toast],
+  );
 
-  const handleMarkCompleteWithAutoAdvance = useCallback(async () => {
-    let changed = false;
-    try {
-      changed = await handleMarkComplete();
-    } catch {
-      toast.error(t('bibleschool.simpleMode.completionSaveError'));
-      return;
-    }
-    if (simpleMode && changed) {
-      setAwaitingAutoAdvance(true);
-    }
-  }, [handleMarkComplete, simpleMode, t, toast]);
+  const {
+    cancel: cancelAutoAdvance,
+    complete: handleMarkCompleteWithAutoAdvance,
+    countdown: autoAdvanceCountdown,
+  } = useSimpleModeAutoAdvance({
+    enabled: simpleMode,
+    moduleId,
+    nextLesson,
+    isLessonUnlocked,
+    isExamUnlocked,
+    markComplete: handleMarkComplete,
+    onError: showCompletionError,
+  });
 
   const handleMarkCompleteStandard = useCallback(() => {
     void handleMarkComplete().catch(() => {
-      toast.error(t('bibleschool.simpleMode.completionSaveError'));
+      showCompletionError();
     });
-  }, [handleMarkComplete, t, toast]);
-
-  const cancelAutoAdvance = useCallback(() => {
-    if (autoAdvanceTimerRef.current) {
-      clearTimeout(autoAdvanceTimerRef.current);
-      autoAdvanceTimerRef.current = null;
-    }
-    setAwaitingAutoAdvance(false);
-    setAutoAdvanceCountdown(null);
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      return cancelAutoAdvance;
-    }, [cancelAutoAdvance]),
-  );
-
-  useEffect(() => {
-    if (!simpleMode || !awaitingAutoAdvance || autoAdvanceTimerRef.current) {
-      return;
-    }
-
-    const targetUnlocked = nextLesson
-      ? isLessonUnlocked(moduleId, nextLesson)
-      : isExamUnlocked(moduleId);
-    if (!targetUnlocked) {
-      const resetTimer = setTimeout(() => {
-        setAwaitingAutoAdvance(false);
-      }, 0);
-      return () => clearTimeout(resetTimer);
-    }
-
-    const nextHref = nextLesson
-      ? routes.bibleschoolModuleLesson(moduleId, nextLesson.id)
-      : routes.bibleschoolModuleExam(moduleId);
-    const initialCountdown = Math.ceil(SIMPLE_MODE_AUTO_ADVANCE_MS / 1000);
-    const tick = (count: number) => {
-      if (count <= 0) {
-        cancelAutoAdvance();
-        requestAnimationFrame(() => router.replace(nextHref));
-        return;
-      }
-      setAutoAdvanceCountdown(count);
-      autoAdvanceTimerRef.current = setTimeout(() => tick(count - 1), 1000);
-    };
-    autoAdvanceTimerRef.current = setTimeout(
-      () => tick(initialCountdown),
-      0,
-    );
-  }, [
-    awaitingAutoAdvance,
-    cancelAutoAdvance,
-    isExamUnlocked,
-    isLessonUnlocked,
-    moduleId,
-    nextLesson,
-    simpleMode,
-  ]);
+  }, [handleMarkComplete, showCompletionError]);
 
   const module = moduleData;
   if (!module || !lesson) {

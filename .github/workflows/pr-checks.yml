@@ -40,6 +40,7 @@ jobs:
               - 'utils/**'
               - 'contexts/**'
               - 'providers/**'
+              - 'scripts/**'
               - 'i18n/**'
               - 'package.json'
               - 'package-lock.json'
@@ -109,8 +110,25 @@ jobs:
           EXPO_PUBLIC_LOCAL_DEV_IP: 127.0.0.1
         run: npm run typecheck
 
+  unit-tests:
+    name: App contract tests
+    needs: detect-changes
+    if: needs.detect-changes.outputs.app == 'true' || needs.detect-changes.outputs.workflows == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22.13.0"
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npm run test:admin
+      - run: npm run test:learning-activity
+
   supabase-validate:
-    name: Supabase migrations syntax
+    name: Supabase schema and database tests
     needs: detect-changes
     if: needs.detect-changes.outputs.migrations == 'true'
     runs-on: ubuntu-latest
@@ -143,4 +161,5 @@ jobs:
           supabase db start
           supabase db reset
           supabase db lint --local --schema public --level warning --fail-on warning
-          echo "All migrations applied and passed lint."
+          supabase test db
+          echo "All migrations applied and passed lint and database tests."

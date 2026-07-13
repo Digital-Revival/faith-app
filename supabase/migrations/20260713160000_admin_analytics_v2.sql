@@ -1,5 +1,41 @@
 -- Admin Analytics 2.0: private learning events, hardened settings and v2 RPCs.
 
+-- Keep the explicit registration choice in the same transaction as auth.users.
+-- The existing auth trigger already points at this function, so replacing it is
+-- enough to make profile and initial settings creation atomic for new users.
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+BEGIN
+  INSERT INTO public.users (id, email, full_name)
+  VALUES (
+    NEW.id,
+    COALESCE(NEW.email, ''),
+    COALESCE(NEW.raw_user_meta_data->>'full_name', '')
+  );
+
+  IF NEW.raw_user_meta_data->>'bibleschool_simple_mode_enabled' IN ('true', 'false') THEN
+    INSERT INTO public.user_settings (user_id, settings)
+    VALUES (
+      NEW.id,
+      jsonb_build_object(
+        'bibleschool.simple_mode',
+        (NEW.raw_user_meta_data->>'bibleschool_simple_mode_enabled')::BOOLEAN
+      )
+    )
+    ON CONFLICT (user_id) DO UPDATE SET
+      settings = public.user_settings.settings || EXCLUDED.settings,
+      updated_at = NOW();
+  END IF;
+
+  RETURN NEW;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.handle_new_user() FROM PUBLIC, anon, authenticated;
+
 CREATE OR REPLACE FUNCTION public.is_admin()
 RETURNS BOOLEAN
 LANGUAGE sql
@@ -12,7 +48,7 @@ AS $$
   );
 $$;
 
-REVOKE ALL ON FUNCTION public.is_admin() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.is_admin() FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.is_admin() TO authenticated;
 
 CREATE OR REPLACE FUNCTION public.prevent_client_role_change()
@@ -33,6 +69,7 @@ BEGIN
   RETURN NEW;
 END;
 $$;
+REVOKE ALL ON FUNCTION public.prevent_client_role_change() FROM PUBLIC, anon, authenticated;
 
 DROP TRIGGER IF EXISTS prevent_client_role_change ON public.users;
 CREATE TRIGGER prevent_client_role_change
@@ -58,6 +95,8 @@ BEGIN
   RETURN setting_value;
 END;
 $$;
+REVOKE ALL ON FUNCTION public.get_user_setting(UUID, TEXT) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.get_user_setting(UUID, TEXT) TO authenticated;
 
 CREATE OR REPLACE FUNCTION public.set_user_setting(p_user_id UUID, p_setting_key TEXT, p_setting_value JSONB)
 RETURNS JSONB
@@ -93,6 +132,8 @@ BEGIN
   RETURN updated_settings;
 END;
 $$;
+REVOKE ALL ON FUNCTION public.set_user_setting(UUID, TEXT, JSONB) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.set_user_setting(UUID, TEXT, JSONB) TO authenticated;
 
 CREATE TABLE IF NOT EXISTS public.learning_activity_events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -144,6 +185,7 @@ DECLARE
   item JSONB;
   inserted_count INTEGER := 0;
   duplicate_count INTEGER := 0;
+  rejected_count INTEGER := 0;
   affected INTEGER;
   event_type TEXT;
   occurred_at TIMESTAMPTZ;
@@ -157,44 +199,58 @@ BEGIN
 
   FOR item IN SELECT value FROM jsonb_array_elements(p_events)
   LOOP
-    event_type := item->>'eventType';
-    IF event_type NOT IN ('app_session_started', 'lesson_started', 'lesson_engaged') THEN
-      RAISE EXCEPTION 'Invalid event type';
-    END IF;
-    IF COALESCE(length(item->>'clientEventId'), 0) NOT BETWEEN 8 AND 120
-       OR COALESCE(length(item->>'sessionId'), 0) NOT BETWEEN 8 AND 120 THEN
-      RAISE EXCEPTION 'Invalid event identifier';
-    END IF;
-    IF event_type <> 'app_session_started'
-       AND (NULLIF(item->>'moduleId', '') IS NULL OR NULLIF(item->>'lessonId', '') IS NULL) THEN
-      RAISE EXCEPTION 'Lesson events require module and lesson identifiers';
-    END IF;
-    occurred_at := (item->>'occurredAt')::TIMESTAMPTZ;
-    IF occurred_at > NOW() + INTERVAL '5 minutes' OR occurred_at < NOW() - INTERVAL '31 days' THEN
-      RAISE EXCEPTION 'Event timestamp is outside the accepted window';
-    END IF;
+    BEGIN
+      event_type := item->>'eventType';
+      IF event_type NOT IN ('app_session_started', 'lesson_started', 'lesson_engaged') THEN
+        RAISE EXCEPTION 'Invalid event type';
+      END IF;
+      IF COALESCE(length(item->>'clientEventId'), 0) NOT BETWEEN 8 AND 120
+         OR COALESCE(length(item->>'sessionId'), 0) NOT BETWEEN 8 AND 120 THEN
+        RAISE EXCEPTION 'Invalid event identifier';
+      END IF;
+      IF event_type <> 'app_session_started'
+         AND (NULLIF(item->>'moduleId', '') IS NULL OR NULLIF(item->>'lessonId', '') IS NULL) THEN
+        RAISE EXCEPTION 'Lesson events require module and lesson identifiers';
+      END IF;
+      occurred_at := (item->>'occurredAt')::TIMESTAMPTZ;
+      IF occurred_at > NOW() + INTERVAL '5 minutes' OR occurred_at < NOW() - INTERVAL '31 days' THEN
+        RAISE EXCEPTION 'Event timestamp is outside the accepted window';
+      END IF;
 
-    INSERT INTO public.learning_activity_events (
-      client_event_id, session_id, user_id, event_type, module_id, lesson_id,
-      occurred_at, locale, simple_mode, app_version
-    ) VALUES (
-      item->>'clientEventId', item->>'sessionId', auth.uid(), event_type,
-      NULLIF(item->>'moduleId', ''), NULLIF(item->>'lessonId', ''), occurred_at,
-      CASE WHEN item->>'locale' IN ('nl','bg','hi','id','en') THEN item->>'locale' ELSE 'en' END,
-      COALESCE((item->>'simpleMode')::BOOLEAN, false),
-      LEFT(COALESCE(NULLIF(item->>'appVersion', ''), 'unknown'), 32)
-    ) ON CONFLICT (client_event_id) DO NOTHING;
+      INSERT INTO public.learning_activity_events (
+        client_event_id, session_id, user_id, event_type, module_id, lesson_id,
+        occurred_at, locale, simple_mode, app_version
+      ) VALUES (
+        item->>'clientEventId', item->>'sessionId', auth.uid(), event_type,
+        NULLIF(item->>'moduleId', ''), NULLIF(item->>'lessonId', ''), occurred_at,
+        CASE WHEN item->>'locale' IN ('nl','bg','hi','id','en') THEN item->>'locale' ELSE 'en' END,
+        COALESCE((item->>'simpleMode')::BOOLEAN, false),
+        LEFT(COALESCE(NULLIF(item->>'appVersion', ''), 'unknown'), 32)
+      ) ON CONFLICT (client_event_id) DO NOTHING;
 
-    GET DIAGNOSTICS affected = ROW_COUNT;
-    inserted_count := inserted_count + affected;
-    duplicate_count := duplicate_count + (1 - affected);
+      GET DIAGNOSTICS affected = ROW_COUNT;
+      inserted_count := inserted_count + affected;
+      duplicate_count := duplicate_count + (1 - affected);
+    EXCEPTION
+      WHEN raise_exception
+        OR invalid_text_representation
+        OR datetime_field_overflow
+        OR check_violation
+        OR not_null_violation
+        OR string_data_right_truncation THEN
+        rejected_count := rejected_count + 1;
+    END;
   END LOOP;
 
-  RETURN jsonb_build_object('insertedCount', inserted_count, 'duplicateCount', duplicate_count);
+  RETURN jsonb_build_object(
+    'insertedCount', inserted_count,
+    'duplicateCount', duplicate_count,
+    'rejectedCount', rejected_count
+  );
 END;
 $$;
 
-REVOKE ALL ON FUNCTION public.record_learning_activity_events(JSONB) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.record_learning_activity_events(JSONB) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.record_learning_activity_events(JSONB) TO authenticated;
 
 CREATE OR REPLACE FUNCTION public.admin_period_bounds(p_period TEXT, p_timezone TEXT)
@@ -231,7 +287,7 @@ EXCEPTION WHEN invalid_parameter_value THEN
 END;
 $$;
 
-REVOKE ALL ON FUNCTION public.admin_period_bounds(TEXT, TEXT) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.admin_period_bounds(TEXT, TEXT) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.admin_period_bounds(TEXT, TEXT) TO authenticated;
 
 CREATE OR REPLACE FUNCTION public.get_admin_overview_v2(
@@ -370,7 +426,7 @@ BEGIN
 END;
 $$;
 
-REVOKE ALL ON FUNCTION public.get_admin_overview_v2(TEXT, TEXT) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.get_admin_overview_v2(TEXT, TEXT) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.get_admin_overview_v2(TEXT, TEXT) TO authenticated;
 
 DROP FUNCTION IF EXISTS public.get_admin_learning_analytics_v2(TEXT,TEXT,TEXT,BOOLEAN,TEXT);
@@ -409,6 +465,10 @@ BEGIN
     SELECT u.id FROM public.users u LEFT JOIN public.user_settings s ON s.user_id=u.id
     WHERE u.role='user' AND (p_locales IS NULL OR cardinality(p_locales)=0 OR COALESCE(s.settings->>'language','en')=ANY(p_locales))
       AND (p_simple_modes IS NULL OR cardinality(p_simple_modes)=0 OR COALESCE((s.settings->>'bibleschool.simple_mode')::BOOLEAN,false)=ANY(p_simple_modes))
+  ), module_starts AS (
+    SELECT m.* FROM public.user_module_progress m JOIN eligible e ON e.id=m.user_id
+    WHERE m.created_at BETWEEN from_at AND to_at
+      AND (p_module_ids IS NULL OR cardinality(p_module_ids)=0 OR m.module_id=ANY(p_module_ids))
   ) SELECT COALESCE(jsonb_agg(jsonb_build_object('moduleId',module_id,'starters',starters,'completers',completers,
     'dropoff',GREATEST(starters-completers,0),'completionRate',CASE WHEN starters=0 THEN 0 ELSE ROUND(completers*100.0/starters,1) END,
     'medianDays',median_days,'lessons',lessons) ORDER BY module_id),'[]'::JSONB) INTO modules FROM (
@@ -416,9 +476,12 @@ BEGIN
       COALESCE(ROUND(GREATEST(0, percentile_cont(0.5) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM (m.completed_at-m.created_at))/86400))::NUMERIC,1),0) median_days,
       (SELECT COALESCE(jsonb_agg(jsonb_build_object('lessonId',lesson_id,'started',started,'completed',completed) ORDER BY lesson_id),'[]'::JSONB)
        FROM (SELECT lesson_id,COUNT(DISTINCT user_id)::INT started,COUNT(DISTINCT user_id) FILTER(WHERE completed)::INT completed
-             FROM public.user_lesson_progress l JOIN eligible e2 ON e2.id=l.user_id WHERE l.module_id=m.module_id GROUP BY lesson_id) x) lessons
-    FROM public.user_module_progress m JOIN eligible e ON e.id=m.user_id
-    WHERE (p_module_ids IS NULL OR cardinality(p_module_ids)=0 OR m.module_id=ANY(p_module_ids)) GROUP BY m.module_id
+             FROM public.user_lesson_progress l
+             WHERE l.module_id=m.module_id
+               AND l.created_at BETWEEN from_at AND to_at
+               AND EXISTS(SELECT 1 FROM module_starts ms WHERE ms.user_id=l.user_id AND ms.module_id=l.module_id)
+             GROUP BY lesson_id) x) lessons
+    FROM module_starts m GROUP BY m.module_id
   ) x;
 
   WITH eligible AS (
@@ -440,32 +503,34 @@ BEGIN
     SELECT u.id FROM public.users u LEFT JOIN public.user_settings s ON s.user_id=u.id
     WHERE u.role='user' AND (p_locales IS NULL OR cardinality(p_locales)=0 OR COALESCE(s.settings->>'language','en')=ANY(p_locales))
       AND (p_simple_modes IS NULL OR cardinality(p_simple_modes)=0 OR COALESCE((s.settings->>'bibleschool.simple_mode')::BOOLEAN,false)=ANY(p_simple_modes))
-  ), sessions AS (
-    SELECT user_id, occurred_at, MIN(occurred_at) OVER(PARTITION BY user_id) first_at
-    FROM public.learning_activity_events e JOIN eligible u ON u.id=e.user_id WHERE event_type='app_session_started'
-  ) SELECT jsonb_build_object('d1',COALESCE(ROUND(100.0*COUNT(DISTINCT user_id) FILTER(WHERE occurred_at>=first_at+INTERVAL '1 day')/NULLIF(COUNT(DISTINCT user_id),0),1),0),
-    'd7',COALESCE(ROUND(100.0*COUNT(DISTINCT user_id) FILTER(WHERE occurred_at>=first_at+INTERVAL '7 days')/NULLIF(COUNT(DISTINCT user_id),0),1),0),
-    'd30',COALESCE(ROUND(100.0*COUNT(DISTINCT user_id) FILTER(WHERE occurred_at>=first_at+INTERVAL '30 days')/NULLIF(COUNT(DISTINCT user_id),0),1),0),
-    'isBuilding',coverage_start IS NULL OR coverage_start>NOW()-INTERVAL '14 days','startedAt',coverage_start) INTO retention FROM sessions;
-
-  WITH eligible AS (
-    SELECT u.id FROM public.users u LEFT JOIN public.user_settings s ON s.user_id=u.id
-    WHERE u.role='user' AND (p_locales IS NULL OR cardinality(p_locales)=0 OR COALESCE(s.settings->>'language','en')=ANY(p_locales))
-      AND (p_simple_modes IS NULL OR cardinality(p_simple_modes)=0 OR COALESCE((s.settings->>'bibleschool.simple_mode')::BOOLEAN,false)=ANY(p_simple_modes))
   ), first_sessions AS (
     SELECT e.user_id,MIN(e.occurred_at) first_at FROM public.learning_activity_events e JOIN eligible u ON u.id=e.user_id
     WHERE e.event_type='app_session_started' GROUP BY e.user_id
+  ), returns AS (
+    SELECT f.user_id,f.first_at,
+      EXISTS(SELECT 1 FROM public.learning_activity_events e WHERE e.user_id=f.user_id AND e.event_type='app_session_started' AND e.occurred_at>=f.first_at+INTERVAL '1 day' AND e.occurred_at<f.first_at+INTERVAL '2 days') d1,
+      EXISTS(SELECT 1 FROM public.learning_activity_events e WHERE e.user_id=f.user_id AND e.event_type='app_session_started' AND e.occurred_at>=f.first_at+INTERVAL '7 days' AND e.occurred_at<f.first_at+INTERVAL '8 days') d7,
+      EXISTS(SELECT 1 FROM public.learning_activity_events e WHERE e.user_id=f.user_id AND e.event_type='app_session_started' AND e.occurred_at>=f.first_at+INTERVAL '30 days' AND e.occurred_at<f.first_at+INTERVAL '31 days') d30
+    FROM first_sessions f
   ), grouped AS (
-    SELECT date_trunc('week',f.first_at AT TIME ZONE p_timezone)::DATE week_start,COUNT(*)::INT size,
-      COUNT(*) FILTER(WHERE EXISTS(SELECT 1 FROM public.learning_activity_events e WHERE e.user_id=f.user_id AND e.event_type='app_session_started' AND e.occurred_at>=f.first_at+INTERVAL '1 day' AND e.occurred_at<f.first_at+INTERVAL '2 days'))::INT d1,
-      COUNT(*) FILTER(WHERE EXISTS(SELECT 1 FROM public.learning_activity_events e WHERE e.user_id=f.user_id AND e.event_type='app_session_started' AND e.occurred_at>=f.first_at+INTERVAL '7 days' AND e.occurred_at<f.first_at+INTERVAL '8 days'))::INT d7,
-      COUNT(*) FILTER(WHERE EXISTS(SELECT 1 FROM public.learning_activity_events e WHERE e.user_id=f.user_id AND e.event_type='app_session_started' AND e.occurred_at>=f.first_at+INTERVAL '30 days' AND e.occurred_at<f.first_at+INTERVAL '31 days'))::INT d30
-    FROM first_sessions f GROUP BY date_trunc('week',f.first_at AT TIME ZONE p_timezone)::DATE
-  ) SELECT COALESCE(jsonb_agg(jsonb_build_object('weekStart',week_start,'size',size,
+    SELECT date_trunc('week',first_at AT TIME ZONE p_timezone)::DATE week_start,COUNT(*)::INT size,
+      COUNT(*) FILTER(WHERE d1)::INT d1,COUNT(*) FILTER(WHERE d7)::INT d7,COUNT(*) FILTER(WHERE d30)::INT d30
+    FROM returns GROUP BY date_trunc('week',first_at AT TIME ZONE p_timezone)::DATE
+  ), summary AS (
+    SELECT jsonb_build_object(
+      'd1',COALESCE(ROUND(100.0*COUNT(*) FILTER(WHERE d1)/NULLIF(COUNT(*),0),1),0),
+      'd7',COALESCE(ROUND(100.0*COUNT(*) FILTER(WHERE d7)/NULLIF(COUNT(*),0),1),0),
+      'd30',COALESCE(ROUND(100.0*COUNT(*) FILTER(WHERE d30)/NULLIF(COUNT(*),0),1),0),
+      'isBuilding',coverage_start IS NULL OR coverage_start>NOW()-INTERVAL '14 days',
+      'startedAt',coverage_start
+    ) value FROM returns
+  ), cohort_summary AS (
+    SELECT COALESCE(jsonb_agg(jsonb_build_object('weekStart',week_start,'size',size,
       'd1',CASE WHEN size=0 THEN 0 ELSE ROUND(d1*100.0/size,1) END,
       'd7',CASE WHEN size=0 THEN 0 ELSE ROUND(d7*100.0/size,1) END,
-      'd30',CASE WHEN size=0 THEN 0 ELSE ROUND(d30*100.0/size,1) END) ORDER BY week_start DESC),'[]'::JSONB)
-    INTO cohorts FROM grouped;
+      'd30',CASE WHEN size=0 THEN 0 ELSE ROUND(d30*100.0/size,1) END) ORDER BY week_start DESC),'[]'::JSONB) value
+    FROM grouped
+  ) SELECT summary.value,cohort_summary.value INTO retention,cohorts FROM summary CROSS JOIN cohort_summary;
   retention := retention || jsonb_build_object('cohorts',cohorts);
 
   RETURN jsonb_build_object('generatedAt',NOW(),'period',p_period,'timezone',p_timezone,'bounds',bounds,
@@ -476,7 +541,7 @@ BEGIN
 END;
 $$;
 
-REVOKE ALL ON FUNCTION public.get_admin_learning_analytics_v2(TEXT,TEXT,TEXT[],BOOLEAN[],TEXT[]) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.get_admin_learning_analytics_v2(TEXT,TEXT,TEXT[],BOOLEAN[],TEXT[]) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.get_admin_learning_analytics_v2(TEXT,TEXT,TEXT[],BOOLEAN[],TEXT[]) TO authenticated;
 
 DROP FUNCTION IF EXISTS public.get_admin_users_v2(INTEGER,INTEGER,TEXT,TEXT,BOOLEAN,TEXT,TEXT,TEXT);
@@ -559,35 +624,30 @@ BEGIN
       AND (p_simple_modes IS NULL OR cardinality(p_simple_modes)=0 OR simple_mode=ANY(p_simple_modes))
       AND (p_signals IS NULL OR cardinality(p_signals)=0 OR signals&&p_signals)
       AND (p_module_ids IS NULL OR cardinality(p_module_ids)=0 OR current_module=ANY(p_module_ids))
+  ), ranked AS (
+    SELECT filtered.*,ROW_NUMBER() OVER(ORDER BY
+      CASE WHEN p_sort='name' AND p_direction='asc' THEN COALESCE(full_name,email) END ASC,
+      CASE WHEN p_sort='name' AND p_direction='desc' THEN COALESCE(full_name,email) END DESC,
+      CASE WHEN p_sort='created_at' AND p_direction='asc' THEN created_at END ASC,
+      CASE WHEN p_sort='created_at' AND p_direction='desc' THEN created_at END DESC,
+      CASE WHEN p_sort='last_activity' AND p_direction='asc' THEN last_activity END ASC NULLS LAST,
+      CASE WHEN p_sort='last_activity' AND p_direction='desc' THEN last_activity END DESC NULLS LAST,
+      CASE WHEN p_sort='progress' AND p_direction='asc' THEN progress END ASC,
+      CASE WHEN p_sort='progress' AND p_direction='desc' THEN progress END DESC,
+      id ASC
+    ) rn FROM filtered
   )
   SELECT COUNT(*), COALESCE(jsonb_agg(jsonb_build_object('id',id,'email',email,'fullName',full_name,'role',role,
     'createdAt',created_at,'lastActivity',last_activity,'locale',locale,'simpleMode',simple_mode,'currentModuleId',current_module,
     'currentModuleStatus',current_module_status,'progressPercentage',progress,'completedModuleCount',completed_module_count,
-    'completedLessonCount',completed_lesson_count,'lastCompletedModuleId',last_completed_module_id,'signals',to_jsonb(signals)) ORDER BY
-      CASE WHEN p_sort='name' AND p_direction='asc' THEN COALESCE(full_name,email) END ASC,
-      CASE WHEN p_sort='name' AND p_direction='desc' THEN COALESCE(full_name,email) END DESC,
-      CASE WHEN p_sort='created_at' AND p_direction='asc' THEN created_at END ASC,
-      CASE WHEN p_sort='created_at' AND p_direction='desc' THEN created_at END DESC,
-      CASE WHEN p_sort='last_activity' AND p_direction='asc' THEN last_activity END ASC NULLS LAST,
-      CASE WHEN p_sort='last_activity' AND p_direction='desc' THEN last_activity END DESC NULLS LAST,
-      CASE WHEN p_sort='progress' AND p_direction='asc' THEN progress END ASC,
-      CASE WHEN p_sort='progress' AND p_direction='desc' THEN progress END DESC
+    'completedLessonCount',completed_lesson_count,'lastCompletedModuleId',last_completed_module_id,'signals',to_jsonb(signals)) ORDER BY rn
     ) FILTER(WHERE rn>p_offset AND rn<=p_offset+p_limit),'[]'::JSONB)
-  INTO total_count,users_json FROM (SELECT filtered.*,ROW_NUMBER() OVER(ORDER BY
-      CASE WHEN p_sort='name' AND p_direction='asc' THEN COALESCE(full_name,email) END ASC,
-      CASE WHEN p_sort='name' AND p_direction='desc' THEN COALESCE(full_name,email) END DESC,
-      CASE WHEN p_sort='created_at' AND p_direction='asc' THEN created_at END ASC,
-      CASE WHEN p_sort='created_at' AND p_direction='desc' THEN created_at END DESC,
-      CASE WHEN p_sort='last_activity' AND p_direction='asc' THEN last_activity END ASC NULLS LAST,
-      CASE WHEN p_sort='last_activity' AND p_direction='desc' THEN last_activity END DESC NULLS LAST,
-      CASE WHEN p_sort='progress' AND p_direction='asc' THEN progress END ASC,
-      CASE WHEN p_sort='progress' AND p_direction='desc' THEN progress END DESC
-    ) rn FROM filtered) page;
+  INTO total_count,users_json FROM ranked;
   RETURN jsonb_build_object('generatedAt',NOW(),'users',users_json,'totalCount',total_count,'limit',p_limit,'offset',p_offset);
 END;
 $$;
 
-REVOKE ALL ON FUNCTION public.get_admin_users_v2(INTEGER,INTEGER,TEXT,TEXT[],BOOLEAN[],TEXT[],TEXT[],TEXT,TEXT) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.get_admin_users_v2(INTEGER,INTEGER,TEXT,TEXT[],BOOLEAN[],TEXT[],TEXT[],TEXT,TEXT) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.get_admin_users_v2(INTEGER,INTEGER,TEXT,TEXT[],BOOLEAN[],TEXT[],TEXT[],TEXT,TEXT) TO authenticated;
 
 CREATE OR REPLACE FUNCTION public.get_admin_user_detail_v2(p_user_id UUID)
@@ -634,5 +694,5 @@ BEGIN
 END;
 $$;
 
-REVOKE ALL ON FUNCTION public.get_admin_user_detail_v2(UUID) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.get_admin_user_detail_v2(UUID) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.get_admin_user_detail_v2(UUID) TO authenticated;

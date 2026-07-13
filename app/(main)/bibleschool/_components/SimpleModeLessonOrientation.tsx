@@ -128,6 +128,7 @@ export function SimpleModeLessonOrientation({
           isLocked={!nextUnlocked}
           onPress={onNextPress}
           onLockedPress={onLockedPress}
+          variant="simple"
         />
       ) : (
         <TouchableOpacity

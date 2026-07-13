@@ -1,7 +1,6 @@
 import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
 import { LockOverlay } from '@/components/common/LockOverlay';
-import { useBibleschoolSimpleMode } from '@/contexts/BibleschoolSimpleModeContext';
 import type { ThemeColors } from '@/hooks/useTheme';
 import { useVimeoThumbnail } from '@/hooks/useVimeoThumbnail';
 import type { LessonLike } from '@/types/bibleschool';
@@ -22,6 +21,7 @@ export function NextLessonCard({
   isLocked,
   onPress,
   onLockedPress,
+  variant = 'standard',
 }: {
   nextLesson: LessonLike;
   theme: ThemeColors;
@@ -29,8 +29,9 @@ export function NextLessonCard({
   isLocked: boolean;
   onPress: () => void;
   onLockedPress?: () => void;
+  variant?: 'standard' | 'simple';
 }) {
-  const { enabled: simpleMode } = useBibleschoolSimpleMode();
+  const simpleMode = variant === 'simple';
   const videoIdForThumb = !nextLesson.thumbnailUrl && nextLesson.videoId ? nextLesson.videoId : undefined;
   const { data: vimeoThumbnail, isLoading } = useVimeoThumbnail(videoIdForThumb);
   const thumbnailUrl = nextLesson.thumbnailUrl ?? vimeoThumbnail ?? undefined;

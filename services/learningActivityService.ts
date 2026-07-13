@@ -3,13 +3,16 @@ import Constants from 'expo-constants';
 
 import { supabase } from '@/services/supabase/client';
 import type { LearningActivityEvent, LearningActivityEventType } from '@/types/learningActivity';
+import {
+  LEARNING_ACTIVITY_MAX_QUEUE_SIZE,
+  resolveLearningActivitySession,
+  sanitizeLearningActivityQueue,
+  type StoredLearningActivitySession,
+} from '@/utils/learningActivityQueue';
 
-const MAX_QUEUE_SIZE = 100;
-const SESSION_TIMEOUT_MS = 30 * 60 * 1000;
 const QUEUE_PREFIX = 'learning-activity.queue.v1';
 const SESSION_PREFIX = 'learning-activity.session.v1';
 
-interface StoredSession { id: string; lastActivityAt: number }
 export interface LearningEventContext {
   userId: string;
   locale: LearningActivityEvent['locale'];
@@ -26,22 +29,33 @@ async function readQueue(userId: string): Promise<LearningActivityEvent[]> {
   try {
     const raw = await AsyncStorage.getItem(queueKey(userId));
     const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed.slice(-MAX_QUEUE_SIZE) : [];
-  } catch { return []; }
+    const queue = sanitizeLearningActivityQueue(parsed);
+    if (raw && (!Array.isArray(parsed) || queue.length !== parsed.length)) {
+      if (queue.length) {
+        await AsyncStorage.setItem(queueKey(userId), JSON.stringify(queue));
+      } else {
+        await AsyncStorage.removeItem(queueKey(userId));
+      }
+    }
+    return queue;
+  } catch {
+    await AsyncStorage.removeItem(queueKey(userId)).catch(() => undefined);
+    return [];
+  }
 }
 
-async function getSession(userId: string): Promise<{ session: StoredSession; isNew: boolean }> {
+async function getSession(userId: string): Promise<{ session: StoredLearningActivitySession; isNew: boolean }> {
   const now = Date.now();
-  let stored: StoredSession | null = null;
+  let stored: unknown = null;
   try {
     const raw = await AsyncStorage.getItem(sessionKey(userId));
     stored = raw ? JSON.parse(raw) : null;
   } catch {}
-  const isNew = !stored?.id || now - stored.lastActivityAt >= SESSION_TIMEOUT_MS;
-  const session: StoredSession = {
-    id: isNew ? createId('session') : stored!.id,
-    lastActivityAt: now,
-  };
+  const { session, isNew } = resolveLearningActivitySession(
+    stored,
+    now,
+    () => createId('session'),
+  );
   await AsyncStorage.setItem(sessionKey(userId), JSON.stringify(session));
   return { session, isNew };
 }
@@ -85,7 +99,12 @@ class LearningActivityService {
       simpleMode: context.simpleMode,
       appVersion: Constants.expoConfig?.version ?? 'unknown',
     };
-    await AsyncStorage.setItem(queueKey(context.userId), JSON.stringify([...queue, event].slice(-MAX_QUEUE_SIZE)));
+    await AsyncStorage.setItem(
+      queueKey(context.userId),
+      JSON.stringify(
+        [...queue, event].slice(-LEARNING_ACTIVITY_MAX_QUEUE_SIZE),
+      ),
+    );
   }
 
   private async flushQueue(userId: string): Promise<void> {

@@ -86,6 +86,7 @@ export function ModuleLessonList({
               isCompleted={completedLessonIds.has(currentLessonRow.id)}
               isLocked={false}
               isCurrent
+              variant={simpleMode ? 'simple' : 'standard'}
               videoPositionSeconds={lessonPositionMap.get(currentLessonRow.id)}
               onPress={() => {
                 bzzt();
@@ -125,6 +126,7 @@ export function ModuleLessonList({
                 t={t}
                 isCompleted={completedLessonIds.has(lesson.id)}
                 isLocked={!isLessonUnlocked(moduleId, lesson)}
+                variant={simpleMode ? 'simple' : 'standard'}
                 videoPositionSeconds={lessonPositionMap.get(lesson.id)}
                 onPress={() => {
                   bzzt();

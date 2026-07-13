@@ -22,8 +22,6 @@ const SIMPLE_MODE_TABS = [
   { route: 'modules' as const, href: () => routes.bibleschoolModules(), icon: 'book' as const, labelKey: 'bibleschool.simpleMode.tabLessons' },
 ];
 
-type TabConfig = (typeof ALL_TABS)[number] | (typeof SIMPLE_MODE_TABS)[number];
-
 function resolveSimpleModeTab(pathname: string): 'index' | 'modules' {
   const segments = pathname.split('/').filter(Boolean);
   const modulesIndex = segments.indexOf('modules');
@@ -39,16 +37,36 @@ function BibleschoolTabBarInner() {
   const pathname = usePathname();
   const { enabled: simpleMode } = useBibleschoolSimpleMode();
   const { activeTab, setActiveTab, setNavigationDirection } = useBibleschoolTab();
-  const tabs = simpleMode ? SIMPLE_MODE_TABS : ALL_TABS;
-  const selectedTab = simpleMode ? resolveSimpleModeTab(pathname) : activeTab;
+  const mode = simpleMode
+    ? {
+        tabs: SIMPLE_MODE_TABS,
+        selectedTab: resolveSimpleModeTab(pathname),
+        syncActiveTab: false,
+        iconSize: 24,
+        iconHeight: 24,
+        labelSize: 14,
+        labelHeight: 18,
+        verticalPadding: 9,
+        horizontalPadding: 10,
+        gap: 4,
+      }
+    : {
+        tabs: ALL_TABS,
+        selectedTab: activeTab,
+        syncActiveTab: true,
+        iconSize: 20,
+        iconHeight: 20,
+        labelSize: 10,
+        labelHeight: 12,
+        verticalPadding: 8,
+        horizontalPadding: 8,
+        gap: 3,
+      };
+  const { tabs, selectedTab } = mode;
   const isDark = theme.isDark;
   const borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
   const inactiveIconColor = theme.tabInactiveText;
   const inactiveTextColor = theme.tabInactiveText;
-
-  const getIsFocused = (tab: TabConfig) => {
-    return tab.route === selectedTab;
-  };
 
   return (
     <View
@@ -75,15 +93,15 @@ function BibleschoolTabBarInner() {
         }}
       >
         {tabs.map((tab) => {
-          const isFocused = getIsFocused(tab);
-          const config = { icon: tab.icon, label: t(tab.labelKey) };
+          const isFocused = tab.route === selectedTab;
+          const label = t(tab.labelKey);
 
           const onPress = () => {
             bzzt();
             const currentIndex = tabs.findIndex((t) => t.route === selectedTab);
             const targetIndex = tabs.findIndex((t) => t.route === tab.route);
             setNavigationDirection(targetIndex < currentIndex ? 'left' : 'right');
-            if (!simpleMode) {
+            if (mode.syncActiveTab) {
               setActiveTab(tab.route);
             }
             router.navigate(tab.href());
@@ -93,7 +111,7 @@ function BibleschoolTabBarInner() {
             <TouchableOpacity
               key={tab.route}
               accessibilityRole="tab"
-              accessibilityLabel={config.label}
+              accessibilityLabel={label}
               accessibilityState={isFocused ? { selected: true } : {}}
               onPress={onPress}
               activeOpacity={0.7}
@@ -110,8 +128,8 @@ function BibleschoolTabBarInner() {
                   style={{
                     backgroundColor: theme.buttonPrimary,
                     borderRadius: 16,
-                    paddingVertical: simpleMode ? 9 : 8,
-                    paddingHorizontal: simpleMode ? 10 : 8,
+                    paddingVertical: mode.verticalPadding,
+                    paddingHorizontal: mode.horizontalPadding,
                     shadowColor: theme.buttonPrimary,
                     shadowOffset: { width: 0, height: 3 },
                     shadowOpacity: isDark ? 0.15 : 0.25,
@@ -119,27 +137,27 @@ function BibleschoolTabBarInner() {
                     elevation: 6,
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: simpleMode ? 4 : 3,
+                    gap: mode.gap,
                     width: '100%',
                   }}
                 >
-                  <View style={{ height: simpleMode ? 24 : 20, justifyContent: 'center' }}>
+                  <View style={{ height: mode.iconHeight, justifyContent: 'center' }}>
                     <Ionicons
-                      name={config.icon}
-                      size={simpleMode ? 24 : 20}
+                      name={tab.icon}
+                      size={mode.iconSize}
                       color={theme.buttonPrimaryContrast}
                     />
                   </View>
-                  <View style={{ minHeight: simpleMode ? 18 : 12, justifyContent: 'center' }}>
+                  <View style={{ minHeight: mode.labelHeight, justifyContent: 'center' }}>
                       <Text
                         style={{
-                          fontSize: simpleMode ? 14 : 10,
+                          fontSize: mode.labelSize,
                           fontWeight: '600',
                           color: theme.buttonPrimaryContrast,
-                          lineHeight: simpleMode ? 18 : 12,
+                          lineHeight: mode.labelHeight,
                         }}
                       >
-                        {config.label}
+                        {label}
                       </Text>
                   </View>
                 </View>
@@ -149,28 +167,28 @@ function BibleschoolTabBarInner() {
                     width: '100%',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: simpleMode ? 4 : 3,
-                    paddingVertical: simpleMode ? 9 : 8,
-                    paddingHorizontal: simpleMode ? 10 : 8,
+                    gap: mode.gap,
+                    paddingVertical: mode.verticalPadding,
+                    paddingHorizontal: mode.horizontalPadding,
                   }}
                 >
-                  <View style={{ height: simpleMode ? 24 : 20, justifyContent: 'center' }}>
+                  <View style={{ height: mode.iconHeight, justifyContent: 'center' }}>
                     <Ionicons
-                      name={`${config.icon}-outline` as keyof typeof Ionicons.glyphMap}
-                      size={simpleMode ? 24 : 20}
+                      name={`${tab.icon}-outline` as keyof typeof Ionicons.glyphMap}
+                      size={mode.iconSize}
                       color={inactiveIconColor}
                     />
                   </View>
-                  <View style={{ minHeight: simpleMode ? 18 : 12, justifyContent: 'center' }}>
+                  <View style={{ minHeight: mode.labelHeight, justifyContent: 'center' }}>
                       <Text
                         style={{
-                          fontSize: simpleMode ? 14 : 10,
+                          fontSize: mode.labelSize,
                           fontWeight: '500',
                           color: inactiveTextColor,
-                          lineHeight: simpleMode ? 18 : 12,
+                          lineHeight: mode.labelHeight,
                         }}
                       >
-                        {config.label}
+                        {label}
                       </Text>
                   </View>
                 </View>
