@@ -2,6 +2,7 @@ import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { useBibleschoolTab } from '@/contexts/BibleschoolTabContext';
+import { useBibleschoolSimpleMode } from '@/contexts/BibleschoolSimpleModeContext';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { FeedbackFab } from '@/app/(main)/_components/FeedbackFab';
@@ -10,6 +11,7 @@ import { routes } from '@/constants/routes';
 import { ContinueLearningCard } from '../_components/ContinueLearningCard';
 import { CurrentVideoCard } from '../_components/CurrentVideoCard';
 import { ProgressCard } from '../_components/ProgressCard';
+import { SimpleModeWatchScreen } from '../_components/SimpleModeWatchScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from "expo-router/react-navigation";
 import { router } from 'expo-router';
@@ -22,8 +24,8 @@ import { bibleschoolService } from '@/services/storyblok/bibleschoolService';
 export default function BibleSchoolScreen() {
   const { setActiveTab } = useBibleschoolTab();
   const queryClient = useQueryClient();
-  const { locale } = useTranslation();
-
+  const { locale, t } = useTranslation();
+  const { enabled: simpleMode } = useBibleschoolSimpleMode();
   useFocusEffect(
     useCallback(() => {
       setActiveTab('index');
@@ -31,10 +33,14 @@ export default function BibleSchoolScreen() {
         queryKey: queryKeys.bibleschool.category(locale),
         queryFn: () => bibleschoolService.getBibleschoolCategory(locale),
       });
-    }, [setActiveTab, queryClient, locale])
+    }, [
+      setActiveTab,
+      queryClient,
+      locale,
+    ]),
   );
+
   const theme = useTheme();
-  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const [refreshing, setRefreshing] = useState(false);
 
@@ -61,6 +67,7 @@ export default function BibleSchoolScreen() {
         title={t('navbar.bibleschool')}
         currentSection="bibleschool"
         showBackButton
+        enlarged={simpleMode}
         onBack={() => router.replace(routes.main())}
       />
 
@@ -78,21 +85,25 @@ export default function BibleSchoolScreen() {
           />
         }
       >
-        <VStack className="gap-6">
-          <Text
-            className="text-xs font-semibold uppercase tracking-wider"
-            style={{ color: theme.textSecondary }}
-          >
-            {t('overview.sectionTitle')}
-          </Text>
-          <VStack className="gap-4">
-            <ProgressCard />
-            <CurrentVideoCard />
-            <ContinueLearningCard />
+        {simpleMode ? (
+          <SimpleModeWatchScreen />
+        ) : (
+          <VStack className="gap-6">
+            <Text
+              className="text-xs font-semibold uppercase tracking-wider"
+              style={{ color: theme.textSecondary }}
+            >
+              {t('overview.sectionTitle')}
+            </Text>
+            <VStack className="gap-4">
+              <ProgressCard />
+              <CurrentVideoCard />
+              <ContinueLearningCard />
+            </VStack>
           </VStack>
-        </VStack>
+        )}
       </ScrollView>
-      <FeedbackFab variant="aboveTabBar" />
+      {!simpleMode ? <FeedbackFab variant="aboveTabBar" /> : null}
     </Box>
   );
 }

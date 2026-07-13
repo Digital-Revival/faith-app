@@ -31,6 +31,7 @@
   },
   "auth": {
     "back": "वापस",
+    "retry": "फिर प्रयास करें", "clear": "साफ़ करें", "previous": "पिछला", "next": "अगला",
     "welcomeBack": "वापस स्वागत है",
     "loginSubtitle": "अपनी बाइबल स्कूल प्रगति ट्रैक करने के लिए लॉग इन करें",
     "loginBrandTitle": "फेथ जनरेशन में आपका स्वागत है",
@@ -91,6 +92,12 @@
     "stepOf": "चरण {{current}} / {{total}}",
     "step1Title": "खाता",
     "step2Title": "प्रोफ़ाइल",
+    "simpleModeTitle": "बाइबल स्कूल को आसान बनाना चाहते हैं?",
+    "simpleModeSubtitle": "आप इसे बाद में सेटिंग्स में बदल सकते हैं।",
+    "simpleModeYesTitle": "हाँ, आसान बनाएं",
+    "simpleModeYesBody": "बड़े बटन, कम स्क्रीन और सीधे वीडियो देखें।",
+    "simpleModeNoTitle": "नहीं, सामान्य दृश्य",
+    "simpleModeNoBody": "बाइबल स्कूल के सभी भाग सामान्य रूप से दिखेंगे।",
     "phone": "फ़ोन नंबर",
     "phonePlaceholder": "वैकल्पिक",
     "phoneMinLength": "फ़ोन नंबर कम से कम 8 अंकों का होना चाहिए",
@@ -217,7 +224,8 @@
     "back": "वापस",
     "yesterday": "कल",
     "daysAgo": "{{count}} दिन पहले",
-    "weeksAgo": "{{count}} सप्ताह पहले"
+    "weeksAgo": "{{count}} सप्ताह पहले",
+    "error": "कुछ गलत हो गया। कृपया पुनः प्रयास करें।"
   },
   "comingSoon": {
     "badge": "जल्द आ रहा है",
@@ -257,6 +265,35 @@
     "bibleReadingScheduleSubtitle": "दैनिक बाइबल पढ़ने की योजनाएँ",
     "comingSoon": "जल्द ही उपलब्ध"
   },
+  "bibleschool": {
+    "simpleMode": {
+      "nextLesson": "अगला पाठ {{number}}",
+      "tabWatch": "देखें",
+      "tabLessons": "पाठ",
+      "introContext": "परिचय से यहाँ शुरू करें",
+      "lessonContext": "पाठ {{lesson}}, मॉड्यूल {{module}}",
+      "examContext": "मॉड्यूल {{module}} की परीक्षा",
+      "startVideo": "वीडियो शुरू करें",
+      "continueWatching": "देखना जारी रखें",
+      "nextLessonLabel": "अगला पाठ",
+      "loadingWatch": "आपका अगला वीडियो खोज रहे हैं...",
+      "loadError": "पाठ लोड नहीं हो सके। अपना कनेक्शन जाँचें और फिर प्रयास करें।",
+      "retry": "फिर प्रयास करें",
+      "allDoneTitle": "आपने बाइबल स्कूल पूरा कर लिया",
+      "allDoneContext": "आप किसी भी पाठ को फिर से देख सकते हैं।",
+      "viewLessons": "पाठ देखें",
+      "allLessons": "सभी पाठ",
+      "openMenu": "मेन्यू खोलें",
+      "lessonCompleted": "पाठ पूरा हुआ",
+      "continueCountdown": "{{count}} सेकंड में आगे बढ़ेंगे",
+      "stayHere": "यहीं रहें",
+      "completionSaveError": "पाठ को पूरा हुआ के रूप में सहेजा नहीं जा सका। अपना कनेक्शन जाँचें और फिर प्रयास करें।",
+      "watchToContinue": "अगले पाठ पर जाने के लिए वीडियो देखें।",
+      "tapToOpen": "खोलने के लिए टैप करें",
+      "tapToWatch": "देखने के लिए टैप करें",
+      "lockedHint": "पहले पिछला पाठ पूरा करें"
+    }
+  },
   "feedback": {
     "title": "प्रतिक्रिया",
     "subtitle": "अपने विचार साझा करें, बग रिपोर्ट करें या विचार सुझाएं",
@@ -289,6 +326,20 @@
       "fixed": "ठीक किया गया"
     },
     "releases": {
+      "v2_0_2": {
+        "simpleMode": {
+          "title": "बाइबल स्कूल के लिए सरल मोड",
+          "description": "बड़े टेक्स्ट, कम चरण और पाठ वीडियो तक सीधी पहुंच का उपयोग करें। इस मोड को पंजीकरण के समय या बाद में सेटिंग्स से चुनें।"
+        },
+        "registration": {
+          "title": "पंजीकरण फिर से काम करता है",
+          "description": "जिस समस्या के कारण खाता नहीं बन पा रहा था, उसे ठीक कर दिया गया है। अब आप फिर से सामान्य रूप से पंजीकरण कर सकते हैं।"
+        },
+        "languageSwitcher": {
+          "title": "भाषा जल्दी बदलें",
+          "description": "पहले सेटिंग्स में जाए बिना, नेविगेशन मेनू से सीधे ऐप की भाषा बदलें।"
+        }
+      },
       "v2_0_1": {
         "whatsNew": {
           "title": "नया क्या है",
@@ -312,6 +363,13 @@
   "admin": {
     "overview": "व्यवस्थापक अवलोकन",
     "welcome": "व्यवस्थापक डैशबोर्ड",
+    "viewModeTitle": "एडमिन मोड",
+    "viewModeNormalDescription": "सामान्य ऐप सक्रिय है",
+    "viewModeAdminDescription": "एडमिन क्षेत्र सक्रिय है",
+    "viewModeEnterLabel": "एडमिन क्षेत्र पर जाएँ",
+    "viewModeExitLabel": "सामान्य ऐप पर जाएँ",
+    "viewModeEntering": "एडमिन क्षेत्र की ओर",
+    "viewModeLeaving": "ऐप पर वापस",
     "analytics": "बाइबल स्कूल एनालिटिक्स",
     "users": "उपयोगकर्ता",
     "quickLinks": "त्वरित लिंक",
@@ -363,7 +421,23 @@
     "exportUnavailable": "शेयर करना उपलब्ध नहीं है",
     "exportAnalytics": "बाइबल स्कूल एनालिटिक्स निर्यात करें",
     "customizeGraphs": "अनुकूलित करें",
-    "selectGraphs": "दिखाने के लिए विश्लेषण चुनें"
+    "selectGraphs": "दिखाने के लिए विश्लेषण चुनें",
+    "v2": {
+      "schoolHealth": "स्कूल की स्थिति", "updatedAt": "{{time}} पर अपडेट", "customize": "ओवरव्यू बदलें", "loadError": "एनालिटिक्स लोड नहीं हो सका।", "showData": "डेटा दिखाएँ", "hideData": "डेटा छिपाएँ",
+      "active": "सक्रिय", "engaged": "जुड़े हुए", "newUsers": "नए", "modulesCompleted": "पूरे मॉड्यूल", "noComparison": "कोई तुलना नहीं", "previousPeriod": "पिछली अवधि की तुलना में", "highest": "सबसे अधिक",
+      "lessonCompletions": "पाठ", "moduleCompletions": "मॉड्यूल", "activityTrend": "गतिविधि रुझान", "attention": "ध्यान आवश्यक", "modulePulse": "पाठ्यक्रम स्थिति", "examPulse": "परीक्षा स्थिति",
+      "starters": "शुरू करने वाले", "completers": "पूरा किया", "dropoff": "छोड़ा", "firstAttempt": "पहला प्रयास", "retries": "दोबारा प्रयास", "medianDays": "मध्य पूरा समय: {{count}} दिन",
+      "filters": "फ़िल्टर", "languages": "भाषाएँ", "modes": "मोड", "modules": "मॉड्यूल", "selectedCount": "{{count}} चयनित", "clearFilter": "फ़िल्टर हटाएँ", "applyFilters": "लागू करें", "sortBy": "इसके अनुसार क्रमबद्ध करें", "pageNumber": "पृष्ठ {{count}}",
+      "programCompleted": "पाठ्यक्रम पूरा हुआ", "allModulesCompleted": "सभी मॉड्यूल पूरे हुए", "modulePosition": "मॉड्यूल {{current}} / {{total}}", "completedModulesShort": "{{count}} मॉड्यूल पूरे", "completedLessonsShort": "{{count}} पाठ पूरे", "currentPosition": "वर्तमान स्थिति", "inProgress": "जारी है", "readyForNext": "अगले मॉड्यूल के लिए तैयार", "lessonsInModule": "{{total}} में से {{completed}} पाठ पूरे", "lastLesson": "अंतिम पाठ", "curriculumProgress": "मॉड्यूल के अनुसार प्रगति", "completed": "पूरा", "examHistory": "परीक्षा प्रयास", "attemptNumber": "प्रयास {{count}}",
+      "allLanguages": "सभी भाषाएँ", "allModes": "सभी मोड", "simpleMode": "सरल मोड", "normalMode": "सामान्य मोड", "allModules": "सभी मॉड्यूल", "allSignals": "सभी संकेत", "simpleShort": "सरल", "normalShort": "सामान्य", "notStarted": "शुरू नहीं किया", "hasAttention": "ध्यान संकेत है",
+      "exportUsers": "उपयोगकर्ता निर्यात करें", "retentionBuilding": "रिटेंशन डेटा बन रहा है। चौदह दिन बाद यह ओवरव्यू भरोसेमंद होगा।", "progressTimeline": "प्रगति समयरेखा", "noTimeline": "अभी कोई सीखने की गतिविधि नहीं", "sendEmail": "ईमेल भेजें", "emailSubject": "Faith Generation Bible School", "emailCopied": "ईमेल पता कॉपी किया गया", "moveUp": "ऊपर", "moveDown": "नीचे",
+      "tabs": { "path": "सीखने का मार्ग", "modules": "मॉड्यूल", "exams": "परीक्षाएँ", "retention": "रिटेंशन" },
+      "funnel": { "registered": "पंजीकृत", "started": "शुरू किया", "lessonCompleted": "पाठ पूरा", "moduleCompleted": "मॉड्यूल पूरा", "examPassed": "परीक्षा पास" },
+      "signals": { "no_first_lesson": "7 दिन बाद भी पहला पाठ नहीं", "inactive_after_start": "शुरू करने के बाद 14 दिन निष्क्रिय", "stalled_module": "सक्रिय मॉड्यूल में 7 दिन से प्रगति नहीं", "repeated_exam_failure": "कई असफल परीक्षा प्रयास" },
+      "sort": { "last_activity": "अंतिम गतिविधि", "progress": "प्रगति", "created_at": "पंजीकरण", "name": "नाम" },
+      "timeline": { "lesson_completed": "पाठ पूरा", "module_completed": "मॉड्यूल पूरा", "exam_attempt": "परीक्षा प्रयास" },
+      "widgets": { "schoolHealth": "मुख्य आँकड़े", "activityTrend": "गतिविधि रुझान", "attention": "ध्यान", "learningFunnel": "सीखने का मार्ग", "modulePulse": "पाठ्यक्रम", "examPulse": "परीक्षा", "retention": "रिटेंशन" }
+    }
   },
   "navbar": {
     "home": "होम",
@@ -468,6 +542,9 @@
     "videoQualityLow": "480p",
     "videoQualityDataSaver": "डेटा सेवर",
     "videoQualityDescription": "लोडिंग गति और डेटा उपयोग को प्रभावित करता है",
+    "simpleMode": "सरल मोड",
+    "simpleModeDescription": "बड़ा टेक्स्ट, कम चरण और सीधी वीडियो पहुंच के साथ सरल बाइबिल स्कूल",
+    "simpleModeAccessibilityHint": "बड़े टेक्स्ट और कम चरणों वाला सरल बाइबिल स्कूल दृश्य चालू करता है",
     "whatsNew": "नया क्या है",
     "whatsNewSubtitle": "रिलीज़ नोट और अपडेट"
   },

@@ -20,6 +20,34 @@ export const WHATS_NEW_MAX_RELEASES = 10;
 
 export const WHATS_NEW_RELEASES: WhatsNewRelease[] = [
   {
+    version: '2.0.2',
+    date: '2026-07-13',
+    items: [
+      {
+        id: 'simpleMode',
+        icon: 'accessibility-outline',
+        titleKey: 'whatsNew.releases.v2_0_2.simpleMode.title',
+        descriptionKey: 'whatsNew.releases.v2_0_2.simpleMode.description',
+        category: 'added',
+      },
+      {
+        id: 'registration',
+        icon: 'person-add-outline',
+        titleKey: 'whatsNew.releases.v2_0_2.registration.title',
+        descriptionKey: 'whatsNew.releases.v2_0_2.registration.description',
+        category: 'fixed',
+      },
+      {
+        id: 'languageSwitcher',
+        icon: 'language-outline',
+        titleKey: 'whatsNew.releases.v2_0_2.languageSwitcher.title',
+        descriptionKey:
+          'whatsNew.releases.v2_0_2.languageSwitcher.description',
+        category: 'added',
+      },
+    ],
+  },
+  {
     version: '2.0.1',
     date: '2026-06-18',
     items: [

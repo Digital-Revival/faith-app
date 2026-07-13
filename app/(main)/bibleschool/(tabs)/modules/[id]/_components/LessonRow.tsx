@@ -12,6 +12,7 @@ import type { LessonLike } from '@/types/bibleschool';
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { SimpleLessonRow } from './SimpleLessonRow';
 
 const rowStyles = StyleSheet.create({
   durationRow: {
@@ -48,19 +49,24 @@ export function LessonRow({
   t,
   isCompleted,
   isLocked,
+  isCurrent = false,
   videoPositionSeconds,
   onPress,
   onLockedPress,
+  variant,
 }: {
   lesson: LessonLike;
   theme: ReturnType<typeof useTheme>;
   t: (key: string, params?: Record<string, string | number>) => string;
   isCompleted: boolean;
   isLocked: boolean;
+  isCurrent?: boolean;
   videoPositionSeconds?: number;
   onPress: () => void;
   onLockedPress?: (lesson: LessonLike) => void;
+  variant: 'standard' | 'simple';
 }) {
+  const simpleMode = variant === 'simple';
   const videoIdForThumb = !lesson.thumbnailUrl && lesson.videoId ? lesson.videoId : undefined;
   const vimeoMetaEnabled = !!lesson.videoId && (!lesson.thumbnailUrl || !isLocked);
 
@@ -106,6 +112,36 @@ export function LessonRow({
   const lessonNumberStr = t('lessons.lessonNumber', { number: lesson.order });
   const titleStr = lesson.title ?? (lesson.titleKey ? t(lesson.titleKey as never) : '');
   const showNumberSeparately = !titleStr.trim().toLowerCase().startsWith(lessonNumberStr.trim().toLowerCase());
+
+  if (simpleMode) {
+    const statusLabel = isCompleted
+      ? t('lessons.completed')
+      : isLocked
+        ? t('lessons.locked')
+        : isCurrent
+          ? t('lessonsPage.currentLesson')
+          : t('bibleschool.simpleMode.tapToWatch');
+    const actionHint = isLocked
+      ? t('bibleschool.simpleMode.lockedHint')
+      : t('bibleschool.simpleMode.tapToWatch');
+
+    return (
+      <SimpleLessonRow
+        lessonNumber={lessonNumberStr}
+        title={titleStr}
+        statusLabel={statusLabel}
+        actionHint={actionHint}
+        thumbnailUrl={thumbnailUrl}
+        thumbnailLoading={thumbnailLoading}
+        isCompleted={isCompleted}
+        isLocked={isLocked}
+        isCurrent={isCurrent}
+        theme={theme}
+        lockedLabel={t('lessons.locked')}
+        onPress={handlePress}
+      />
+    );
+  }
 
   return (
     <TouchableOpacity

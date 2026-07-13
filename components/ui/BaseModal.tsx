@@ -80,20 +80,18 @@ export function BaseModal({
           />
         </Pressable>
         <View style={{ width: '100%', maxWidth }} className="self-center">
-          <Pressable onPress={(e) => e.stopPropagation()}>
-            <Animated.View
-              className="rounded-3xl border p-6"
-              style={{
-                width: '100%',
-                maxWidth,
-                backgroundColor: theme.cardBg,
-                borderColor: theme.cardBorder,
-                transform: [{ scale: scaleAnim }],
-              }}
-            >
-              {children}
-            </Animated.View>
-          </Pressable>
+          <Animated.View
+            className="rounded-3xl border p-6"
+            style={{
+              width: '100%',
+              maxWidth,
+              backgroundColor: theme.cardBg,
+              borderColor: theme.cardBorder,
+              transform: [{ scale: scaleAnim }],
+            }}
+          >
+            {children}
+          </Animated.View>
         </View>
       </View>
     </Modal>

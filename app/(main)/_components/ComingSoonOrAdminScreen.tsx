@@ -2,7 +2,7 @@ import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
 import { MainTopBar } from './MainTopBar';
 import { ComingSoonSection } from './ComingSoonSection';
-import { useIsAdmin } from '@/hooks/useIsAdmin';
+import { useAdminViewMode } from '@/contexts/AdminViewModeContext';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Ionicons } from '@expo/vector-icons';
@@ -27,9 +27,9 @@ export function ComingSoonOrAdminScreen({
   const theme = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-  const isAdmin = useIsAdmin();
+  const { isAdminView } = useAdminViewMode();
 
-  if (isAdmin) {
+  if (isAdminView) {
     return (
       <Box
         className="flex-1 px-6 pt-6"

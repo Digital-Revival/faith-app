@@ -1,6 +1,7 @@
 import { MainTopBar } from "@/app/(main)/_components/MainTopBar";
 import { Box } from "@/components/ui/box";
 import { Text } from "@/components/ui/text";
+import { useBibleschoolSimpleMode } from "@/contexts/BibleschoolSimpleModeContext";
 import { routes } from "@/constants/routes";
 import {
   useIntroductionVimeoId,
@@ -11,23 +12,34 @@ import { prefetchLessonThumbnailsForModule } from "@/hooks/usePrefetchLessonThum
 import { useTheme } from "@/hooks/useTheme";
 import { useTranslation } from "@/hooks/useTranslation";
 import type { BibleschoolModule } from "@/types/bibleschool";
-import { getFirstModuleId } from "@/utils/bibleschoolCurriculum";
+import {
+  getFirstModuleId,
+  sortModulesByOrder,
+} from "@/utils/bibleschoolCurriculum";
 import { filterBibleschoolModulesBySearch } from "@/utils/bibleschoolModuleSearch";
 import { bzzt } from "@/utils/haptics";
 import { Ionicons } from "@expo/vector-icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, ScrollView, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { runDeferredTask } from "@/utils/runDeferredTask";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ModulesCatalogSections } from "./_components/ModulesCatalogSections";
 import { ModulesSearchBar } from "./_components/ModulesSearchBar";
 import { useModuleProgress } from "./_hooks/useModuleProgress";
+import { SimpleModeModuleRow } from "./_components/SimpleModeModuleRow";
 
 export default function BibleSchoolModulesScreen() {
   const theme = useTheme();
   const { t, locale } = useTranslation();
+  const { enabled: simpleMode } = useBibleschoolSimpleMode();
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
   const { data: introductionVimeoId } = useIntroductionVimeoId(locale);
@@ -160,11 +172,59 @@ export default function BibleSchoolModulesScreen() {
           title={t("navbar.bibleschool")}
           currentSection="bibleschool"
           showBackButton
+          enlarged={simpleMode}
           onBack={() => router.replace(routes.bibleschool())}
         />
         <Box className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color={theme.textSecondary} />
         </Box>
+      </Box>
+    );
+  }
+
+  if (simpleMode) {
+    const simpleModules = sortModulesByOrder(modules);
+    return (
+      <Box
+        className="flex-1 px-6"
+        style={{
+          paddingTop: insets.top + 24,
+          backgroundColor: theme.pageBg,
+        }}
+      >
+        <MainTopBar
+          title={t("bibleschool.simpleMode.tabLessons")}
+          currentSection="bibleschool"
+          showBackButton
+          enlarged
+          onBack={() => router.replace(routes.bibleschool())}
+        />
+        <FlatList
+          data={simpleModules}
+          keyExtractor={(module) => module.id}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingTop: 16,
+            paddingBottom: insets.bottom + 116,
+          }}
+          ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+          ListHeaderComponent={
+            <Text
+              className="text-2xl font-bold mb-4"
+              style={{ color: theme.textPrimary }}
+            >
+              {t("bibleschool.simpleMode.allLessons")}
+            </Text>
+          }
+          renderItem={({ item }) => (
+            <SimpleModeModuleRow
+              module={item}
+              progress={progressMap[item.id]}
+              isCurrent={nextUnlockedTarget?.module.id === item.id}
+              onPress={() => handleModulePress(item)}
+            />
+          )}
+        />
       </Box>
     );
   }
@@ -181,6 +241,7 @@ export default function BibleSchoolModulesScreen() {
         title={t("navbar.bibleschool")}
         currentSection="bibleschool"
         showBackButton
+        enlarged={simpleMode}
         onBack={() => router.replace(routes.bibleschool())}
       />
       <ScrollView
@@ -204,7 +265,9 @@ export default function BibleSchoolModulesScreen() {
         >
           {t("navbar.modules")}
         </Text>
-        <ModulesSearchBar value={searchQuery} onChangeText={setSearchQuery} />
+        {!simpleMode ? (
+          <ModulesSearchBar value={searchQuery} onChangeText={setSearchQuery} />
+        ) : null}
         {hasNoSearchResults ? (
           <Text
             className="text-center text-base py-8 px-2"
@@ -240,7 +303,7 @@ export default function BibleSchoolModulesScreen() {
           />
         )}
       </ScrollView>
-      {showScrollToTop && (
+      {!simpleMode && showScrollToTop && (
         <View
           style={{
             position: "absolute",

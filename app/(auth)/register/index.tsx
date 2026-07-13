@@ -27,10 +27,11 @@ import { AuthBackgroundDecor } from "../_components/AuthBackgroundDecor";
 import { AuthHeader } from "../_components/AuthHeader";
 import { RegisterAccountStep } from "./_components/RegisterAccountStep";
 import { RegisterProfileStep } from "./_components/RegisterProfileStep";
+import { RegisterSimpleModeStep } from "./_components/RegisterSimpleModeStep";
 import { useRegister } from "./_hooks/useRegister";
 import { useState } from "react";
 
-const TOTAL_STEPS = 2;
+const TOTAL_STEPS = 3;
 
 export default function RegisterScreen() {
   const { register, isLoading, error } = useRegister();
@@ -46,6 +47,9 @@ export default function RegisterScreen() {
   const [birthdate, setBirthdate] = useState<string | null>(null);
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
+  const [simpleModeEnabled, setSimpleModeEnabled] = useState<boolean | null>(
+    null,
+  );
 
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -72,12 +76,15 @@ export default function RegisterScreen() {
       setConfirmPasswordError(confirmErr);
       if (nameErr || emailErr || passwordErr || confirmErr) return;
       nextStep();
-    } else {
+    } else if (currentStep === 1) {
       const phoneErr = validatePhone(phone, t);
       const birthdateErr = validateBirthdate(birthdate, t);
       setPhoneError(phoneErr);
       setBirthdateError(birthdateErr);
       if (phoneErr || birthdateErr) return;
+      nextStep();
+    } else {
+      if (simpleModeEnabled === null) return;
       await register({
         name,
         email,
@@ -87,6 +94,7 @@ export default function RegisterScreen() {
         birthdate: birthdate || undefined,
         country: country.trim() || undefined,
         city: city.trim() || undefined,
+        bibleschoolSimpleModeEnabled: simpleModeEnabled,
       });
     }
   };
@@ -123,6 +131,7 @@ export default function RegisterScreen() {
                 stepIndicatorVariant="dots"
                 showBackButton={false}
                 isNextLoading={isLoading}
+                isNextDisabled={currentStep === 2 && simpleModeEnabled === null}
               >
                 {currentStep === 0 ? (
                   <RegisterAccountStep
@@ -146,7 +155,7 @@ export default function RegisterScreen() {
                     isLoading={isLoading}
                     onSubmit={handleNext}
                   />
-                ) : (
+                ) : currentStep === 1 ? (
                   <RegisterProfileStep
                     phone={phone}
                     birthdate={birthdate}
@@ -160,6 +169,11 @@ export default function RegisterScreen() {
                     birthdateError={birthdateError}
                     isLoading={isLoading}
                     onSubmit={handleNext}
+                  />
+                ) : (
+                  <RegisterSimpleModeStep
+                    value={simpleModeEnabled}
+                    onChange={setSimpleModeEnabled}
                   />
                 )}
               </StepManager>

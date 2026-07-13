@@ -175,7 +175,15 @@ export const authService = {
         email: data.email.trim().toLowerCase(),
         password: data.password,
         options: {
-          data: data.fullName ? { full_name: data.fullName } : undefined,
+          data: {
+            ...(data.fullName ? { full_name: data.fullName } : {}),
+            ...(typeof data.bibleschoolSimpleModeEnabled === 'boolean'
+              ? {
+                  bibleschool_simple_mode_enabled:
+                    data.bibleschoolSimpleModeEnabled,
+                }
+              : {}),
+          },
         },
       });
       if (error) throw error;

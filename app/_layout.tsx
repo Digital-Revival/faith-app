@@ -15,7 +15,9 @@ import "react-native-reanimated";
 
 import { ThemeLayout } from "@/components/ThemeLayout";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { BibleschoolSimpleModeProvider } from "@/contexts/BibleschoolSimpleModeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { LearningActivityProvider } from "@/contexts/LearningActivityContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { TypographyProvider } from "@/contexts/TypographyContext";
@@ -57,13 +59,17 @@ export default function RootLayout() {
           <TypographyProvider>
             <QueryProvider>
               <AuthProvider>
-                <ThemeProvider>
-                  <LanguageProvider>
-                    <ToastProvider>
-                      <ThemeLayout />
-                    </ToastProvider>
-                  </LanguageProvider>
-                </ThemeProvider>
+                <BibleschoolSimpleModeProvider>
+                  <ThemeProvider>
+                    <LanguageProvider>
+                      <LearningActivityProvider>
+                        <ToastProvider>
+                          <ThemeLayout />
+                        </ToastProvider>
+                      </LearningActivityProvider>
+                    </LanguageProvider>
+                  </ThemeProvider>
+                </BibleschoolSimpleModeProvider>
               </AuthProvider>
             </QueryProvider>
           </TypographyProvider>

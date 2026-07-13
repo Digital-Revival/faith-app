@@ -1,4 +1,7 @@
 import type {
+  AdminLearningAnalyticsResponse,
+  AdminUserFilters,
+  AdminUsersResponseV2,
   BibleschoolAnalytics,
   QuizAnalytics,
   TimeAnalytics,
@@ -10,6 +13,41 @@ function escapeCsvCell(value: string | number): string {
     return `"${s.replace(/"/g, '""')}"`;
   }
   return s;
+}
+
+export function buildLearningAnalyticsCsv(data: AdminLearningAnalyticsResponse): string {
+  const rows = [
+    'Faith Generation Admin Analytics',
+    `Generated At,${escapeCsvCell(data.generatedAt)}`,
+    `Period,${escapeCsvCell(data.period)}`,
+    `Timezone,${escapeCsvCell(data.timezone)}`,
+    `Locales,${escapeCsvCell(data.filters.locales.length ? data.filters.locales.join('|') : 'all')}`,
+    `Simple Modes,${escapeCsvCell(data.filters.simpleModes.length ? data.filters.simpleModes.map(String).join('|') : 'all')}`,
+    `Modules,${escapeCsvCell(data.filters.moduleIds.length ? data.filters.moduleIds.join('|') : 'all')}`,
+    '', 'Funnel', 'Stage,Students',
+    ...data.funnel.map((stage) => `${escapeCsvCell(stage.id)},${stage.value}`),
+    '', 'Modules', 'Module,Starters,Completers,Dropoff,Completion Rate,Median Days',
+    ...data.modules.map((module) => [module.moduleId,module.starters,module.completers,module.dropoff,module.completionRate,module.medianDays].map(escapeCsvCell).join(',')),
+    '', 'Exams', 'Module,Attempts,First Attempt Pass Rate,Overall Pass Rate,Average Score,Retries',
+    ...data.exams.map((exam) => [exam.moduleId,exam.attempts,exam.firstAttemptPassRate,exam.overallPassRate,exam.averageScore,exam.retryCount].map(escapeCsvCell).join(',')),
+    '', 'Retention', 'D1,D7,D30,Building',
+    [data.retention.d1,data.retention.d7,data.retention.d30,String(data.retention.isBuilding)].map(escapeCsvCell).join(','),
+  ];
+  return rows.join('\n');
+}
+
+export function buildAdminUsersCsv(data: AdminUsersResponseV2, filters: AdminUserFilters, timezone: string): string {
+  const rows = [
+    'Faith Generation Admin Users', `Generated At,${escapeCsvCell(data.generatedAt)}`,
+    `Timezone,${escapeCsvCell(timezone)}`, `Search,${escapeCsvCell(filters.search ?? '')}`,
+    `Locales,${escapeCsvCell(filters.locales?.length ? filters.locales.join('|') : 'all')}`,
+    `Simple Modes,${escapeCsvCell(filters.simpleModes?.length ? filters.simpleModes.map(String).join('|') : 'all')}`,
+    `Attention Signals,${escapeCsvCell(filters.signals?.length ? filters.signals.join('|') : 'all')}`,
+    `Modules,${escapeCsvCell(filters.moduleIds?.length ? filters.moduleIds.join('|') : 'all')}`, '',
+    'Name,Email,Created At,Last Activity,Locale,Simple Mode,Current Module,Module Status,Module Progress,Completed Modules,Completed Lessons,Signals',
+    ...data.users.map((user) => [user.fullName ?? '',user.email,user.createdAt,user.lastActivity ?? '',user.locale,String(user.simpleMode),user.currentModuleId ?? '',user.currentModuleStatus,user.progressPercentage,user.completedModuleCount,user.completedLessonCount,user.signals.join('|')].map(escapeCsvCell).join(',')),
+  ];
+  return rows.join('\n');
 }
 
 export function buildAnalyticsCsv(

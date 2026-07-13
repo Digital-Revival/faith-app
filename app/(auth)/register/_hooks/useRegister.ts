@@ -29,6 +29,7 @@ export interface RegisterData {
   birthdate?: string | null;
   country?: string;
   city?: string;
+  bibleschoolSimpleModeEnabled?: boolean;
 }
 
 interface UseRegisterReturn {
@@ -49,6 +50,7 @@ export function useRegister(): UseRegisterReturn {
         email: data.email,
         password: data.password,
         fullName: data.name,
+        bibleschoolSimpleModeEnabled: data.bibleschoolSimpleModeEnabled,
       });
       if (!authData?.user?.id) {
         throw new Error(t('auth.registrationFailed'));
@@ -65,9 +67,14 @@ export function useRegister(): UseRegisterReturn {
       return {
         authData,
         contactEmail: data.email.trim().toLowerCase(),
+        bibleschoolSimpleModeEnabled: data.bibleschoolSimpleModeEnabled,
       };
     },
-    onSuccess: async ({ authData, contactEmail }) => {
+    onSuccess: async ({
+      authData,
+      contactEmail,
+      bibleschoolSimpleModeEnabled,
+    }) => {
       const userId = authData.user?.id;
       if (!userId) {
         return;
@@ -114,6 +121,13 @@ export function useRegister(): UseRegisterReturn {
         );
       }
 
+      if (typeof bibleschoolSimpleModeEnabled === 'boolean') {
+        queryClient.setQueryData(
+          queryKeys.userSettings.simpleMode(userId),
+          bibleschoolSimpleModeEnabled,
+        );
+      }
+
       await Promise.allSettled(bestEffort);
 
       try {
@@ -122,6 +136,9 @@ export function useRegister(): UseRegisterReturn {
             queryKey: queryKeys.userSettings.onboardingSection(userId, section),
           });
         }
+        await queryClient.invalidateQueries({
+          queryKey: queryKeys.userSettings.simpleMode(userId),
+        });
       } catch {
         //
       }

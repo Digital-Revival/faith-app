@@ -1,5 +1,6 @@
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
+import { useBibleschoolSimpleMode } from '@/contexts/BibleschoolSimpleModeContext';
 import type { ExamStatusForModule } from '@/hooks/useLessonUnlocks';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -51,6 +52,7 @@ export function ModuleLessonList({
 }: ModuleLessonListProps) {
   const theme = useTheme();
   const { t } = useTranslation();
+  const { enabled: simpleMode } = useBibleschoolSimpleMode();
 
   const currentLessonRow =
     currentTarget?.type === 'lesson'
@@ -62,7 +64,11 @@ export function ModuleLessonList({
       {currentTarget ? (
         <VStack className="gap-3">
           <Text
-            className="text-sm font-medium uppercase tracking-wider"
+            className={
+              simpleMode
+                ? 'text-xl font-semibold'
+                : 'text-sm font-medium uppercase tracking-wider'
+            }
             style={{ color: theme.textSecondary }}
           >
             {t('lessonsPage.currentLesson')}
@@ -79,6 +85,8 @@ export function ModuleLessonList({
               t={t}
               isCompleted={completedLessonIds.has(currentLessonRow.id)}
               isLocked={false}
+              isCurrent
+              variant={simpleMode ? 'simple' : 'standard'}
               videoPositionSeconds={lessonPositionMap.get(currentLessonRow.id)}
               onPress={() => {
                 bzzt();
@@ -93,7 +101,11 @@ export function ModuleLessonList({
       {showIntroInOther || otherLessons.length > 0 || showExamInOther ? (
         <VStack className="gap-3">
           <Text
-            className="text-sm font-medium uppercase tracking-wider"
+            className={
+              simpleMode
+                ? 'text-xl font-semibold'
+                : 'text-sm font-medium uppercase tracking-wider'
+            }
             style={{ color: theme.textSecondary }}
           >
             {t('lessonsPage.otherLessons')}
@@ -114,6 +126,7 @@ export function ModuleLessonList({
                 t={t}
                 isCompleted={completedLessonIds.has(lesson.id)}
                 isLocked={!isLessonUnlocked(moduleId, lesson)}
+                variant={simpleMode ? 'simple' : 'standard'}
                 videoPositionSeconds={lessonPositionMap.get(lesson.id)}
                 onPress={() => {
                   bzzt();

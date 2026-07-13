@@ -1,6 +1,7 @@
 import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
 import { MainTopBar } from '@/app/(main)/_components/MainTopBar';
+import { useBibleschoolSimpleMode } from '@/contexts/BibleschoolSimpleModeContext';
 import { useIntroductionVimeoId, useModule, useModules } from '@/hooks/useBibleschoolContent';
 import { useIntroVideoWatched } from '@/hooks/useIntroVideoWatched';
 import { usePrefetchLessonThumbnails } from '@/hooks/usePrefetchLessonThumbnails';
@@ -50,6 +51,7 @@ export default function ModuleLessonsScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const { t, locale } = useTranslation();
+  const { enabled: simpleMode } = useBibleschoolSimpleMode();
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
   const userId = user?.id;
@@ -265,6 +267,7 @@ export default function ModuleLessonsScreen() {
         title={module.title}
         currentSection="bibleschool"
         showBackButton
+        enlarged={simpleMode}
         onBack={() => navigation.goBack()}
       />
       <ScrollView
@@ -282,8 +285,8 @@ export default function ModuleLessonsScreen() {
           />
         }
       >
-        <ModuleHeroBanner module={module} />
-        {module.description.trim() ? (
+        {!simpleMode ? <ModuleHeroBanner module={module} /> : null}
+        {!simpleMode && module.description.trim() ? (
           <Text
             className="text-base mb-6"
             style={{ color: theme.textSecondary }}

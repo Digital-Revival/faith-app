@@ -31,6 +31,7 @@
   },
   "auth": {
     "back": "Назад",
+    "retry": "Опитайте отново", "clear": "Изчистване", "previous": "Предишна", "next": "Следваща",
     "welcomeBack": "Добре дошли отново",
     "loginSubtitle": "Влезте, за да проследявате напредъка си в Библийското училище",
     "loginBrandTitle": "ДОБРЕ ДОШЛИ В FAITH GENERATION",
@@ -91,6 +92,12 @@
     "stepOf": "Стъпка {{current}} от {{total}}",
     "step1Title": "Акаунт",
     "step2Title": "Профил",
+    "simpleModeTitle": "Да направим ли Библийското училище по-лесно?",
+    "simpleModeSubtitle": "Можете да промените това по-късно в Настройки.",
+    "simpleModeYesTitle": "Да, направи го лесно",
+    "simpleModeYesBody": "По-големи бутони, по-малко екрани и директно видео.",
+    "simpleModeNoTitle": "Не, стандартен изглед",
+    "simpleModeNoBody": "Всички части на Библийското училище остават видими.",
     "phone": "Телефонен номер",
     "phonePlaceholder": "По избор",
     "phoneMinLength": "Телефонният номер трябва да е поне 8 цифри",
@@ -217,7 +224,8 @@
     "back": "Назад",
     "yesterday": "Вчера",
     "daysAgo": "преди {{count}} дни",
-    "weeksAgo": "преди {{count}} седмици"
+    "weeksAgo": "преди {{count}} седмици",
+    "error": "Нещо се обърка. Моля, опитайте отново."
   },
   "comingSoon": {
     "badge": "Скоро",
@@ -257,6 +265,35 @@
     "bibleReadingScheduleSubtitle": "Ежедневни планове за четене",
     "comingSoon": "Скоро"
   },
+  "bibleschool": {
+    "simpleMode": {
+      "nextLesson": "Следващ урок {{number}}",
+      "tabWatch": "Гледай",
+      "tabLessons": "Уроци",
+      "introContext": "Започнете тук с въведението",
+      "lessonContext": "Урок {{lesson}}, модул {{module}}",
+      "examContext": "Изпит за модул {{module}}",
+      "startVideo": "Пусни видеото",
+      "continueWatching": "Продължи гледането",
+      "nextLessonLabel": "Следващ урок",
+      "loadingWatch": "Търсим следващото ви видео...",
+      "loadError": "Не успяхме да заредим уроците. Проверете връзката и опитайте отново.",
+      "retry": "Опитай отново",
+      "allDoneTitle": "Завършихте Библейската школа",
+      "allDoneContext": "Можете да гледате всеки урок отново.",
+      "viewLessons": "Виж уроците",
+      "allLessons": "Всички уроци",
+      "openMenu": "Отвори менюто",
+      "lessonCompleted": "Урокът е завършен",
+      "continueCountdown": "Продължаваме след {{count}} секунди",
+      "stayHere": "Остани тук",
+      "completionSaveError": "Не успяхме да запазим урока като завършен. Проверете връзката и опитайте отново.",
+      "watchToContinue": "Изгледайте видеото, за да продължите към следващия урок.",
+      "tapToOpen": "Докоснете, за да отворите",
+      "tapToWatch": "Докоснете, за да гледате",
+      "lockedHint": "Първо завършете предишния урок"
+    }
+  },
   "feedback": {
     "title": "Обратна връзка",
     "subtitle": "Споделете мислите си, докладвайте грешки или предложете идеи",
@@ -289,6 +326,20 @@
       "fixed": "Поправено"
     },
     "releases": {
+      "v2_0_2": {
+        "simpleMode": {
+          "title": "Опростен режим за Библейското училище",
+          "description": "Използвайте по-голям текст, по-малко стъпки и директен достъп до видеата на уроците. Изберете този режим при регистрация или по-късно от Настройки."
+        },
+        "registration": {
+          "title": "Регистрацията отново работи",
+          "description": "Проблемът, който пречеше на създаването на акаунт, е отстранен. Вече можете отново да се регистрирате нормално."
+        },
+        "languageSwitcher": {
+          "title": "По-бърза смяна на езика",
+          "description": "Сменяйте езика на приложението директно от навигационното меню, без първо да отваряте Настройки."
+        }
+      },
       "v2_0_1": {
         "whatsNew": {
           "title": "Какво е ново",
@@ -312,6 +363,13 @@
   "admin": {
     "overview": "Админ обзор",
     "welcome": "Админ панел",
+    "viewModeTitle": "Администраторски режим",
+    "viewModeNormalDescription": "Обикновеното приложение е активно",
+    "viewModeAdminDescription": "Администраторският панел е активен",
+    "viewModeEnterLabel": "Преминаване към администраторския панел",
+    "viewModeExitLabel": "Преминаване към обикновеното приложение",
+    "viewModeEntering": "Към администраторския панел",
+    "viewModeLeaving": "Обратно към приложението",
     "analytics": "Библийско училище анализи",
     "users": "Потребители",
     "quickLinks": "Бързи връзки",
@@ -363,7 +421,23 @@
     "exportUnavailable": "Споделянето не е налично",
     "exportAnalytics": "Експорт на анализи",
     "customizeGraphs": "Персонализиране",
-    "selectGraphs": "Изберете кои анализи да показвате"
+    "selectGraphs": "Изберете кои анализи да показвате",
+    "v2": {
+      "schoolHealth": "Състояние на училището", "updatedAt": "Обновено в {{time}}", "customize": "Настройване на прегледа", "loadError": "Анализите не можаха да се заредят.", "showData": "Покажи данните", "hideData": "Скрий данните",
+      "active": "Активни", "engaged": "Ангажирани", "newUsers": "Нови", "modulesCompleted": "Завършени модули", "noComparison": "Няма сравнение", "previousPeriod": "спрямо предходния период", "highest": "Най-висока стойност",
+      "lessonCompletions": "Уроци", "moduleCompletions": "Модули", "activityTrend": "Тенденция на активността", "attention": "Нужда от внимание", "modulePulse": "Учебна програма", "examPulse": "Изпити",
+      "starters": "започнали", "completers": "завършили", "dropoff": "отпаднали", "firstAttempt": "Първи опит", "retries": "Повторения", "medianDays": "Средно време: {{count}} дни",
+      "filters": "Филтри", "languages": "Езици", "modes": "Режими", "modules": "Модули", "selectedCount": "Избрани: {{count}}", "clearFilter": "Изчисти филтъра", "applyFilters": "Приложи", "sortBy": "Сортиране по", "pageNumber": "Страница {{count}}",
+      "programCompleted": "Обучението е завършено", "allModulesCompleted": "Всички модули са завършени", "modulePosition": "Модул {{current}} от {{total}}", "completedModulesShort": "{{count}} завършени модула", "completedLessonsShort": "{{count}} завършени урока", "currentPosition": "Текуща позиция", "inProgress": "В процес", "readyForNext": "Готов за следващия модул", "lessonsInModule": "Завършени {{completed}} от {{total}} урока", "lastLesson": "Последен урок", "curriculumProgress": "Напредък по модули", "completed": "Завършен", "examHistory": "Изпитни опити", "attemptNumber": "Опит {{count}}",
+      "allLanguages": "Всички езици", "allModes": "Всички режими", "simpleMode": "Опростен режим", "normalMode": "Нормален режим", "allModules": "Всички модули", "allSignals": "Всички сигнали", "simpleShort": "Опростен", "normalShort": "Нормален", "notStarted": "Не е започнал", "hasAttention": "Има сигнал за внимание",
+      "exportUsers": "Експортиране на потребители", "retentionBuilding": "Данните за задържане се събират. Прегледът става надежден след четиринадесет дни.", "progressTimeline": "Хронология на напредъка", "noTimeline": "Все още няма учебна активност", "sendEmail": "Изпращане на имейл", "emailSubject": "Faith Generation Библейско училище", "emailCopied": "Имейл адресът е копиран", "moveUp": "Нагоре", "moveDown": "Надолу",
+      "tabs": { "path": "Учебен път", "modules": "Модули", "exams": "Изпити", "retention": "Задържане" },
+      "funnel": { "registered": "Регистрирани", "started": "Започнали", "lessonCompleted": "Завършен урок", "moduleCompleted": "Завършен модул", "examPassed": "Взет изпит" },
+      "signals": { "no_first_lesson": "Без първи урок след 7 дни", "inactive_after_start": "Неактивен 14 дни след започване", "stalled_module": "Без напредък в активен модул 7 дни", "repeated_exam_failure": "Няколко неуспешни опита на изпит" },
+      "sort": { "last_activity": "Последна активност", "progress": "Напредък", "created_at": "Регистрация", "name": "Име" },
+      "timeline": { "lesson_completed": "Завършен урок", "module_completed": "Завършен модул", "exam_attempt": "Опит на изпит" },
+      "widgets": { "schoolHealth": "Основни показатели", "activityTrend": "Тенденция", "attention": "Внимание", "learningFunnel": "Учебен път", "modulePulse": "Учебна програма", "examPulse": "Изпити", "retention": "Задържане" }
+    }
   },
   "navbar": {
     "home": "Начало",
@@ -469,6 +543,9 @@
     "videoQualityLow": "480p",
     "videoQualityDataSaver": "Икономия на данни",
     "videoQualityDescription": "Влияе на скоростта на зареждане и използването на данни",
+    "simpleMode": "Опростен режим",
+    "simpleModeDescription": "Опростена библейска школа с по-голям текст, по-малко стъпки и директен достъп до видео",
+    "simpleModeAccessibilityHint": "Включва по-опростен изглед на Библейската школа с по-голям текст и по-малко стъпки",
     "whatsNew": "Какво е новото",
     "whatsNewSubtitle": "Бележки за версията и актуализации"
   },

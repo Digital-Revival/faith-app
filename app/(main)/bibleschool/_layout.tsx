@@ -1,4 +1,5 @@
 import { BibleschoolTabProvider } from "@/contexts/BibleschoolTabContext";
+import { useBibleschoolSimpleMode } from "@/contexts/BibleschoolSimpleModeContext";
 import { BibleschoolTabBar } from "./_components/BibleschoolTabBar";
 import { StoryblokErrorBanner } from "./_components/StoryblokErrorBanner";
 import {
@@ -13,6 +14,8 @@ import { View } from "react-native";
 
 export default function BibleSchoolLayout() {
   const theme = useTheme();
+  const { enabled: simpleMode, isLoading: simpleModeLoading } =
+    useBibleschoolSimpleMode();
   const baseOptions = stackScreenOptions({
     headerShown: false,
     contentStyle: { backgroundColor: theme.pageBg },
@@ -20,11 +23,11 @@ export default function BibleSchoolLayout() {
   const { onboardingCompleted: bsOnboardingDone, isLoading: bsOnboardingLoading } =
     useOnboardingSection('bibleschool');
 
-  if (bsOnboardingLoading) {
+  if (bsOnboardingLoading || simpleModeLoading) {
     return <View style={{ flex: 1, backgroundColor: theme.pageBg }} />;
   }
 
-  if (bsOnboardingDone === false) {
+  if (!simpleMode && bsOnboardingDone === false) {
     return <Redirect href={'/onboarding?section=bibleschool' as Href} />;
   }
 

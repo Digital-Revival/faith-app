@@ -31,6 +31,7 @@
   },
   "auth": {
     "back": "Back",
+    "retry": "Try again", "clear": "Clear", "previous": "Previous", "next": "Next",
     "welcomeBack": "Welcome back",
     "loginSubtitle": "Log in to track your Bible school progress",
     "loginBrandTitle": "WELCOME TO FAITH GENERATION",
@@ -91,6 +92,12 @@
     "stepOf": "Step {{current}} of {{total}}",
     "step1Title": "Account",
     "step2Title": "Profile",
+    "simpleModeTitle": "Make Bible School easier to use?",
+    "simpleModeSubtitle": "You can change this later in Settings.",
+    "simpleModeYesTitle": "Yes, make it simple",
+    "simpleModeYesBody": "Bigger buttons, fewer screens, and direct video access.",
+    "simpleModeNoTitle": "No, standard view",
+    "simpleModeNoBody": "All Bible School parts stay visible as usual.",
     "phone": "Phone number",
     "phonePlaceholder": "Optional",
     "phoneMinLength": "Phone number must be at least 8 digits",
@@ -217,7 +224,8 @@
     "back": "Back",
     "yesterday": "Yesterday",
     "daysAgo": "{{count}}d ago",
-    "weeksAgo": "{{count}}w ago"
+    "weeksAgo": "{{count}}w ago",
+    "error": "Something went wrong. Please try again."
   },
   "hub": {
     "title": "What would you like to do today?",
@@ -257,6 +265,35 @@
     "miraclesDescription": "Stories of God's power and testimonies from the body of Christ—this section is in development.",
     "bibleReadingScheduleDescription": "Structured Bible reading plans to help you stay in the Word daily—coming to the app."
   },
+  "bibleschool": {
+    "simpleMode": {
+      "nextLesson": "Next lesson {{number}}",
+      "tabWatch": "Watch",
+      "tabLessons": "Lessons",
+      "introContext": "Start here with the introduction",
+      "lessonContext": "Lesson {{lesson}}, module {{module}}",
+      "examContext": "Exam for module {{module}}",
+      "startVideo": "Start video",
+      "continueWatching": "Continue watching",
+      "nextLessonLabel": "Next lesson",
+      "loadingWatch": "Finding your next video...",
+      "loadError": "We could not load your lessons. Check your connection and try again.",
+      "retry": "Try again",
+      "allDoneTitle": "You completed Bible School",
+      "allDoneContext": "You can watch any lesson again.",
+      "viewLessons": "View lessons",
+      "allLessons": "All lessons",
+      "openMenu": "Open menu",
+      "lessonCompleted": "Lesson completed",
+      "continueCountdown": "Continuing in {{count}} seconds",
+      "stayHere": "Stay here",
+      "completionSaveError": "We could not save this lesson as completed. Check your connection and try again.",
+      "watchToContinue": "Watch the video to continue to the next lesson.",
+      "tapToOpen": "Tap to open",
+      "tapToWatch": "Tap to watch",
+      "lockedHint": "Complete the previous lesson first"
+    }
+  },
   "feedback": {
     "title": "Feedback",
     "subtitle": "Share your thoughts, report bugs, or suggest ideas",
@@ -289,6 +326,20 @@
       "fixed": "Fixed"
     },
     "releases": {
+      "v2_0_2": {
+        "simpleMode": {
+          "title": "Simple mode for Bible School",
+          "description": "Use larger text, fewer steps, and direct access to lesson videos. Choose this mode during registration or later in Settings."
+        },
+        "registration": {
+          "title": "Registration works again",
+          "description": "The issue that prevented you from creating an account has been fixed. You can now register normally again."
+        },
+        "languageSwitcher": {
+          "title": "Switch languages faster",
+          "description": "Change the app language directly from the navigation menu, without going to Settings first."
+        }
+      },
       "v2_0_1": {
         "whatsNew": {
           "title": "What's New",
@@ -312,6 +363,13 @@
   "admin": {
     "overview": "Admin Overview",
     "welcome": "Admin Dashboard",
+    "viewModeTitle": "Admin mode",
+    "viewModeNormalDescription": "Normal app active",
+    "viewModeAdminDescription": "Admin area active",
+    "viewModeEnterLabel": "Switch to the admin area",
+    "viewModeExitLabel": "Switch to the normal app",
+    "viewModeEntering": "Launching the admin area",
+    "viewModeLeaving": "Returning to the app",
     "analytics": "Bible School Analytics",
     "users": "Users",
     "quickLinks": "Quick links",
@@ -363,7 +421,23 @@
     "exportUnavailable": "Sharing is not available",
     "exportAnalytics": "Export Bible School Analytics",
     "customizeGraphs": "Customize",
-    "selectGraphs": "Select which analytics to show"
+    "selectGraphs": "Select which analytics to show",
+    "v2": {
+      "schoolHealth": "School health", "updatedAt": "Updated at {{time}}", "customize": "Customize overview", "loadError": "Analytics could not be loaded.", "showData": "Show data", "hideData": "Hide data",
+      "active": "Active", "engaged": "Engaged", "newUsers": "New", "modulesCompleted": "Modules completed", "noComparison": "No comparison", "previousPeriod": "vs previous period", "highest": "Highest value",
+      "lessonCompletions": "Lessons", "moduleCompletions": "Modules", "activityTrend": "Activity trend", "attention": "Needs attention", "modulePulse": "Curriculum pulse", "examPulse": "Exam pulse",
+      "starters": "starters", "completers": "completed", "dropoff": "dropped off", "firstAttempt": "First attempt", "retries": "Retries", "medianDays": "Median completion time: {{count}} days",
+      "filters": "Filters", "languages": "Languages", "modes": "Modes", "modules": "Modules", "selectedCount": "{{count}} selected", "clearFilter": "Clear filter", "applyFilters": "Apply", "sortBy": "Sort by", "pageNumber": "Page {{count}}",
+      "programCompleted": "Program completed", "allModulesCompleted": "All modules completed", "modulePosition": "Module {{current}} of {{total}}", "completedModulesShort": "{{count}} modules completed", "completedLessonsShort": "{{count}} lessons completed", "currentPosition": "Current position", "inProgress": "In progress", "readyForNext": "Ready for the next module", "lessonsInModule": "{{completed}} of {{total}} lessons completed", "lastLesson": "Last lesson", "curriculumProgress": "Progress by module", "completed": "Completed", "examHistory": "Exam attempts", "attemptNumber": "Attempt {{count}}",
+      "allLanguages": "All languages", "allModes": "All modes", "simpleMode": "Simple mode", "normalMode": "Normal mode", "allModules": "All modules", "allSignals": "All signals", "simpleShort": "Simple", "normalShort": "Normal", "notStarted": "Not started", "hasAttention": "Has an attention signal",
+      "exportUsers": "Export users", "retentionBuilding": "Retention data is building. This overview becomes reliable after fourteen days.", "progressTimeline": "Progress timeline", "noTimeline": "No learning activity yet", "sendEmail": "Send email", "emailSubject": "Faith Generation Bible School", "emailCopied": "Email address copied", "moveUp": "Move up", "moveDown": "Move down",
+      "tabs": { "path": "Learning path", "modules": "Modules", "exams": "Exams", "retention": "Retention" },
+      "funnel": { "registered": "Registered", "started": "Started", "lessonCompleted": "Lesson completed", "moduleCompleted": "Module completed", "examPassed": "Exam passed" },
+      "signals": { "no_first_lesson": "No first lesson after 7 days", "inactive_after_start": "Inactive for 14 days after starting", "stalled_module": "No progress in active module for 7 days", "repeated_exam_failure": "Multiple failed exam attempts" },
+      "sort": { "last_activity": "Last activity", "progress": "Progress", "created_at": "Registration", "name": "Name" },
+      "timeline": { "lesson_completed": "Lesson completed", "module_completed": "Module completed", "exam_attempt": "Exam attempt" },
+      "widgets": { "schoolHealth": "Key metrics", "activityTrend": "Activity trend", "attention": "Attention", "learningFunnel": "Learning path", "modulePulse": "Curriculum pulse", "examPulse": "Exam pulse", "retention": "Retention" }
+    }
   },
   "navbar": {
     "home": "Home",
@@ -468,6 +542,9 @@
     "videoQualityLow": "480p",
     "videoQualityDataSaver": "Data saver",
     "videoQualityDescription": "Affects loading speed and data usage",
+    "simpleMode": "Simple mode",
+    "simpleModeDescription": "Simplified Bible School with larger text, fewer steps, and direct video access",
+    "simpleModeAccessibilityHint": "Turns on a simpler Bible School layout with larger text and fewer steps",
     "whatsNew": "What's New",
     "whatsNewSubtitle": "Release notes and updates"
   },

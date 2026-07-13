@@ -2,7 +2,7 @@
   "expo": {
     "name": "Faith Generation",
     "slug": "faith-generation",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/logo_icon.png",
     "scheme": "faithapp",
@@ -37,7 +37,10 @@
               "host": "reset-password"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ]
     },

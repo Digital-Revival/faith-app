@@ -24,6 +24,8 @@ export interface LessonVideoPlayerProps {
   initialPositionSeconds: number;
   onSavePosition: (seconds: number, immediate?: boolean) => void;
   onMarkComplete?: () => void;
+  onPlaybackStarted?: () => void;
+  onPlaybackEngaged?: () => void;
   pipRef?: MutableRefObject<{
     start: () => void;
     stop: () => void;
@@ -36,14 +38,22 @@ export function LessonVideoPlayer({
   initialPositionSeconds,
   onSavePosition,
   onMarkComplete,
+  onPlaybackStarted,
+  onPlaybackEngaged,
   pipRef,
 }: LessonVideoPlayerProps) {
   const videoViewRef = useRef<VideoView>(null);
   const lastPositionRef = useRef(initialPositionSeconds);
   const onSavePositionRef = useSyncRef(onSavePosition);
   const onMarkCompleteRef = useSyncRef(onMarkComplete);
+  const onPlaybackStartedRef = useSyncRef(onPlaybackStarted);
+  const onPlaybackEngagedRef = useSyncRef(onPlaybackEngaged);
   const hasAppliedInitialSeekRef = useRef(false);
   const hasMarkedCompleteRef = useRef(false);
+  const hasTrackedStartedRef = useRef(false);
+  const hasTrackedEngagedRef = useRef(false);
+  const engagedSecondsRef = useRef(0);
+  const lastPlayingTickRef = useRef<number | null>(null);
 
   const SEEK_DELTA_THRESHOLD = 4;
   const SEEK_SETTLE_MS = 1500;
@@ -83,6 +93,19 @@ export function LessonVideoPlayer({
 
     lastPositionRef.current = currentTime;
 
+    if (lastPlayingTickRef.current !== null && !isSeekingRef.current) {
+      const now = Date.now();
+      engagedSecondsRef.current += Math.min(
+        (now - lastPlayingTickRef.current) / 1000,
+        3,
+      );
+      lastPlayingTickRef.current = now;
+      if (engagedSecondsRef.current >= 30 && !hasTrackedEngagedRef.current) {
+        hasTrackedEngagedRef.current = true;
+        onPlaybackEngagedRef.current?.();
+      }
+    }
+
     if (isSeekingRef.current) return;
 
     onSavePositionRef.current(currentTime, false);
@@ -104,6 +127,15 @@ export function LessonVideoPlayer({
   });
 
   useEventListener(player, 'playingChange', ({ isPlaying }) => {
+    if (isPlaying) {
+      lastPlayingTickRef.current = Date.now();
+      if (!hasTrackedStartedRef.current) {
+        hasTrackedStartedRef.current = true;
+        onPlaybackStartedRef.current?.();
+      }
+      return;
+    }
+    lastPlayingTickRef.current = null;
     if (!isPlaying) {
       const pos = player.currentTime;
       lastPositionRef.current = pos;

@@ -1,6 +1,7 @@
 import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
 import { MainTopBar } from '@/app/(main)/_components/MainTopBar';
+import { useBibleschoolSimpleMode } from '@/contexts/BibleschoolSimpleModeContext';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useIntroductionVimeoId, useModule, useModules } from '@/hooks/useBibleschoolContent';
@@ -32,6 +33,7 @@ import { bzzt, bzztWarning } from '@/utils/haptics';
 import { getFirstModuleId, sortLessonsByOrder } from '@/utils/bibleschoolCurriculum';
 import { LockedLessonModal } from '@/app/(main)/bibleschool/(tabs)/modules/[id]/_components/LockedLessonModal';
 import { LockOverlay } from '@/components/common/LockOverlay';
+import { LessonVideoLoadError } from './_components/LessonVideoLoadError';
 
 const MIN_PROGRESS_TO_COUNT_VIEW = 0.5;
 const NEXT_THUMBNAIL_WIDTH = 120;
@@ -284,6 +286,7 @@ function NextLessonCard({
 export default function IntroScreen() {
   const theme = useTheme();
   const { t, locale } = useTranslation();
+  const { enabled: simpleMode } = useBibleschoolSimpleMode();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const progressRef = useRef({ currentTime: 0, duration: 1 });
@@ -294,7 +297,12 @@ export default function IntroScreen() {
   const { data: introductionVimeoId, isLoading: idLoading } =
     useIntroductionVimeoId(locale);
   const networkQuality = useNetworkQuality();
-  const { data: videoUrl, isLoading: urlLoading } =
+  const {
+    data: videoUrl,
+    isLoading: urlLoading,
+    isError: videoError,
+    refetch: refetchVideo,
+  } =
     useVimeoPlaybackUrl(introductionVimeoId, networkQuality);
   const { hasWatched, markWatched } = useIntroVideoWatched();
   const {
@@ -342,12 +350,16 @@ export default function IntroScreen() {
       await markWatched();
     }
     savedByHandleBackRef.current = true;
+    if (simpleMode) {
+      router.replace(routes.bibleschool());
+      return;
+    }
     if (navigation.canGoBack()) {
       navigation.goBack();
     } else {
       router.replace(routes.bibleschool());
     }
-  }, [markWatched, navigation, handleSavePosition, savedPosition]);
+  }, [markWatched, navigation, handleSavePosition, savedPosition, simpleMode]);
 
   const handleMarkWatched = useCallback(async () => {
     await markWatched();
@@ -393,6 +405,7 @@ export default function IntroScreen() {
           title={t('overview.introVideoTitle')}
           currentSection="bibleschool"
           showBackButton
+          enlarged={simpleMode}
           onBack={handleBack}
         />
       </Box>
@@ -425,44 +438,61 @@ export default function IntroScreen() {
               getCurrentPositionRef={getCurrentPositionRef}
               savedByHandleBackRef={savedByHandleBackRef}
             />
+          ) : videoError ? (
+            <LessonVideoLoadError
+              theme={theme}
+              message={t('lessons.videoLoadError')}
+              onRetry={() => {
+                bzzt();
+                void refetchVideo();
+              }}
+            />
           ) : null}
         </Box>
 
-        <Box
-          className="rounded-2xl overflow-hidden p-5 mt-6 mb-8"
-          style={{
-            backgroundColor: theme.cardBg,
-            borderWidth: 1,
-            borderColor: theme.cardBorder,
-          }}
-        >
-          <Text
-            className="text-sm font-medium uppercase tracking-wider mb-1"
-            style={{ color: theme.textSecondary }}
+        {!simpleMode ? (
+          <Box
+            className="rounded-2xl overflow-hidden p-5 mt-6 mb-8"
+            style={{
+              backgroundColor: theme.cardBg,
+              borderWidth: 1,
+              borderColor: theme.cardBorder,
+            }}
           >
-            {t('overview.introVideoTitle')}
-          </Text>
-          <Text
-            className="text-lg font-bold mb-4"
-            style={{ color: theme.textPrimary }}
-          >
-            {t('overview.introVideoSubtitle')}
-          </Text>
-          <Text
-            className="text-base"
-            style={{ color: theme.textPrimary }}
-          >
-            {t('overview.introVideoContent')}
-          </Text>
-        </Box>
+            <Text
+              className="text-sm font-medium uppercase tracking-wider mb-1"
+              style={{ color: theme.textSecondary }}
+            >
+              {t('overview.introVideoTitle')}
+            </Text>
+            <Text
+              className="text-lg font-bold mb-4"
+              style={{ color: theme.textPrimary }}
+            >
+              {t('overview.introVideoSubtitle')}
+            </Text>
+            <Text
+              className="text-base"
+              style={{ color: theme.textPrimary }}
+            >
+              {t('overview.introVideoContent')}
+            </Text>
+          </Box>
+        ) : null}
 
         {firstLesson ? (
           <>
             <Text
-              className="text-sm font-semibold uppercase tracking-wider mb-3"
-              style={{ color: theme.textSecondary }}
+              className={
+                simpleMode
+                  ? 'text-xl font-semibold mb-3 mt-6'
+                  : 'text-sm font-semibold uppercase tracking-wider mb-3'
+              }
+              style={{ color: simpleMode ? theme.textPrimary : theme.textSecondary }}
             >
-              {t('lessons.nextLesson', { number: firstLesson.order })}
+              {simpleMode
+                ? t('bibleschool.simpleMode.nextLessonLabel')
+                : t('lessons.nextLesson', { number: firstLesson.order })}
             </Text>
             <NextLessonCard
               lesson={firstLesson}

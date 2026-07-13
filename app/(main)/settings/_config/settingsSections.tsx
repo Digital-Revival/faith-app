@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
 import type { Ionicons } from '@expo/vector-icons';
+import { BibleschoolSimpleModeToggle } from '../_components/BibleschoolSimpleModeToggle';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import { ThemeSwitcher } from '../_components/ThemeSwitcher';
 import { VideoQualitySelector } from '../_components/VideoQualitySelector';
@@ -44,6 +45,14 @@ export const SETTINGS_SECTIONS: SettingsSectionConfig[] = [
         component: ThemeSwitcher,
         componentProps: { fullWidth: true },
         fullWidthChildren: true,
+        useCard: true,
+      },
+      {
+        id: 'bibleschool-simple-mode',
+        icon: 'accessibility',
+        labelKey: 'settings.simpleMode',
+        descriptionKey: 'settings.simpleModeDescription',
+        component: BibleschoolSimpleModeToggle,
         isLast: true,
         useCard: true,
       },

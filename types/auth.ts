@@ -7,6 +7,7 @@ export interface RegisterData {
   email: string;
   password: string;
   fullName?: string;
+  bibleschoolSimpleModeEnabled?: boolean;
 }
 
 export interface ForgotPasswordData {
